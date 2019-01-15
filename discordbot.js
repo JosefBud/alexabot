@@ -27,6 +27,17 @@ client.on('ready', () => {
   console.log(client.debug);
 });
 
+function playSong(title,imageUrl,youtubeUrl) {
+    message.channel.send(embed.setAuthor(`${title}, ${message.author.username}`).setImage(imageUrl));
+    const channel = message.member.voiceChannel;
+    channel.join()
+    .then(connection => {
+        const stream = ytdl(youtubeUrl, { filter : 'audioonly' })
+        const dispatcher = connection.playStream(stream, streamOptions);}
+        )
+    .catch(console.error);
+    console.log(msgContent);
+}
 // checks for "alexa, play despacito" message and plays that shit, unless they're not in a voice channel
 // USES STREAM INSTEAD OF FILE
 client.on('message', message => {
@@ -36,6 +47,7 @@ client.on('message', message => {
             console.log(message.author);
         }
         //Alexa, play despacito command
+        /*
         if (msgContent.includes(`alexa play despacito`.toLowerCase())) {
             if (!message.guild.voiceConnection) {
                 if (typeof message.member.voiceChannel !== 'undefined') {
@@ -57,6 +69,21 @@ client.on('message', message => {
                 message.reply(`I'm already playing it, goofball`);
             }
         }
+        */
+       if (msgContent.includes(`alexa play despacito`.toLowerCase())) {
+        if (!message.guild.voiceConnection) {
+            if (typeof message.member.voiceChannel !== 'undefined') {
+                playSong("Let's get jiggy with it","https://media.giphy.com/media/kLM9I1g8jsiAM/giphy.gif","https://www.youtube.com/watch?v=kJQP7kiw5Fk");
+            }
+            else {
+                    message.reply(`get in a voice channel, ya bonehead`);
+            }
+        } 
+        else {
+            message.reply(`I'm already playing it, goofball`);
+        }
+    }
+
         //Alexa, play shooting stars command
         if (msgContent.includes(`alexa play shooting stars`.toLowerCase())) {
             if (!message.guild.voiceConnection) {

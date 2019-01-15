@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
+const config = require("./config.json");
 const user = new Discord.Message();
 const broadcast = client.createVoiceBroadcast();
 const ytdl = require('ytdl-core');
@@ -145,4 +146,4 @@ client.on('message', message => {
 
 var d = new Date();
 console.log(d.getTime());
-client.login('NTM0NDY5NjM2MzgxNzM2OTgx.Dx6EcA.uybJnXUb8Ih6LTH-Gwx1DJpekO0');
+client.login(config.token);

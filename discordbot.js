@@ -50,7 +50,7 @@ client.on('message', message => {
                     console.log(msgContent);
                 }
                 else {
-                        message.reply(`Get in a voice channel, ya bonehead`);
+                        message.reply(`get in a voice channel, ya bonehead`);
                 }
             } 
             else {
@@ -94,7 +94,7 @@ client.on('message', message => {
                         thatsSoSad = false;
                     }
                     else {
-                            message.reply(`Get in a voice channel, ya bonehead`);
+                            message.reply(`get in a voice channel, ya bonehead`);
                             thatsSoSad = false;
                     }
                 } 

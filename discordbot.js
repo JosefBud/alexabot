@@ -27,21 +27,21 @@ client.on('ready', () => {
   console.log(client.debug);
 });
 
-function playSong(title,imageUrl,youtubeUrl) {
-    Discord.Message.channel.send(embed.setAuthor(`${title}, ${message.author.username}`).setImage(imageUrl));
-    const channel = message.member.voiceChannel;
-    channel.join()
-    .then(connection => {
-        const stream = ytdl(youtubeUrl, { filter : 'audioonly' })
-        const dispatcher = connection.playStream(stream, streamOptions);}
-        )
-    .catch(console.error);
-    console.log(msgContent);
-}
 // checks for "alexa, play despacito" message and plays that shit, unless they're not in a voice channel
 // USES STREAM INSTEAD OF FILE
 client.on('message', message => {
     let msgContent = message.content.toLowerCase().replace(/[,!'.]/gi,"");
+    function playSong(title,imageUrl,youtubeUrl) {
+        message.channel.send(embed.setAuthor(`${title}, ${message.author.username}`).setImage(imageUrl));
+        const channel = message.member.voiceChannel;
+        channel.join()
+        .then(connection => {
+            const stream = ytdl(youtubeUrl, { filter : 'audioonly' })
+            const dispatcher = connection.playStream(stream, streamOptions);}
+            )
+        .catch(console.error);
+        console.log(msgContent);
+    }
     if (!message.author.bot) {
         if (msgContent.includes(`alexa test`.toLowerCase())) {
             console.log(message.author);

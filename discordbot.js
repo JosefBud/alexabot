@@ -58,7 +58,7 @@ client.on('message', message => {
             }
         }
         // Alexa, stfu command
-        if (msgContent.includes("alexa stfu".toLowerCase())) {
+        if (msgContent.includes("alexa stfu".toLowerCase()) || msgContent.includes("alexa shut up".toLowerCase()) || msgContent.includes("alexa fuck off".toLowerCase())) {
             if (message.guild.voiceConnection) {
                 message.channel.send(`Well fine, fuck you too`);
                 message.guild.voiceConnection.disconnect();
@@ -71,7 +71,7 @@ client.on('message', message => {
             message.reply(`your purchase was successful. The credit card charge has been applied to Taydoge's Amazon™ account.`);
         }
         // That's so sad command
-        if (msgContent.includes("thats so sad".toLowerCase())) {
+        if (msgContent.includes("thats so sad".toLowerCase()) || msgContent.includes("that is so sad".toLowerCase())) {
             message.reply(`sorry you're sad. Would you like me to play Despacito?`)
             .then(thatsSoSad = true);
         }

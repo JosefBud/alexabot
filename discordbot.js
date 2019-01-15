@@ -57,6 +57,28 @@ client.on('message', message => {
                 message.reply(`I'm already playing it, goofball`);
             }
         }
+        //Alexa, play shooting stars command
+        if (msgContent.includes(`alexa play shooting stars`.toLowerCase())) {
+            if (!message.guild.voiceConnection) {
+                if (typeof message.member.voiceChannel !== 'undefined') {
+                    message.channel.send(embed.setAuthor(`I've fallen and I can't get up, ${message.author.username}`).setImage("https://thumbs.gfycat.com/PowerfulViciousBangeltiger-size_restricted.gif"));
+                    const channel = message.member.voiceChannel;
+                    channel.join()
+                    .then(connection => {
+                        const stream = ytdl('https://www.youtube.com/watch?v=feA64wXhbjo', { filter : 'audioonly' })
+                        const dispatcher = connection.playStream(stream, streamOptions);}
+                        )
+                    .catch(console.error);
+                    console.log(msgContent);
+                }
+                else {
+                        message.reply(`get in a voice channel, ya bonehead`);
+                }
+            } 
+            else {
+                message.reply(`I'm already playing it, goofball`);
+            }
+        }
         // Alexa, stfu command
         if (msgContent.includes("alexa stfu".toLowerCase()) || msgContent.includes("alexa shut up".toLowerCase()) || msgContent.includes("alexa fuck off".toLowerCase())) {
             if (message.guild.voiceConnection) {

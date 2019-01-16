@@ -148,7 +148,7 @@ client.on('message', message => {
         }
 
         if (message.content.toLowerCase().includes("i'm".toLowerCase())) {
-            message.channel.send(`Hi, ${msgContent.slice(4)}, I'm Alexa!`);
+            message.channel.send(`Hi, ${msgContent.slice(3)}, I'm Alexa!`);
         }
     }
 });

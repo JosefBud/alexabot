@@ -3,6 +3,7 @@ const client = new Discord.Client();
 const config = require("./config.json");
 const user = new Discord.Message();
 const broadcast = client.createVoiceBroadcast();
+const guildChannel = new Discord.GuildChannel();
 const ytdl = require('ytdl-core');
 const streamOptions = { seek: 0, volume: 1 };
 const embed = new Discord.RichEmbed()
@@ -45,8 +46,9 @@ client.on('message', message => {
         console.log(msgContent);
     }
     if (!message.author.bot) {
+        // command for testing things
         if (msgContent.includes(`alexa test`.toLowerCase())) {
-            console.log(message.author);
+            console.log(guildChannel);
         }
         //Alexa, play despacito command
        if (msgContent.includes(`alexa play despacito`.toLowerCase())) {

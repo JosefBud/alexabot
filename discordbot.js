@@ -48,7 +48,7 @@ client.on('message', message => {
         // command for testing things
         if (msgContent.includes(`alexa test`.toLowerCase())) {
             console.log("test 1: " + message.author.lastMessage.channel.id);
-            console.log("test 2: " + message.channel);
+            console.log("test 2: " + message.channel.members);
         }
         //Alexa, play despacito command
        if (msgContent.includes(`alexa play despacito`.toLowerCase())) {

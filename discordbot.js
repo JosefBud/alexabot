@@ -32,7 +32,7 @@ client.on('ready', () => {
 client.on('message', message => {
     let msgContent = message.content.toLowerCase().replace(/[,!'.]/gi,"");
     let everyoneArray = message.guild.members.array();
-    let randomMember = Math.floor(Math.random()) * everyoneArray.length;
+    let randomMember = Math.floor(Math.random()) * 5;
 
     // function for playing a song, all three of the function arguments are strings
     function playSong(title,imageUrl,youtubeUrl) {

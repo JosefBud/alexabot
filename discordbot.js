@@ -49,6 +49,7 @@ client.on('message', message => {
         .catch(console.error);
         console.log(msgContent);
     }
+
     // NOT-BOT CHECK
     if (!message.author.bot) {
         // ALEXA TEST COMMAND
@@ -98,6 +99,7 @@ client.on('message', message => {
             }
         }
         */
+
         // ALEXA, STFU COMMAND FOR ENDING THE STREAM
         if (msgContent.includes("alexa stfu".toLowerCase()) || msgContent.includes("alexa shut up".toLowerCase()) || msgContent.includes("alexa fuck off".toLowerCase())) {
             if (message.guild.voiceConnection) {
@@ -107,16 +109,19 @@ client.on('message', message => {
                 message.channel.send(`I'm not even doing anything, asshole`)
             }
           }
+
         // ALEXA, BUY COMMAND WHICH USES THE RANDOM MEMBER
         if (msgContent.includes("alexa buy".toLowerCase())) {
             client.fetchUser(randomMember).then(myUser => {message.reply(`your purchase was successful. The credit card charge has been applied to ${myUser.username}'s Amazon™ account.`)})
             //message.reply(`your purchase was successful. The credit card charge has been applied to ${poorSoul}'s Amazon™ account.`);
         }
+
         // THAT'S SO SAD COMMAND, WHICH PROMPTS ALEXA TO ASK IF YOU WANT TO PLAY DESPACITO
         if (msgContent.replace(/[o]/gi,"").includes("thats s sad".toLowerCase()) || msgContent.replace(/[o]/gi,"").includes("that is s sad".toLowerCase()) || msgContent.replace(/[o]/gi,"").includes("that is just s sad".toLowerCase())) {
             message.reply(`sorry you're sad. Would you like me to play Despacito?`)
             .then(thatsSoSad = true);
         }
+
         // That's so sad REPLY commands
         // YES
         if (msgContent.includes("yes".toLowerCase()) || msgContent.includes("yeah".toLowerCase()) || msgContent.includes("ya".toLowerCase())) {
@@ -147,7 +152,8 @@ client.on('message', message => {
             }
         }
 
-        if (message.content.toLowerCase().includes("i'm".toLowerCase())) {
+        // DAD BOT COMMANDS
+        if (msgContent.startsWith("im ".toLowerCase())) {
             message.channel.send(`Hi, ${msgContent.slice(3)}, I'm Alexa!`);
         }
     }

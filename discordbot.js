@@ -6,6 +6,18 @@ const broadcast = client.createVoiceBroadcast();
 const ytdl = require('ytdl-core');
 const streamOptions = { seek: 0, volume: 1 };
 const ytSearch = require( 'yt-search' )
+/*
+const mysql = require('mysql');
+const connection = mysql.createConnection({
+  host     : config.hostname,
+  port     : config.port,
+  user     : config.user,
+  password : config.password,
+  database : config.database,
+  charset : 'utf8mb4'
+});
+*/
+
 const embed = new Discord.RichEmbed()
 //.setTitle("This is your title, it can hold 256 characters")*/
 //.setAuthor(`Let's get jiggy with it, ${user.author}`/*, "https://i.imgur.com/lm8s41J.png"*/)
@@ -38,8 +50,12 @@ client.on('message', message => {
     let randomMember = everyoneArray[Math.floor(Math.random() * everyoneArray.length)];
 
     // FUNCTION FOR PLAYING A SONG, ALL THREE OF THE FUNCTION ARGUMENTS ARE STRINGS
-    function playSong(title,imageUrl,youtubeUrl) {
-        message.channel.send(embed.setAuthor(`${title}, ${message.author.username}`).setThumbnail(imageUrl));
+    function playSong(title,imageUrl,youtubeUrl,youtubeThumb,youtubeTitle) {
+        message.channel.send(embed
+            .setAuthor(`${title}, ${message.author.username}`)
+            .setThumbnail(imageUrl)
+            .setImage(youtubeThumb)
+            .setFooter(youtubeTitle));
         const channel = message.member.voiceChannel;
         channel.join()
         .then(connection => {
@@ -65,8 +81,9 @@ client.on('message', message => {
                 ytSearch(searchQuery, function (err,r ) {
                 if (err) throw err
                 const videos = r.videos
-                firstResult = videos[0].url
-                playSong("Let's get jiggy with it","https://media.giphy.com/media/kLM9I1g8jsiAM/giphy.gif",`https://www.youtube.com${firstResult}`);
+                firstResult = videos[0]
+                playSong("Let's get jiggy with it","https://media.giphy.com/media/kLM9I1g8jsiAM/giphy.gif",`https://www.youtube.com/watch?v=${firstResult.videoId}`,`https://i.ytimg.com/vi/${firstResult.videoId}/default.jpg`,firstResult.title);
+                console.log(firstResult)
                 } )
             }
             else {

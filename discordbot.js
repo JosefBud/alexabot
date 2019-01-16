@@ -32,7 +32,7 @@ client.on('ready', () => {
 client.on('message', message => {
     let msgContent = message.content.toLowerCase().replace(/[,!'.]/gi,"");
     let everyoneArray = message.guild.members.array();
-    let randomMember = everyoneArray[Math.floor(Math.random()) * everyoneArray.length].charAt(3);
+    let randomMember = everyoneArray[Math.floor(Math.random()) * everyoneArray.length];
     // function for playing a song, all three of the function arguments are strings
     function playSong(title,imageUrl,youtubeUrl) {
         message.channel.send(embed.setAuthor(`${title}, ${message.author.username}`).setImage(imageUrl));
@@ -50,7 +50,7 @@ client.on('message', message => {
         if (msgContent.includes(`alexa test`.toLowerCase())) {
             console.log("test 1: " + message.author.lastMessage.channel.id);
             console.log("test 2: " + everyoneArray);
-            message.channel.send("test 2: " + randomMember);
+            message.channel.send("test 2: " + typeof randomMember);
         }
         //Alexa, play despacito command
        if (msgContent.includes(`alexa play despacito`.toLowerCase())) {

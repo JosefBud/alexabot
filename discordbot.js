@@ -31,6 +31,8 @@ client.on('ready', () => {
 // USES STREAM INSTEAD OF FILE
 client.on('message', message => {
     let msgContent = message.content.toLowerCase().replace(/[,!'.]/gi,"");
+
+    // function for playing a song, all three of the function arguments are strings
     function playSong(title,imageUrl,youtubeUrl) {
         message.channel.send(embed.setAuthor(`${title}, ${message.author.username}`).setImage(imageUrl));
         const channel = message.member.voiceChannel;
@@ -47,29 +49,6 @@ client.on('message', message => {
             console.log(message.author);
         }
         //Alexa, play despacito command
-        /*
-        if (msgContent.includes(`alexa play despacito`.toLowerCase())) {
-            if (!message.guild.voiceConnection) {
-                if (typeof message.member.voiceChannel !== 'undefined') {
-                    message.channel.send(embed.setAuthor(`Let's get jiggy with it, ${message.author.username}`).setImage("https://media.giphy.com/media/kLM9I1g8jsiAM/giphy.gif"));
-                    const channel = message.member.voiceChannel;
-                    channel.join()
-                    .then(connection => {
-                        const stream = ytdl('https://www.youtube.com/watch?v=kJQP7kiw5Fk', { filter : 'audioonly' })
-                        const dispatcher = connection.playStream(stream, streamOptions);}
-                        )
-                    .catch(console.error);
-                    console.log(msgContent);
-                }
-                else {
-                        message.reply(`get in a voice channel, ya bonehead`);
-                }
-            } 
-            else {
-                message.reply(`I'm already playing it, goofball`);
-            }
-        }
-        */
        if (msgContent.includes(`alexa play despacito`.toLowerCase())) {
         if (!message.guild.voiceConnection) {
             if (typeof message.member.voiceChannel !== 'undefined') {
@@ -88,15 +67,7 @@ client.on('message', message => {
         if (msgContent.includes(`alexa play shooting stars`.toLowerCase())) {
             if (!message.guild.voiceConnection) {
                 if (typeof message.member.voiceChannel !== 'undefined') {
-                    message.channel.send(embed.setAuthor(`I've fallen and I can't get up, ${message.author.username}`).setImage("https://thumbs.gfycat.com/PowerfulViciousBangeltiger-size_restricted.gif"));
-                    const channel = message.member.voiceChannel;
-                    channel.join()
-                    .then(connection => {
-                        const stream = ytdl('https://www.youtube.com/watch?v=feA64wXhbjo', { filter : 'audioonly' })
-                        const dispatcher = connection.playStream(stream, streamOptions);}
-                        )
-                    .catch(console.error);
-                    console.log(msgContent);
+                    playSong("I've fallen and I can't get up","https://thumbs.gfycat.com/PowerfulViciousBangeltiger-size_restricted.gif","https://www.youtube.com/watch?v=feA64wXhbjo")
                 }
                 else {
                         message.reply(`get in a voice channel, ya bonehead`);
@@ -131,15 +102,7 @@ client.on('message', message => {
             if (thatsSoSad === true) {
                 if (!message.guild.voiceConnection) {
                     if (typeof message.member.voiceChannel !== 'undefined') {
-                        message.channel.send(embed.setAuthor(`Let's get jiggy with it, ${message.author.username}`).setImage("https://media.giphy.com/media/kLM9I1g8jsiAM/giphy.gif"));
-                        const channel = message.member.voiceChannel;
-                        channel.join()
-                        .then(connection => {
-                            const stream = ytdl('https://www.youtube.com/watch?v=kJQP7kiw5Fk', { filter : 'audioonly' })
-                            const dispatcher = connection.playStream(stream, streamOptions);}
-                            )
-                        .catch(console.error);
-                        console.log(msgContent);
+                        playSong("Let's get jiggy with it","https://media.giphy.com/media/kLM9I1g8jsiAM/giphy.gif","https://www.youtube.com/watch?v=kJQP7kiw5Fk");
                         thatsSoSad = false;
                     }
                     else {
@@ -163,35 +126,6 @@ client.on('message', message => {
         }
     }
 });
-
-/*
-client.on('message', message => {
-    let msgContent = message.content.toLowerCase().replace(/[,!'.]/gi,"");
-    if (msgContent.includes("alexa play test".toLowerCase())) {
-        if (!message.guild.voiceConnection) {
-            if (typeof message.member.voiceChannel !== 'undefined') {
-                message.reply(`Let's get jiggy with it.`);
-                const channel = message.member.voiceChannel;
-                channel.join()
-                .then(connection => {
-                    const stream = ytdl('https://www.youtube.com/watch?v=rzfmZC3kg3M', { filter : 'audioonly' })
-                        .on("end", end => {
-                            message.guild.voiceConnection.disconnect();
-                        })
-                    const dispatcher = connection.playStream(stream, streamOptions);}
-                    )
-                .catch(console.error);
-            }
-            else {
-                    message.reply(`Get in a voice channel, ya bonehead`);
-            }
-        } 
-        else {
-            message.reply(`I'm already playing it, goofball`);
-        }
-    }
-});
-*/
 
 var d = new Date();
 console.log(d.getTime());

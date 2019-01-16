@@ -140,7 +140,7 @@ client.on('message', message => {
             if (thatsSoSad === true) {
                 //if (!message.guild.voiceConnection) {
                     if (typeof message.member.voiceChannel !== 'undefined') {
-                        playSong("Let's get jiggy with it","https://media.giphy.com/media/kLM9I1g8jsiAM/giphy.gif","https://www.youtube.com/watch?v=kJQP7kiw5Fk");
+                        playSong("Let's get jiggy with it","https://media.giphy.com/media/kLM9I1g8jsiAM/giphy.gif","https://www.youtube.com/watch?v=kJQP7kiw5Fk","","");
                         thatsSoSad = false;
                     }
                     else {

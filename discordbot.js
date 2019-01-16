@@ -113,7 +113,7 @@ client.on('message', message => {
             //message.reply(`your purchase was successful. The credit card charge has been applied to ${poorSoul}'s Amazon™ account.`);
         }
         // THAT'S SO SAD COMMAND, WHICH PROMPTS ALEXA TO ASK IF YOU WANT TO PLAY DESPACITO
-        if (msgContent.replace(/[o]/gi,"").includes("thats s sad".toLowerCase()) || msgContent.includes("that is s sad".toLowerCase())) {
+        if (msgContent.replace(/[o]/gi,"").includes("thats s sad".toLowerCase()) || msgContent.replace(/[o]/gi,"").includes("that is s sad".toLowerCase()) || msgContent.replace(/[o]/gi,"").includes("that is just s sad".toLowerCase())) {
             message.reply(`sorry you're sad. Would you like me to play Despacito?`)
             .then(thatsSoSad = true);
         }
@@ -147,8 +147,8 @@ client.on('message', message => {
             }
         }
 
-        if (msgContent.includes("im".toLowerCase())) {
-            message.channel.send(`Hi, ${msgContent.slice(3)}, I'm Alexa!`);
+        if (message.content.toLowerCase().includes("i'm".toLowerCase())) {
+            message.channel.send(`Hi, ${msgContent.slice(4)}, I'm Alexa!`);
         }
     }
 });

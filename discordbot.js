@@ -146,6 +146,10 @@ client.on('message', message => {
                 thatsSoSad = false;
             }
         }
+
+        if (msgContent.includes("im".toLowerCase())) {
+            message.channel.send(`Hi, ${msgContent.slice(3)}, I'm Alexa!`);
+        }
     }
 });
 

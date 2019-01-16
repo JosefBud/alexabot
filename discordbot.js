@@ -49,7 +49,7 @@ client.on('message', message => {
         if (msgContent.includes(`alexa test`.toLowerCase())) {
             console.log("test 1: " + message.author.lastMessage.channel.id);
             console.log("test 2: " + message.guild.members.array()[0]);
-            message.channel.send(message.guild.members.array()[0]);
+            message.channel.send(message.guild.members.array());
         }
         //Alexa, play despacito command
        if (msgContent.includes(`alexa play despacito`.toLowerCase())) {

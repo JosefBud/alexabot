@@ -51,7 +51,7 @@ client.on('message', message => {
         if (msgContent.includes(`alexa test`.toLowerCase())) {
             console.log("test 1: " + message.author.lastMessage.channel.id);
             console.log("test 2: " + everyoneArray);
-            message.channel.send("test 2: " + randomMember);
+            message.channel.send("test 2: " + typeof randomMember);
         }
         //Alexa, play despacito command
        if (msgContent.includes(`alexa play despacito`.toLowerCase())) {

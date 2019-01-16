@@ -113,7 +113,7 @@ client.on('message', message => {
             //message.reply(`your purchase was successful. The credit card charge has been applied to ${poorSoul}'s Amazon™ account.`);
         }
         // THAT'S SO SAD COMMAND, WHICH PROMPTS ALEXA TO ASK IF YOU WANT TO PLAY DESPACITO
-        if (msgContent.includes("thats so sad".toLowerCase()) || msgContent.includes("that is so sad".toLowerCase())) {
+        if (msgContent.replace(/[o]/gi,"").includes("thats s sad".toLowerCase()) || msgContent.includes("that is s sad".toLowerCase())) {
             message.reply(`sorry you're sad. Would you like me to play Despacito?`)
             .then(thatsSoSad = true);
         }

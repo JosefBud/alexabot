@@ -28,14 +28,16 @@ client.on('ready', () => {
   console.log(client.debug);
 });
 
-// checks for "alexa, play despacito" message and plays that shit, unless they're not in a voice channel
-// USES STREAM INSTEAD OF FILE
+//
 client.on('message', message => {
+    // REMOVES SPECIFIC COMMON PUNCTUATION, LIKE SAYING "ALEXA, PLAY X" OR "ALEXA PLAY X."
     let msgContent = message.content.toLowerCase().replace(/[,!'.]/gi,"");
+
+    // PULLS RANDOM MEMBER FROM THE SERVER/GUILD MEMBER LIST FOR USE WITH THE "ALEXA BUY" COMMAND
     let everyoneArray = message.guild.members.array();
     let randomMember = everyoneArray[Math.floor(Math.random() * everyoneArray.length)];
 
-    // function for playing a song, all three of the function arguments are strings
+    // FUNCTION FOR PLAYING A SONG, ALL THREE OF THE FUNCTION ARGUMENTS ARE STRINGS
     function playSong(title,imageUrl,youtubeUrl) {
         message.channel.send(embed.setAuthor(`${title}, ${message.author.username}`).setThumbnail(imageUrl));
         const channel = message.member.voiceChannel;
@@ -47,8 +49,9 @@ client.on('message', message => {
         .catch(console.error);
         console.log(msgContent);
     }
+    // NOT-BOT CHECK
     if (!message.author.bot) {
-        // command for testing things
+        // ALEXA TEST COMMAND
         if (msgContent.includes(`alexa test`.toLowerCase())) {
             let searchQuery = msgContent.slice(11);
             ytSearch(searchQuery, function (err,r ) {
@@ -59,7 +62,7 @@ client.on('message', message => {
                 message.channel.send(searchQuery)
               } )
         }
-        //Alexa, play command
+        //ALEXA PLAY COMMAND
        if (msgContent.includes(`alexa play`.toLowerCase())) {
         //if (!message.guild.voiceConnection) {
             if (typeof message.member.voiceChannel !== 'undefined') {
@@ -79,7 +82,7 @@ client.on('message', message => {
             message.reply(`I'm already playing it, goofball`);
         }*/
     }
-
+        /*
         //Alexa, play shooting stars command
         if (msgContent.includes(`alexa play shooting stars`.toLowerCase())) {
             if (!message.guild.voiceConnection) {
@@ -94,7 +97,8 @@ client.on('message', message => {
                 message.reply(`I'm already playing it, goofball`);
             }
         }
-        // Alexa, stfu command
+        */
+        // ALEXA, STFU COMMAND FOR ENDING THE STREAM
         if (msgContent.includes("alexa stfu".toLowerCase()) || msgContent.includes("alexa shut up".toLowerCase()) || msgContent.includes("alexa fuck off".toLowerCase())) {
             if (message.guild.voiceConnection) {
                 message.channel.send(`Well fine, fuck you too`);
@@ -103,12 +107,12 @@ client.on('message', message => {
                 message.channel.send(`I'm not even doing anything, asshole`)
             }
           }
-        // Alexa, buy command
+        // ALEXA, BUY COMMAND WHICH USES THE RANDOM MEMBER
         if (msgContent.includes("alexa buy".toLowerCase())) {
             client.fetchUser(randomMember).then(myUser => {message.reply(`your purchase was successful. The credit card charge has been applied to ${myUser.username}'s Amazon™ account.`)})
             //message.reply(`your purchase was successful. The credit card charge has been applied to ${poorSoul}'s Amazon™ account.`);
         }
-        // That's so sad command
+        // THAT'S SO SAD COMMAND, WHICH PROMPTS ALEXA TO ASK IF YOU WANT TO PLAY DESPACITO
         if (msgContent.includes("thats so sad".toLowerCase()) || msgContent.includes("that is so sad".toLowerCase())) {
             message.reply(`sorry you're sad. Would you like me to play Despacito?`)
             .then(thatsSoSad = true);
@@ -118,7 +122,7 @@ client.on('message', message => {
         if (msgContent.includes("yes".toLowerCase()) || msgContent.includes("yeah".toLowerCase()) || msgContent.includes("ya".toLowerCase())) {
             console.log(thatsSoSad);
             if (thatsSoSad === true) {
-                if (!message.guild.voiceConnection) {
+                //if (!message.guild.voiceConnection) {
                     if (typeof message.member.voiceChannel !== 'undefined') {
                         playSong("Let's get jiggy with it","https://media.giphy.com/media/kLM9I1g8jsiAM/giphy.gif","https://www.youtube.com/watch?v=kJQP7kiw5Fk");
                         thatsSoSad = false;
@@ -127,11 +131,11 @@ client.on('message', message => {
                             message.reply(`get in a voice channel, ya bonehead`);
                             thatsSoSad = false;
                     }
-                } 
-                else {
+                //} 
+                /*else {
                     message.reply(`I'm already playing it, goofball`);
                     thatsSoSad = false;
-                }
+                }*/
             }
         }
         // NO

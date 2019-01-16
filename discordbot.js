@@ -54,14 +54,8 @@ client.on('message', message => {
     if (!message.author.bot) {
         // ALEXA TEST COMMAND
         if (msgContent.includes(`alexa test`.toLowerCase())) {
-            let searchQuery = msgContent.slice(11);
-            ytSearch(searchQuery, function (err,r ) {
-                if (err) throw err
-                const videos = r.videos
-                const firstResult = videos[0].url
-                message.channel.send(`https://www.youtube.com${firstResult}`)
-                message.channel.send(searchQuery)
-              } )
+            const myGuilds = client.guilds.map(g => g.name).join("\n");
+            console.log(myGuilds.emojis);
         }
         //ALEXA PLAY COMMAND
        if (msgContent.includes(`alexa play`.toLowerCase())) {
@@ -152,7 +146,7 @@ client.on('message', message => {
             }
         }
 
-        // DAD BOT COMMANDS
+        // DAD BOT COMMAND
         if (msgContent.startsWith("im ".toLowerCase())) {
             message.channel.send(`Hi, ${msgContent.slice(3)}, I'm Alexa!`);
         }

@@ -93,7 +93,6 @@ client.on('message', message => {
           }
         // Alexa, buy command
         if (msgContent.includes("alexa buy".toLowerCase())) {
-            let poorSoul
             client.fetchUser(randomMember).then(myUser => {poorSoul = myUser.username})
             message.reply(`your purchase was successful. The credit card charge has been applied to ${poorSoul}'s Amazon™ account.`);
         }

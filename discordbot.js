@@ -109,7 +109,7 @@ client.on('message', message => {
         // ALEXA TEST COMMAND
         //
         if (msgContent.includes(`alexa test`)) {
-
+            
         }
         if (msgContent.includes(`alexa points`)) {
               message.reply(`You currently have ${score.points} points and are level ${score.level}!`);

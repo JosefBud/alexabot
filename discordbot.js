@@ -6,6 +6,8 @@ const broadcast = client.createVoiceBroadcast();
 const ytdl = require('ytdl-core');
 const streamOptions = { seek: 0, volume: 1 };
 const ytSearch = require( 'yt-search' )
+const SQLite = require("better-sqlite3");
+const sql = new SQLite('./scores.sqlite');
 /*
 const mysql = require('mysql');
 const connection = mysql.createConnection({
@@ -35,9 +37,26 @@ const embed = new Discord.RichEmbed()
 //.addField("Inline Field 3", "You can have a maximum of 25 fields.", true);*/
 var thatsSoSad = false;
 
+client.on("ready", () => {
+
+  });
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
   console.log(client.debug);
+      // Check if the table "points" exists.
+      const table = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = 'scores';").get();
+      if (!table['count(*)']) {
+        // If the table isn't there, create it and setup the database correctly.
+        sql.prepare("CREATE TABLE scores (id TEXT PRIMARY KEY, user TEXT, guild TEXT, points INTEGER, level INTEGER);").run();
+        // Ensure that the "id" row is always unique and indexed.
+        sql.prepare("CREATE UNIQUE INDEX idx_scores_id ON scores (id);").run();
+        sql.pragma("synchronous = 1");
+        sql.pragma("journal_mode = wal");
+      }
+     
+      // And then we have two prepared statements to get and set the score data.
+      client.getScore = sql.prepare("SELECT * FROM scores WHERE user = ? AND guild = ?;");
+      client.setScore = sql.prepare("INSERT OR REPLACE INTO scores (id, user, guild, points, level) VALUES (@id, @user, @guild, @points, @level);");
 });
 
 //
@@ -68,12 +87,37 @@ client.on('message', message => {
 
     // NOT-BOT CHECK
     if (!message.author.bot) {
-        // ALEXA TEST COMMAND
-        if (msgContent.includes(`alexa test`.toLowerCase())) {
-            const myGuilds = client.guilds.map(g => g.name).join("\n");
-            console.log(myGuilds.emojis);
+        let score = client.getScore.get(message.author.id, message.guild.id);
+        if (!score) {
+            score = {
+              id: `${message.guild.id}-${message.author.id}`,
+              user: message.author.id,
+              guild: message.guild.id,
+              points: 0,
+              level: 1
+            }
         }
-        //ALEXA PLAY COMMAND
+        score.points++;
+        const curLevel = Math.floor(0.1 * Math.sqrt(score.points));
+        if(score.level < curLevel) {
+        score.level++;
+        message.reply(`You've leveled up to level **${curLevel}**! Ain't that dandy?`);
+        }
+        client.setScore.run(score);
+    
+        //
+        // ALEXA TEST COMMAND
+        //
+        if (msgContent.includes(`alexa test`.toLowerCase())) {
+
+        }
+        if (msgContent.includes(`alexa points`.toLowerCase())) {
+              message.reply(`You currently have ${score.points} points and are level ${score.level}!`);
+              console.log(score)
+        }
+        //
+        // ALEXA PLAY COMMAND
+        //
        if (msgContent.includes(`alexa play`.toLowerCase())) {
         //if (!message.guild.voiceConnection) {
             if (typeof message.member.voiceChannel !== 'undefined') {
@@ -111,7 +155,9 @@ client.on('message', message => {
         }
         */
 
+        //
         // ALEXA, STFU COMMAND FOR ENDING THE STREAM
+        //
         if (msgContent.includes("alexa stfu".toLowerCase()) || msgContent.includes("alexa shut up".toLowerCase()) || msgContent.includes("alexa fuck off".toLowerCase())) {
             if (message.guild.voiceConnection) {
                 message.channel.send(`Well fine, fuck you too`);
@@ -120,14 +166,18 @@ client.on('message', message => {
                 message.channel.send(`I'm not even doing anything, asshole`)
             }
           }
-
+        
+        //
         // ALEXA, BUY COMMAND WHICH USES THE RANDOM MEMBER
+        //
         if (msgContent.includes("alexa buy".toLowerCase())) {
             client.fetchUser(randomMember).then(myUser => {message.reply(`your purchase was successful. The credit card charge has been applied to ${myUser.username}'s Amazon™ account.`)})
             //message.reply(`your purchase was successful. The credit card charge has been applied to ${poorSoul}'s Amazon™ account.`);
         }
 
+        //
         // THAT'S SO SAD COMMAND, WHICH PROMPTS ALEXA TO ASK IF YOU WANT TO PLAY DESPACITO
+        //
         if (msgContent.replace(/[o]/gi,"").includes("thats s sad".toLowerCase()) || msgContent.replace(/[o]/gi,"").includes("that is s sad".toLowerCase()) || msgContent.replace(/[o]/gi,"").includes("that is just s sad".toLowerCase())) {
             message.reply(`sorry you're sad. Would you like me to play Despacito?`)
             .then(thatsSoSad = true);

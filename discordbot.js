@@ -101,7 +101,7 @@ client.on('message', message => {
         const curLevel = Math.floor(0.1 * Math.sqrt(score.points));
         if(score.level < curLevel) {
         score.level++;
-        message.reply(`You've leveled up to level **${curLevel}**! Ain't that dandy?`);
+        //message.reply(`You've leveled up to level **${curLevel}**! Ain't that dandy?`);
         }
         client.setScore.run(score);
     

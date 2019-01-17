@@ -108,17 +108,17 @@ client.on('message', message => {
         //
         // ALEXA TEST COMMAND
         //
-        if (msgContent.includes(`alexa test`.toLowerCase())) {
+        if (msgContent.includes(`alexa test`)) {
 
         }
-        if (msgContent.includes(`alexa points`.toLowerCase())) {
+        if (msgContent.includes(`alexa points`)) {
               message.reply(`You currently have ${score.points} points and are level ${score.level}!`);
               console.log(score)
         }
         //
         // ALEXA PLAY COMMAND
         //
-       if (msgContent.includes(`alexa play`.toLowerCase())) {
+       if (msgContent.includes(`alexa play`)) {
         //if (!message.guild.voiceConnection) {
             if (typeof message.member.voiceChannel !== 'undefined') {
                 let searchQuery = msgContent.slice(11);
@@ -140,7 +140,7 @@ client.on('message', message => {
     }
         /*
         //Alexa, play shooting stars command
-        if (msgContent.includes(`alexa play shooting stars`.toLowerCase())) {
+        if (msgContent.includes(`alexa play shooting stars`)) {
             if (!message.guild.voiceConnection) {
                 if (typeof message.member.voiceChannel !== 'undefined') {
                     playSong("I've fallen and I can't get up","https://thumbs.gfycat.com/PowerfulViciousBangeltiger-size_restricted.gif","https://www.youtube.com/watch?v=feA64wXhbjo")
@@ -158,7 +158,7 @@ client.on('message', message => {
         //
         // ALEXA, STFU COMMAND FOR ENDING THE STREAM
         //
-        if (msgContent.includes("alexa stfu".toLowerCase()) || msgContent.includes("alexa shut up".toLowerCase()) || msgContent.includes("alexa fuck off".toLowerCase())) {
+        if (msgContent.includes("alexa stfu") || msgContent.includes("alexa shut up") || msgContent.includes("alexa fuck off")) {
             if (message.guild.voiceConnection) {
                 message.channel.send(`Well fine, fuck you too`);
                 message.guild.voiceConnection.disconnect();
@@ -170,7 +170,7 @@ client.on('message', message => {
         //
         // ALEXA, BUY COMMAND WHICH USES THE RANDOM MEMBER
         //
-        if (msgContent.includes("alexa buy".toLowerCase())) {
+        if (msgContent.includes("alexa buy")) {
             client.fetchUser(randomMember).then(myUser => {message.reply(`your purchase was successful. The credit card charge has been applied to ${myUser.username}'s Amazon™ account.`)})
             //message.reply(`your purchase was successful. The credit card charge has been applied to ${poorSoul}'s Amazon™ account.`);
         }
@@ -178,14 +178,14 @@ client.on('message', message => {
         //
         // THAT'S SO SAD COMMAND, WHICH PROMPTS ALEXA TO ASK IF YOU WANT TO PLAY DESPACITO
         //
-        if (msgContent.replace(/[o]/gi,"").includes("thats s sad".toLowerCase()) || msgContent.replace(/[o]/gi,"").includes("that is s sad".toLowerCase()) || msgContent.replace(/[o]/gi,"").includes("that is just s sad".toLowerCase())) {
+        if (msgContent.replace(/[o]/gi,"").includes("thats s sad") || msgContent.replace(/[o]/gi,"").includes("that is s sad") || msgContent.replace(/[o]/gi,"").includes("that is just s sad")) {
             message.reply(`sorry you're sad. Would you like me to play Despacito?`)
             .then(thatsSoSad = true);
         }
 
         // That's so sad REPLY commands
         // YES
-        if (msgContent.includes("yes".toLowerCase()) || msgContent.includes("yeah".toLowerCase()) || msgContent.includes("ya".toLowerCase())) {
+        if (msgContent.includes("yes") || msgContent.includes("yeah") || msgContent.includes("ya")) {
             console.log(thatsSoSad);
             if (thatsSoSad === true) {
                 //if (!message.guild.voiceConnection) {
@@ -205,7 +205,7 @@ client.on('message', message => {
             }
         }
         // NO
-        if (msgContent.includes("no".toLowerCase()) || msgContent.includes("nah".toLowerCase()) || msgContent.includes("nope".toLowerCase())) {
+        if (msgContent.includes("no") || msgContent.includes("nah") || msgContent.includes("nope")) {
             console.log(thatsSoSad);
             if (thatsSoSad === true) {
                 message.channel.send(`Okie dokie. Hope you feel better.`)
@@ -214,7 +214,7 @@ client.on('message', message => {
         }
 
         // DAD BOT COMMAND
-        if (msgContent.startsWith("im ".toLowerCase())) {
+        if (msgContent.startsWith("im ")) {
             message.channel.send(`Hi, ${msgContent.slice(3)}, I'm Alexa!`);
         }
     }

@@ -2,12 +2,9 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const config = require('./config.json');
 const user = new Discord.Message();
-const broadcast = client.createVoiceBroadcast();
-const ytdl = require('ytdl-core');
-const streamOptions = { seek: 0, volume: 1 };
-const ytSearch = require( 'yt-search' )
 const SQLite = require("better-sqlite3");
 const sql = new SQLite('./scores.sqlite');
+const Commands = require('./commands.js');
 /*
 const mysql = require('mysql');
 const connection = mysql.createConnection({
@@ -37,55 +34,31 @@ const embed = new Discord.RichEmbed()
 //.addField("Inline Field 3", "You can have a maximum of 25 fields.", true);*/
 var thatsSoSad = false;
 
-client.on("ready", () => {
-
-  });
 client.on('ready', () => {
-  console.log(`Logged in as ${client.user.tag}!`);
-  console.log(client.debug);
-      // Check if the table "points" exists.
-      const table = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = 'scores';").get();
-      if (!table['count(*)']) {
-        // If the table isn't there, create it and setup the database correctly.
-        sql.prepare("CREATE TABLE scores (id TEXT PRIMARY KEY, user TEXT, guild TEXT, points INTEGER, level INTEGER);").run();
-        // Ensure that the "id" row is always unique and indexed.
-        sql.prepare("CREATE UNIQUE INDEX idx_scores_id ON scores (id);").run();
-        sql.pragma("synchronous = 1");
-        sql.pragma("journal_mode = wal");
-      }
-     
-      // And then we have two prepared statements to get and set the score data.
-      client.getScore = sql.prepare("SELECT * FROM scores WHERE user = ? AND guild = ?;");
-      client.setScore = sql.prepare("INSERT OR REPLACE INTO scores (id, user, guild, points, level) VALUES (@id, @user, @guild, @points, @level);");
-});
+    console.log(`Logged in as ${client.user.tag}!`);
+    console.log(client.debug);
 
-//
-client.on('message', message => {
-    // REMOVES SPECIFIC COMMON PUNCTUATION, LIKE SAYING "ALEXA, PLAY X" OR "ALEXA PLAY X."
-    let msgContent = message.content.toLowerCase().replace(/[,!'.]/gi,"");
-
-    // PULLS RANDOM MEMBER FROM THE SERVER/GUILD MEMBER LIST FOR USE WITH THE "ALEXA BUY" COMMAND
-    let everyoneArray = message.guild.members.array();
-    let randomMember = everyoneArray[Math.floor(Math.random() * everyoneArray.length)];
-
-    // FUNCTION FOR PLAYING A SONG, ALL THREE OF THE FUNCTION ARGUMENTS ARE STRINGS
-    function playSong(title,imageUrl,youtubeUrl,youtubeThumb,youtubeTitle) {
-        message.channel.send(embed
-            .setAuthor(`${title}, ${message.author.username}`)
-            .setThumbnail(imageUrl)
-            .setImage(youtubeThumb)
-            .setFooter(youtubeTitle));
-        const channel = message.member.voiceChannel;
-        channel.join()
-        .then(connection => {
-            const stream = ytdl(youtubeUrl, { filter : 'audioonly' })
-            const dispatcher = connection.playStream(stream, streamOptions);}
-            )
-        .catch(console.error);
-        console.log(msgContent);
+    // Check if the table "points" exists.
+    const table = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = 'scores';").get();
+    if (!table['count(*)']) {
+    // If the table isn't there, create it and setup the database correctly.
+    sql.prepare("CREATE TABLE scores (id TEXT PRIMARY KEY, user TEXT, guild TEXT, points INTEGER, level INTEGER);").run();
+    // Ensure that the "id" row is always unique and indexed.
+    sql.prepare("CREATE UNIQUE INDEX idx_scores_id ON scores (id);").run();
+    sql.pragma("synchronous = 1");
+    sql.pragma("journal_mode = wal");
     }
 
-    // NOT-BOT CHECK
+    // And then we have two prepared statements to get and set the score data.
+    client.getScore = sql.prepare("SELECT * FROM scores WHERE user = ? AND guild = ?;");
+    client.setScore = sql.prepare("INSERT OR REPLACE INTO scores (id, user, guild, points, level) VALUES (@id, @user, @guild, @points, @level);");
+});
+
+client.on('message', message => {
+// REMOVES SPECIFIC COMMON PUNCTUATION, LIKE SAYING "ALEXA, PLAY ____" OR "ALEXA PLAY ____."
+    let msgContent = message.content.toLowerCase().replace(/[,!'.]/gi,"");
+
+// NOT-BOT CHECK
     if (!message.author.bot) {
         let score = client.getScore.get(message.author.id, message.guild.id);
         if (!score) {
@@ -105,74 +78,30 @@ client.on('message', message => {
         }
         client.setScore.run(score);
     
-        //
-        // ALEXA TEST COMMAND
-        //
-        if (msgContent.includes(`alexa test`)) {
-            
-        }
+//
+// ALEXA POINTS / SQL TEST
+//
         if (msgContent.includes(`alexa points`)) {
-              message.reply(`You currently have ${score.points} points and are level ${score.level}!`);
-              console.log(score)
+            message.reply(`You currently have ${score.points} points and are level ${score.level}!`);
+            console.log(score)
         }
-        //
-        // ALEXA PLAY COMMAND
-        //
-       if (msgContent.includes(`alexa play`)) {
-        //if (!message.guild.voiceConnection) {
-            if (typeof message.member.voiceChannel !== 'undefined') {
-                let searchQuery = msgContent.slice(11);
-                ytSearch(searchQuery, function (err,r ) {
-                if (err) throw err
-                const videos = r.videos
-                firstResult = videos[0]
-                playSong("Let's get jiggy with it","https://media.giphy.com/media/kLM9I1g8jsiAM/giphy.gif",`https://www.youtube.com/watch?v=${firstResult.videoId}`,`https://i.ytimg.com/vi/${firstResult.videoId}/default.jpg`,firstResult.title);
-                console.log(firstResult)
-                } )
-            }
-            else {
-                    message.reply(`get in a voice channel, ya bonehead`);
-            }
-        //} 
-        /*else {
-            message.reply(`I'm already playing it, goofball`);
-        }*/
-    }
-        /*
-        //Alexa, play shooting stars command
-        if (msgContent.includes(`alexa play shooting stars`)) {
-            if (!message.guild.voiceConnection) {
-                if (typeof message.member.voiceChannel !== 'undefined') {
-                    playSong("I've fallen and I can't get up","https://thumbs.gfycat.com/PowerfulViciousBangeltiger-size_restricted.gif","https://www.youtube.com/watch?v=feA64wXhbjo")
-                }
-                else {
-                        message.reply(`get in a voice channel, ya bonehead`);
-                }
-            } 
-            else {
-                message.reply(`I'm already playing it, goofball`);
-            }
+//
+// ALEXA TEST COMMAND
+//
+        if (msgContent.includes(`alexa test`)) {
+            Commands.test(message);
         }
-        */
 
-        //
-        // ALEXA, STFU COMMAND FOR ENDING THE STREAM
-        //
-        if (msgContent.includes("alexa stfu") || msgContent.includes("alexa shut up") || msgContent.includes("alexa fuck off")) {
-            if (message.guild.voiceConnection) {
-                message.channel.send(`Well fine, fuck you too`);
-                message.guild.voiceConnection.disconnect();
-            } else {
-                message.channel.send(`I'm not even doing anything, asshole`)
-            }
-          }
+        if (msgContent.includes(`alexa play`)) {
+           Commands.play(message,msgContent);
+        }
         
-        //
-        // ALEXA, BUY COMMAND WHICH USES THE RANDOM MEMBER
-        //
+        if (msgContent.includes("alexa stfu") || msgContent.includes("alexa shut up") || msgContent.includes("alexa fuck off")) {
+            Commands.stfu(message);
+        }
+        
         if (msgContent.includes("alexa buy")) {
-            client.fetchUser(randomMember).then(myUser => {message.reply(`your purchase was successful. The credit card charge has been applied to ${myUser.username}'s Amazon™ account.`)})
-            //message.reply(`your purchase was successful. The credit card charge has been applied to ${poorSoul}'s Amazon™ account.`);
+            Commands.buy(message,client);
         }
 
         //
@@ -215,7 +144,7 @@ client.on('message', message => {
 
         // DAD BOT COMMAND
         if (msgContent.startsWith("im ")) {
-            message.channel.send(`Hi, ${msgContent.slice(3)}, I'm Alexa!`);
+            Commands.dadBot(message,msgContent);
         }
     }
 });

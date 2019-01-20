@@ -63,24 +63,7 @@ client.on('message', message => {
         // THAT'S SO SAD COMMAND, WHICH PROMPTS ALEXA TO ASK IF YOU WANT TO PLAY DESPACITO
         //
         if (msgContent.replace(/[o]/gi,"").includes("thats s sad") || msgContent.replace(/[o]/gi,"").includes("that is s sad") || msgContent.replace(/[o]/gi,"").includes("that is just s sad")) {
-            message.reply(`sorry you're sad. Would you like me to play Despacito?`)
-            .then(thatsSoSad = true);
-            const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 5000 });
-                //console.log(collector)
-                collector.on('collect', message => {
-                    if (message.content.includes("yes") || message.content.includes("yeah") || message.content.includes("ya")) {
-                        if (typeof message.member.voiceChannel !== 'undefined') {
-                            Commands.play(message,"alexa play despacito")
-                            thatsSoSad = false;
-                        }
-                        else {
-                                message.reply(`get in a voice channel, ya bonehead`);
-                                thatsSoSad = false;
-                        }
-                    } else if (message.content.includes("no") || message.content.includes("nah") || message.content.includes("nope")) {
-                        message.channel.send("Okie dokie. Hope you feel better.");
-                    }
-                })
+            Commands.thatsSoSad(message);
         }
 
         // That's so sad REPLY commands

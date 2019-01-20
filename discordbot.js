@@ -2,29 +2,16 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const config = require('./config.json');
 const user = new Discord.Message();
-const SQLite = require("better-sqlite3");
-const sql = new SQLite('./scores.sqlite');
+//const SQLite = require("better-sqlite3");
+//const sql = new SQLite('./scores.sqlite');
 const Commands = require('./commands.js');
+const Game = require('./game.js');
 var thatsSoSad = false;
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
     console.log(client.debug);
-
-    // Check if the table "points" exists.
-    const table = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = 'scores';").get();
-    if (!table['count(*)']) {
-    // If the table isn't there, create it and setup the database correctly.
-    sql.prepare("CREATE TABLE scores (id TEXT PRIMARY KEY, user TEXT, guild TEXT, points INTEGER, level INTEGER);").run();
-    // Ensure that the "id" row is always unique and indexed.
-    sql.prepare("CREATE UNIQUE INDEX idx_scores_id ON scores (id);").run();
-    sql.pragma("synchronous = 1");
-    sql.pragma("journal_mode = wal");
-    }
-
-    // And then we have two prepared statements to get and set the score data.
-    client.getScore = sql.prepare("SELECT * FROM scores WHERE user = ? AND guild = ?;");
-    client.setScore = sql.prepare("INSERT OR REPLACE INTO scores (id, user, guild, points, level) VALUES (@id, @user, @guild, @points, @level);");
+    Game.prep(client);
 });
 
 client.on('message', message => {
@@ -33,36 +20,31 @@ client.on('message', message => {
 
 // NOT-BOT CHECK
     if (!message.author.bot) {
-        let score = client.getScore.get(message.author.id, message.guild.id);
-        if (!score) {
-            score = {
-              id: `${message.guild.id}-${message.author.id}`,
-              user: message.author.id,
-              guild: message.guild.id,
-              points: 0,
-              level: 1
-            }
-        }
-        score.points++;
-        const curLevel = Math.floor(0.1 * Math.sqrt(score.points));
-        if(score.level < curLevel) {
-        score.level++;
-        //message.reply(`You've leveled up to level **${curLevel}**! Ain't that dandy?`);
-        }
-        client.setScore.run(score);
+        Game.profile(client,message);
     
 //
 // ALEXA POINTS / SQL TEST
 //
         if (msgContent.includes(`alexa points`)) {
-            message.reply(`You currently have ${score.points} points and are level ${score.level}!`);
-            console.log(score)
+            //message.reply(`You currently have ${score.points} points and are level ${score.level}!`);
+            //console.log(score)
+            Game.test(client,message)
         }
 //
 // ALEXA TEST COMMAND
 //
         if (msgContent.includes(`alexa test`)) {
-            Commands.test(message);
+                message.channel.send("See or Change?");
+                const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 10000 });
+                console.log(collector)
+                collector.on('collect', message => {
+                    if (message.content === "See") {
+                        message.channel.send("You Want To See Someones Spec OK!");
+                    } else if (message.content === "Change") {
+                        message.channel.send("You Want To Change Your Spec OK!");
+                    }
+                })
+        
         }
 
         if (msgContent.includes(`alexa play`)) {
@@ -83,37 +65,53 @@ client.on('message', message => {
         if (msgContent.replace(/[o]/gi,"").includes("thats s sad") || msgContent.replace(/[o]/gi,"").includes("that is s sad") || msgContent.replace(/[o]/gi,"").includes("that is just s sad")) {
             message.reply(`sorry you're sad. Would you like me to play Despacito?`)
             .then(thatsSoSad = true);
+            const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 5000 });
+                //console.log(collector)
+                collector.on('collect', message => {
+                    if (message.content.includes("yes") || message.content.includes("yeah") || message.content.includes("ya")) {
+                        if (typeof message.member.voiceChannel !== 'undefined') {
+                            Commands.play(message,"alexa play despacito")
+                            thatsSoSad = false;
+                        }
+                        else {
+                                message.reply(`get in a voice channel, ya bonehead`);
+                                thatsSoSad = false;
+                        }
+                    } else if (message.content.includes("no") || message.content.includes("nah") || message.content.includes("nope")) {
+                        message.channel.send("Okie dokie. Hope you feel better.");
+                    }
+                })
         }
 
         // That's so sad REPLY commands
         // YES
-        if (msgContent.includes("yes") || msgContent.includes("yeah") || msgContent.includes("ya")) {
-            console.log(thatsSoSad);
-            if (thatsSoSad === true) {
-                //if (!message.guild.voiceConnection) {
-                    if (typeof message.member.voiceChannel !== 'undefined') {
-                        playSong("Let's get jiggy with it","https://media.giphy.com/media/kLM9I1g8jsiAM/giphy.gif","https://www.youtube.com/watch?v=kJQP7kiw5Fk","","");
-                        thatsSoSad = false;
-                    }
-                    else {
-                            message.reply(`get in a voice channel, ya bonehead`);
-                            thatsSoSad = false;
-                    }
-                //} 
-                /*else {
-                    message.reply(`I'm already playing it, goofball`);
-                    thatsSoSad = false;
-                }*/
-            }
-        }
-        // NO
-        if (msgContent.includes("no") || msgContent.includes("nah") || msgContent.includes("nope")) {
-            console.log(thatsSoSad);
-            if (thatsSoSad === true) {
-                message.channel.send(`Okie dokie. Hope you feel better.`)
-                thatsSoSad = false;
-            }
-        }
+        // if (msgContent.includes("yes") || msgContent.includes("yeah") || msgContent.includes("ya")) {
+        //     console.log(thatsSoSad);
+        //     if (thatsSoSad === true) {
+        //         //if (!message.guild.voiceConnection) {
+        //             if (typeof message.member.voiceChannel !== 'undefined') {
+        //                 playSong("Let's get jiggy with it","https://media.giphy.com/media/kLM9I1g8jsiAM/giphy.gif","https://www.youtube.com/watch?v=kJQP7kiw5Fk","","");
+        //                 thatsSoSad = false;
+        //             }
+        //             else {
+        //                     message.reply(`get in a voice channel, ya bonehead`);
+        //                     thatsSoSad = false;
+        //             }
+        //         //} 
+        //         /*else {
+        //             message.reply(`I'm already playing it, goofball`);
+        //             thatsSoSad = false;
+        //         }*/
+        //     }
+        // }
+        // // NO
+        // if (msgContent.includes("no") || msgContent.includes("nah") || msgContent.includes("nope")) {
+        //     console.log(thatsSoSad);
+        //     if (thatsSoSad === true) {
+        //         message.channel.send(`Okie dokie. Hope you feel better.`)
+        //         thatsSoSad = false;
+        //     }
+        // }
 
         // DAD BOT COMMAND
         if (msgContent.startsWith("im ")) {

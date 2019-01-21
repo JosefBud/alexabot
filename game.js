@@ -64,7 +64,8 @@ const Game = {
             .addField(`We use the DnD style of assigning attribute points.`,`You have six set numbers: **15, 14, 13, 12, 10 and 8**. Each number can be assigned to an attribute. \n List the attributes you would like them to be assigned to, in that order.\n For example, "str con dex int wis cha" would give you 15 Strength, 14 Constitution, 13 Dexterity, 12 Intelligence, 10 Wisdom and 8 Charisma.`))
         const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 10000 });
         collector.on("collect", message => {
-            let messageArray = message.content.split(" ");
+            if (message.content.includes("str") && message.content.includes("con") && message.content.includes("dex") && message.content.includes("int") && message.content.includes("wis") && message.content.includes("cha")) {
+            messageArray = message.content.split(" ");
             messageArray = messageArray.map(function (element) {
                 if (element.startsWith("str")) {
                     return "strength";
@@ -102,28 +103,32 @@ const Game = {
                 ${messageArray[5].charAt(0).toUpperCase() + messageArray[5].slice(1)}: **8**`)
                 .addField(`Is this correct?`,`Type "yes" or "no"`));
                 yesOrNo = true;
-                
-            } else if (yesOrNo) {
-                if (message.content.startsWith("yes")) {
-                    profile[messageArray[0]] = profile[messageArray[0]] + 15;
-                    profile[messageArray[1]] = profile[messageArray[1]] + 14;
-                    profile[messageArray[2]] = profile[messageArray[2]] + 13;
-                    profile[messageArray[3]] = profile[messageArray[3]] + 12;
-                    profile[messageArray[4]] = profile[messageArray[4]] + 10;
-                    profile[messageArray[5]] = profile[messageArray[5]] + 8;
-                    yesOrNo = false;
-                    message.channel.send(`Your points have been assigned`);
-                    collector.stop();
-                } else if (message.content.startsWith("no")) {
-                    message.channel.send(`Okie dokie. Use the create character command to try again.`)
-                    yesOrNo = false;
-                    collector.stop();
-                }
+
             } else if (messageArray.includes(undefined)) {
                 message.channel.send("You typed something wrong. Try again!")
                 collector.stop();
             }
-        })
+        } else if (yesOrNo) {
+            if (message.content.startsWith("yes")) {
+                profile[messageArray[0]] = profile[messageArray[0]] + 15;
+                profile[messageArray[1]] = profile[messageArray[1]] + 14;
+                profile[messageArray[2]] = profile[messageArray[2]] + 13;
+                profile[messageArray[3]] = profile[messageArray[3]] + 12;
+                profile[messageArray[4]] = profile[messageArray[4]] + 10;
+                profile[messageArray[5]] = profile[messageArray[5]] + 8;
+                yesOrNo = false;
+                message.channel.send(`Your points have been assigned`);
+                collector.stop();
+            } else if (message.content.startsWith("no")) {
+                message.channel.send(`Okie dokie. Use the create character command to try again.`)
+                yesOrNo = false;
+                collector.stop();
+            }
+        } else {
+            message.channel.send("You typed something wrong. Try again!");
+        }
+    
+    })
     },
 
     profileReset: function(message) {

@@ -5,10 +5,10 @@ const Discord = require('discord.js');
 // const broadcast = client.createVoiceBroadcast();
 const ytdl = require('ytdl-core');
 const streamOptions = { seek: 0, volume: 1 };
-const ytSearch = require( 'yt-search' )
+const ytSearch = require( 'yt-search' );
 // const SQLite = require("better-sqlite3");
 // const sql = new SQLite('./scores.sqlite');
-const embed = new Discord.RichEmbed()
+const embed = new Discord.RichEmbed();
 
 const Commands = {
     test: function(message) {

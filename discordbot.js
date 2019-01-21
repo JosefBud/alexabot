@@ -25,31 +25,29 @@ client.on('message', message => {
 //
 // ALEXA POINTS / SQL TEST
 //
-        if (msgContent.includes(`alexa points`)) {
+        if (msgContent.includes(`alexa xp`)) {
             //message.reply(`You currently have ${score.points} points and are level ${score.level}!`);
             //console.log(score)
-            Game.test(client,message)
+            Game.test(message)
         }
 
         if (msgContent.includes(`alexa stage`)) {
-            Game.stage0(client,message);
+            Game.stage(client,message);
 
+        }
+
+        if (msgContent.includes(`alexa reset profile`)) {
+            Game.profileReset(message);
+        }
+
+        if (msgContent.includes(`alexa spend skill points`)) {
+            Game.spendSkillPoints(message);
         }
 //
 // ALEXA TEST COMMAND
 //
         if (msgContent.includes(`alexa test`)) {
-                message.channel.send("See or Change?");
-                const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 10000 });
-                console.log(collector)
-                collector.on('collect', message => {
-                    if (message.content === "See") {
-                        message.channel.send("You Want To See Someones Spec OK!");
-                    } else if (message.content === "Change") {
-                        message.channel.send("You Want To Change Your Spec OK!");
-                    }
-                })
-        
+            Game.emojiTest(message);
         }
 
         if (msgContent.includes(`alexa play`)) {

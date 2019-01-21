@@ -46,7 +46,7 @@ const Game = {
         if (profile.xp >= 10) {
             profile.level++;
             profile.skillPoints = profile.skillPoints + 5;
-            message.channel.send("Congrats! You've leveled up to level " + profile.level);
+            //message.channel.send("Congrats! You've leveled up to level " + profile.level);
             profile.xp = 0;
         };
         setTimeout(function(){client.setProfile.run(profile);}, 1000);

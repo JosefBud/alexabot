@@ -56,7 +56,7 @@ const Game = {
         message.channel.send(`You currently have ${profile.xp} XP and are level ${profile.level} with ${profile.skillPoints} skill points. You are on stage ${profile.stage}.`);
         console.log(profile);
     },
-
+/*
     createCharacter: function(message) {
         const statsEmbed = new Discord.RichEmbed();
         const embed = new Discord.RichEmbed();
@@ -128,6 +128,101 @@ const Game = {
             message.channel.send("You typed something wrong. Try again!");
         }
     
+    })
+    },
+*/
+    createCharacter: function(message) {
+        const statsEmbed = new Discord.RichEmbed();
+        const embed = new Discord.RichEmbed();
+        message.channel.send(embed
+            .addField(`We use the DnD style of assigning attribute points.`,`You have six set numbers: **15, 14, 13, 12, 10 and 8**. Each number can be assigned to an attribute.`)
+            .addField(`List the attributes you would like them to be assigned to, in that order.`,`For example, \`\`str con dex int wis cha\`\` would give you 
+            **15** Strength 
+            **14** Constitution 
+            **13** Dexterity 
+            **12** Intelligence 
+            **10** Wisdom 
+            **8** Charisma.`))
+        const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 10000 });
+        collector.on("collect", message => {
+            if (message.content.includes("str") && message.content.includes("con") && message.content.includes("dex") && message.content.includes("int") && message.content.includes("wis") && message.content.includes("cha")) {
+            messageArray = message.content.split(" ");
+            messageArray = messageArray.map(function (element) {
+                if (element.startsWith("str")) {
+                    return "strength";
+                }
+
+                if (element.startsWith("con")) {
+                    return "constitution";
+                }
+
+                if (element.startsWith("dex")) {
+                    return "dexterity";
+                }
+
+                if (element.startsWith("int")) {
+                    return "intelligence";
+                }
+
+                if (element.startsWith("wis")) {
+                    return "wisdom";
+                }
+
+                if (element.startsWith("cha")) {
+                    return "charisma";
+                }
+            })
+            collector.stop()
+            if (!messageArray.includes(undefined)) {
+                message.channel.send(statsEmbed
+                .addField(`You want to set your attributes like so:`,
+                `${messageArray[0].charAt(0).toUpperCase() + messageArray[0].slice(1)}: **15** 
+                ${messageArray[1].charAt(0).toUpperCase() + messageArray[1].slice(1)}: **14** 
+                ${messageArray[2].charAt(0).toUpperCase() + messageArray[2].slice(1)}: **13** 
+                ${messageArray[3].charAt(0).toUpperCase() + messageArray[3].slice(1)}: **12** 
+                ${messageArray[4].charAt(0).toUpperCase() + messageArray[4].slice(1)}: **10** 
+                ${messageArray[5].charAt(0).toUpperCase() + messageArray[5].slice(1)}: **8**`)
+                .addField(`Is this correct?`,`Type "yes" or "no"`));
+                yesOrNo = true;
+
+                const newCollector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 5000 });
+                newCollector.on("collect", message => {
+                    if (message.content.startsWith("yes")) {
+                        profile[messageArray[0]] = profile[messageArray[0]] + 15;
+                        profile[messageArray[1]] = profile[messageArray[1]] + 14;
+                        profile[messageArray[2]] = profile[messageArray[2]] + 13;
+                        profile[messageArray[3]] = profile[messageArray[3]] + 12;
+                        profile[messageArray[4]] = profile[messageArray[4]] + 10;
+                        profile[messageArray[5]] = profile[messageArray[5]] + 8;
+                        yesOrNo = false;
+                        message.channel.send(`Your points have been assigned`);
+                        newCollector.stop();
+                    } else if (message.content.startsWith("no")) {
+                        message.channel.send(`Okie dokie. Use the create character command to try again.`)
+                        yesOrNo = false;
+                        newCollector.stop();
+                    }
+                    
+                })
+                newCollector.on("end", (collected,reason) => {
+                    if (reason === 'time') {
+                        message.channel.send(`You took too much time!`)
+                    } else {return;}
+                })
+
+            } else if (messageArray.includes(undefined)) {
+                message.channel.send("You typed something wrong. Try again!")
+                collector.stop();
+            }
+        } else {
+            message.channel.send("You typed something wrong. Try again!");
+        }
+    
+    })
+    collector.on("end", (collected,reason) => {
+        if (reason === 'time') {
+            message.channel.send(`You took too much time!`)
+        } else {return;}
     })
     },
 

@@ -36,22 +36,22 @@ client.on('message', message => {
 
         }
 
-        if (msgContent.includes(`alexa reset profile`)) {
+        if (msgContent.includes(`alexa reset`)) {
             Game.profileReset(message);
         }
 
-        if (msgContent.includes(`alexa spend skill points`)) {
+        if (msgContent.includes(`alexa spend`)) {
             Game.spendSkillPoints(message);
         }
 
-        if (msgContent.includes(`alexa create character`)) {
+        if (msgContent.includes(`alexa create`)) {
             Game.createCharacter(message);
         }
 //
 // ALEXA TEST COMMAND
 //
         if (msgContent.includes(`alexa test`)) {
-            Game.emojiTest(message);
+            Game.createCharacterTest(message);
         }
 
         if (msgContent.includes(`alexa play`)) {

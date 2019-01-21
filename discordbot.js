@@ -47,6 +47,10 @@ client.on('message', message => {
         if (msgContent.includes(`alexa create`)) {
             Game.createCharacter(message);
         }
+
+        if (msgContent.includes(`alexa flip`)) {
+            Game.flipCoin(message);
+        }
 //
 // ALEXA TEST COMMAND
 //

@@ -40,7 +40,7 @@ const Game = {
                 intelligence: 0,
                 wisdom: 0,
                 charisma: 0,
-                currency: 0
+                currency: 100
               }
         }
         profile.xp++;
@@ -56,6 +56,38 @@ const Game = {
     test: function(message) {
         message.channel.send(`You currently have ${profile.xp} XP and are level ${profile.level} with ${profile.skillPoints} skill points and $${profile.currency}. You are on stage ${profile.stage}.`);
         console.log(profile);
+    },
+
+    flipCoin: function(message) {
+        let random = Math.random();
+        let coin;
+        if (random >= 0.5) {
+            coin = "heads"
+        } else {coin = "tails"}
+        console.log(random);
+        console.log(coin);
+        message.channel.send(`Heads or tails?`);
+        const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 5000 });
+        collector.on("collect", message => {
+            if (!message.content.startsWith("heads") && !message.content.startsWith("tails")) {
+                message.channel.send(`You must've typed the wrong thing. Try again!`)
+                collector.stop();
+                return;
+            } else if (message.content === coin) {
+                profile.currency = profile.currency + 10;
+                message.channel.send(`You win $10!`);
+                collector.stop();
+            } else {
+                profile.currency = profile.currency - 10;
+                message.channel.send(`You lose $10!`);
+                collector.stop();
+            }
+        })
+        collector.on("end", (collected,reason) => {
+            if (reason === 'time') {
+                message.channel.send(`You took too much time!`)
+            } else {return;}
+        })
     },
 /*
     createCharacter: function(message) {
@@ -238,6 +270,7 @@ const Game = {
         profile.intelligence = 0;
         profile.wisdom = 0;
         profile.charisma = 0;
+        profile.currency = 100;
         message.channel.send(`Your profile has been reset to default values!`);
     },
 

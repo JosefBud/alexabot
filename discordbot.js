@@ -51,7 +51,7 @@ client.on('message', message => {
 // ALEXA TEST COMMAND
 //
         if (msgContent.includes(`alexa test`)) {
-            Game.createCharacterTest(message);
+            Game.test(message);
         }
 
         if (msgContent.includes(`alexa play`)) {

@@ -30,6 +30,11 @@ client.on('message', message => {
             //console.log(score)
             Game.test(client,message)
         }
+
+        if (msgContent.includes(`alexa stage`)) {
+            Game.stage0(client,message);
+
+        }
 //
 // ALEXA TEST COMMAND
 //
@@ -65,36 +70,6 @@ client.on('message', message => {
         if (msgContent.replace(/[o]/gi,"").includes("thats s sad") || msgContent.replace(/[o]/gi,"").includes("that is s sad") || msgContent.replace(/[o]/gi,"").includes("that is just s sad")) {
             Commands.thatsSoSad(message);
         }
-
-        // That's so sad REPLY commands
-        // YES
-        // if (msgContent.includes("yes") || msgContent.includes("yeah") || msgContent.includes("ya")) {
-        //     console.log(thatsSoSad);
-        //     if (thatsSoSad === true) {
-        //         //if (!message.guild.voiceConnection) {
-        //             if (typeof message.member.voiceChannel !== 'undefined') {
-        //                 playSong("Let's get jiggy with it","https://media.giphy.com/media/kLM9I1g8jsiAM/giphy.gif","https://www.youtube.com/watch?v=kJQP7kiw5Fk","","");
-        //                 thatsSoSad = false;
-        //             }
-        //             else {
-        //                     message.reply(`get in a voice channel, ya bonehead`);
-        //                     thatsSoSad = false;
-        //             }
-        //         //} 
-        //         /*else {
-        //             message.reply(`I'm already playing it, goofball`);
-        //             thatsSoSad = false;
-        //         }*/
-        //     }
-        // }
-        // // NO
-        // if (msgContent.includes("no") || msgContent.includes("nah") || msgContent.includes("nope")) {
-        //     console.log(thatsSoSad);
-        //     if (thatsSoSad === true) {
-        //         message.channel.send(`Okie dokie. Hope you feel better.`)
-        //         thatsSoSad = false;
-        //     }
-        // }
 
         // DAD BOT COMMAND
         if (msgContent.startsWith("im ")) {

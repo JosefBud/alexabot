@@ -91,18 +91,79 @@ const Game = {
             .addField(`__Skill points__`,`You have **${profile.skillPoints}** skill points to spend.`)
             .setFooter("Reply with how many points you want to spend, followed by the attribute. For example \"4 Strength\" or \"3 Intelligence\". Shorthand using the first 3 letters can be used, such as \"4 str\" or \"3 int\". Only one attribute can be updated in the reply."));
             collector.on('collect', message => {
-                if (message.content.toLowerCase().endsWith("str")) {
-                    let addStrength = parseInt(message.content);
-                    console.log(addStrength);
-                    profile.strength = profile.strength + addStrength;
-                    profile.skillPoints = profile.skillPoints - addStrength;
-                    message.channel.send(`You have successfully added ${addStrength} points to strength`);
+                if (message.content.toLowerCase().endsWith("str") || message.content.toLowerCase().endsWith("strength")) {
+                    let addAttributePoints = parseInt(message.content);
+                    profile.strength = profile.strength + addAttributePoints;
+                    profile.skillPoints = profile.skillPoints - addAttributePoints;
+                    message.channel.send(`You have successfully added ${addAttributePoints} points to strength`);
                     if (profile.skillPoints > 0) {
                         message.channel.send(`You still have ${profile.skillPoints} left over! Use "alexa spend skill points" again to continue spending them.`);
                     } else {
                         message.channel.send(`You've spent all of your skill points! Continue leveling up to earn more.`)
                     };
                 }
+
+                if (message.content.toLowerCase().endsWith("con") || message.content.toLowerCase().endsWith("constitution")) {
+                    let addAttributePoints = parseInt(message.content);
+                    profile.constitution = profile.constitution + addAttributePoints;
+                    profile.skillPoints = profile.skillPoints - addAttributePoints;
+                    message.channel.send(`You have successfully added ${addAttributePoints} points to constitution`);
+                    if (profile.skillPoints > 0) {
+                        message.channel.send(`You still have ${profile.skillPoints} left over! Use "alexa spend skill points" again to continue spending them.`);
+                    } else {
+                        message.channel.send(`You've spent all of your skill points! Continue leveling up to earn more.`)
+                    };
+                }
+
+                if (message.content.toLowerCase().endsWith("dex") || message.content.toLowerCase().endsWith("dexterity")) {
+                    let addAttributePoints = parseInt(message.content);
+                    profile.dexterity = profile.dexterity + addAttributePoints;
+                    profile.skillPoints = profile.skillPoints - addAttributePoints;
+                    message.channel.send(`You have successfully added ${addAttributePoints} points to dexterity`);
+                    if (profile.skillPoints > 0) {
+                        message.channel.send(`You still have ${profile.skillPoints} left over! Use "alexa spend skill points" again to continue spending them.`);
+                    } else {
+                        message.channel.send(`You've spent all of your skill points! Continue leveling up to earn more.`)
+                    };
+                }
+
+                if (message.content.toLowerCase().endsWith("int") || message.content.toLowerCase().endsWith("intelligence")) {
+                    let addAttributePoints = parseInt(message.content);
+                    profile.intelligence = profile.intelligence + addAttributePoints;
+                    profile.skillPoints = profile.skillPoints - addAttributePoints;
+                    message.channel.send(`You have successfully added ${addAttributePoints} points to intelligence`);
+                    if (profile.skillPoints > 0) {
+                        message.channel.send(`You still have ${profile.skillPoints} left over! Use "alexa spend skill points" again to continue spending them.`);
+                    } else {
+                        message.channel.send(`You've spent all of your skill points! Continue leveling up to earn more.`)
+                    };
+                }
+
+                if (message.content.toLowerCase().endsWith("wis") || message.content.toLowerCase().endsWith("wisdom")) {
+                    let addAttributePoints = parseInt(message.content);
+                    profile.wisdom = profile.wisdom + addAttributePoints;
+                    profile.skillPoints = profile.skillPoints - addAttributePoints;
+                    message.channel.send(`You have successfully added ${addAttributePoints} points to wisdom`);
+                    if (profile.skillPoints > 0) {
+                        message.channel.send(`You still have ${profile.skillPoints} left over! Use "alexa spend skill points" again to continue spending them.`);
+                    } else {
+                        message.channel.send(`You've spent all of your skill points! Continue leveling up to earn more.`)
+                    };
+                }
+
+                if (message.content.toLowerCase().endsWith("cha") || message.content.toLowerCase().endsWith("charisma")) {
+                    let addAttributePoints = parseInt(message.content);
+                    profile.charisma = profile.charisma + addAttributePoints;
+                    profile.skillPoints = profile.skillPoints - addAttributePoints;
+                    message.channel.send(`You have successfully added ${addAttributePoints} points to charisma`);
+                    if (profile.skillPoints > 0) {
+                        message.channel.send(`You still have ${profile.skillPoints} left over! Use "alexa spend skill points" again to continue spending them.`);
+                    } else {
+                        message.channel.send(`You've spent all of your skill points! Continue leveling up to earn more.`)
+                    };
+                }
+
+                else {message.channel.send(`You must've typed something incorrectly, please try again.`)}
             });
     },
 

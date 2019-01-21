@@ -61,7 +61,7 @@ const Game = {
         profile.stage = 0;
         profile.xp = 0;
         profile.level = 1;
-        profile.skillPoints = 0;
+        profile.skillPoints = 30;
         profile.strength = 1;
         profile.constitution = 1;
         profile.dexterity = 1;
@@ -163,7 +163,7 @@ const Game = {
                     };
                 }
 
-                else {message.channel.send(`You must've typed something incorrectly, please try again.`)}
+                //else {message.channel.send(`You must've typed something incorrectly, please try again.`)}
             });
     },
 

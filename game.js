@@ -34,12 +34,12 @@ const Game = {
                 xp: 0,
                 level: 1,
                 skillPoints: 0,
-                strength: 1,
-                constitution: 1,
-                dexterity: 1,
-                intelligence: 1,
-                wisdom: 1,
-                charisma: 1
+                strength: 0,
+                constitution: 0,
+                dexterity: 0,
+                intelligence: 0,
+                wisdom: 0,
+                charisma: 0
               }
         }
         profile.xp++;
@@ -92,12 +92,12 @@ const Game = {
         profile.xp = 0;
         profile.level = 1;
         profile.skillPoints = 30;
-        profile.strength = 1;
-        profile.constitution = 1;
-        profile.dexterity = 1;
-        profile.intelligence = 1;
-        profile.wisdom = 1;
-        profile.charisma = 1;
+        profile.strength = 0;
+        profile.constitution = 0;
+        profile.dexterity = 0;
+        profile.intelligence = 0;
+        profile.wisdom = 0;
+        profile.charisma = 0;
         message.channel.send(`Your profile has been reset to default values!`);
     },
 

@@ -57,6 +57,36 @@ const Game = {
         console.log(profile);
     },
 
+    createCharacter: function(message) {
+        message.channel.send(`We use the DnD style of assigning attribute points. You have six set numbers: **15, 14, 13, 12, 10 and 8**. Each number can be assigned to an attribute. \n Where would you like **15** points to be assigned to?`)
+        const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 5000 });
+        collector.on("collect", message => {
+            if (message.content.toLowerCase().startsWith("str")) {
+                profile.strength = profile.strength + 15;
+            }
+
+            if (message.content.toLowerCase().startsWith("con")) {
+                profile.constitution = profile.constitution + 15;
+            }
+
+            if (message.content.toLowerCase().startsWith("dex")) {
+                profile.dexterity = profile.dexterity + 15;
+            }
+
+            if (message.content.toLowerCase().startsWith("int")) {
+                profile.intelligence = profile.intelligence + 15;
+            }
+
+            if (message.content.toLowerCase().startsWith("wis")) {
+                profile.wisdom = profile.wisdom + 15;
+            }
+            
+            if (message.content.toLowerCase().startsWith("cha")) {
+                profile.charisma = profile.charisma + 15;
+            }
+        })
+    },
+
     profileReset: function(message) {
         profile.stage = 0;
         profile.xp = 0;
@@ -86,14 +116,18 @@ const Game = {
         const embed = new Discord.RichEmbed();
         const addAttributePoints = function(message,attribute) {
             let addPoints = parseInt(message.content);
-            profile[attribute] = profile[attribute] + addPoints;
-            profile.skillPoints = profile.skillPoints - addPoints;
-            message.channel.send(`You have successfully added ${addPoints} points to ${attribute}`);
-            if (profile.skillPoints > 0) {
-                message.channel.send(`You still have ${profile.skillPoints} left over! Use "alexa spend skill points" again to continue spending them.`);
-            } else {
-                message.channel.send(`You've spent all of your skill points! Continue leveling up to earn more.`)
-            };
+            if (addPoints < profile.skillPoints) {
+                profile[attribute] = profile[attribute] + addPoints;
+                profile.skillPoints = profile.skillPoints - addPoints;
+                message.channel.send(`You have successfully added ${addPoints} points to ${attribute}`);
+                if (profile.skillPoints > 0) {
+                    message.channel.send(`You still have ${profile.skillPoints} left over! Use "alexa spend skill points" again to continue spending them.`);
+                } else {
+                    message.channel.send(`You've spent all of your skill points! Continue leveling up to earn more.`)
+                };
+            } else if (addPoints > profile.skillPoints) {
+                message.channel.send(`You don't have enough skill points to do that!`)
+            }
         }
         message.channel.send(embed
             .setAuthor(`${profile.username}`,message.author.avatarURL)

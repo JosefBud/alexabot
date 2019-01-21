@@ -43,6 +43,10 @@ client.on('message', message => {
         if (msgContent.includes(`alexa spend skill points`)) {
             Game.spendSkillPoints(message);
         }
+
+        if (msgContent.includes(`alexa create character`)) {
+            Game.createCharacter(message);
+        }
 //
 // ALEXA TEST COMMAND
 //

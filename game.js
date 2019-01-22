@@ -107,8 +107,12 @@ const Game = {
 
     stealCoins: function(client, message) {
         if (!userStealCoinsCooldowns.has(message.author.id)) {
-            let instigatorId = message.author.id;
-            let victimId = message.content.slice(14,-1);
+            var instigatorId = message.author.id;
+            if (message.content.slice(12,-1).startsWith("<@")) {
+                if (message.content.slice(12,-1).startsWith("<@!")) {
+                    var victimId = message.content.slice(15,-1);
+                } else {var victimId = message.content.slice(14,-1);}
+            }
             if (instigatorId === victimId) {
                 message.channel.send("You can't steal from yourself, dumbass");
                 return;

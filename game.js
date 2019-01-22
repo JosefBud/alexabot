@@ -422,8 +422,8 @@ const Game = {
                     .setThumbnail(getNameDb.avatarUrl)
                     .addField(`__Level__`,`Level: **${getNameDb.level}** \n XP: **${getNameDb.xp}/50**`)
                     .addField(`__Attributes__`,`Strength: **${getNameDb.strength}** \n Constitution: **${getNameDb.constitution}** \n Dexterity: **${getNameDb.dexterity}** \n Intelligence: **${getNameDb.intelligence}** \n Wisdom: **${getNameDb.wisdom}** \n Charisma: **${getNameDb.charisma}**`)
-                    .addField(`__Skill points__`,`You have **${getNameDb.skillPoints}** skill points to spend.`)
-                    .addField(`__Currency__`,`You have **$${getNameDb.currency}** stashed in your prison wallet.`));
+                    .addField(`__Skill points__`,`They have **${getNameDb.skillPoints}** skill points to spend.`)
+                    .addField(`__Currency__`,`They have **$${getNameDb.currency}** stashed in their prison wallet.`));
             }
         } else {
         const profileEmbed = new Discord.RichEmbed();

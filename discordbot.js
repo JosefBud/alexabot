@@ -15,6 +15,8 @@ client.on('ready', () => {
 });
 
 client.on('message', message => {
+    console.log(`${message.author.username}: ${message.content}`);
+    
 // REMOVES SPECIFIC COMMON PUNCTUATION, LIKE SAYING "ALEXA, PLAY ____" OR "ALEXA PLAY ____."
     let msgContent = message.content.toLowerCase().replace(/[,!'.]/gi,"");
 
@@ -50,6 +52,10 @@ client.on('message', message => {
 
         if (msgContent.includes(`alexa flip`)) {
             Game.flipCoin(message);
+        }
+
+        if (msgContent.includes(`alexa steal`)) {
+            Game.stealCoins(client, message);
         }
 //
 // ALEXA TEST COMMAND

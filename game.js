@@ -20,6 +20,7 @@ const Game = {
         }
         client.getProfile = sql.prepare("SELECT * FROM game WHERE userId = ? AND guild = ?");
         client.setProfile = sql.prepare("INSERT OR REPLACE INTO game (id, userId, username, guild, stage, xp, level, skillPoints, strength, constitution, dexterity, intelligence, wisdom, charisma, currency) VALUES (@id, @userId, @username, @guild, @stage, @xp, @level, @skillPoints, @strength, @constitution, @dexterity, @intelligence, @wisdom, @charisma, @currency);");
+        stealCoinsCooldown = false;
     },
 
     profile: function(client,message) {
@@ -50,7 +51,7 @@ const Game = {
             //message.channel.send("Congrats! You've leveled up to level " + profile.level);
             profile.xp = 0;
         };
-        setTimeout(function(){client.setProfile.run(profile);}, 1000);
+        setTimeout(function(){client.setProfile.run(profile);}, 500);
     },
 
     test: function(message) {
@@ -88,6 +89,47 @@ const Game = {
                 message.channel.send(`You took too much time!`)
             } else {return;}
         })
+    },
+
+    stealCoins: function(client, message) {
+        if (stealCoinsCooldown === false) {
+            let instigatorId = message.author.id;
+            let victimId = message.content.slice(14,-1);
+            if (instigatorId === victimId) {
+                message.channel.send("You can't steal from yourself, dumbass");
+                return;
+            } else {
+                if (!message.content.slice(12).startsWith("<@")) {
+                    message.channel.send("You need to tag somebody");
+                } else {
+                    stealCoinsCooldown = true;
+                    setTimeout(function() {stealCoinsCooldown = false;}, 60000)
+                    giveCoins = sql.prepare("UPDATE game SET currency = currency + 10 WHERE userId = ?");
+                    takeCoins = sql.prepare("UPDATE game SET currency = currency - 10 WHERE userId = ?");
+
+                    let randomNumber = Math.random();
+                    if (randomNumber < 0.65) {
+                        console.log("Random number: " + randomNumber)
+                        console.log("instigator: ", instigatorId, typeof instigatorId);
+                        console.log("victim: ", victimId, typeof victimId);
+                        profile.currency = profile.currency - 10;
+                        //takeCoins.run(instigatorId);
+                        giveCoins.run(victimId);
+                        message.channel.send(`Oof. Ya got caught and had to pay them off with $10.`)
+                    } else {
+                        console.log("Random number: " + randomNumber)
+                        console.log("instigator: ", instigatorId);
+                        console.log("victim: ", victimId);
+                        profile.currency = profile.currency + 10;
+                        //giveCoins.run(instigatorId);
+                        takeCoins.run(victimId);
+                        message.channel.send(`Look at you, you sneaky boi. You managed to get $10 off of them.`)
+                    }
+                    //client.instigatorCoins.run(instigator);
+                    //client.victimCoins.run(victim);
+                }
+            }
+        } else {message.channel.send("You've gotta wait a little longer, bro")}
     },
 /*
     createCharacter: function(message) {

@@ -139,7 +139,7 @@ const Game = {
         } else {
             let newTime = new Date();
             let cooldownRemaining = (Math.floor((parseInt(newTime.getTime().toString().slice(8)) / 1000) - actualTime) - 60) * -1;
-            message.channel.send(`You've gotta wait a little longer, bro. You've gotta wait ${cooldownRemaining} more seconds.`)}
+            message.channel.send(`You've gotta wait a little longer, bro. You've got ${cooldownRemaining} long ass seconds left.`)}
     },
 /*
     createCharacter: function(message) {

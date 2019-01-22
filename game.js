@@ -75,11 +75,11 @@ const Game = {
             message.channel.send(`Heads or tails?`);
             const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 5000 });
             collector.on("collect", message => {
-                if (!message.content.startsWith("heads") && !message.content.startsWith("tails")) {
+                if (!message.content.toLowerCase().startsWith("heads") && !message.content.toLowerCase().startsWith("tails")) {
                     message.channel.send(`You must've typed the wrong thing. Try again!`)
                     collector.stop();
                     return;
-                } else if (message.content === coin) {
+                } else if (message.content.toLowerCase() === coin) {
                     profile.currency = profile.currency + 10;
                     message.channel.send(`You win $10!`);
                     collector.stop();

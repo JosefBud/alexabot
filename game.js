@@ -8,19 +8,19 @@ const Discord = require('discord.js');
 // const ytSearch = require( 'yt-search' )
 const SQLite = require("better-sqlite3");
 const sql = new SQLite('./game.sqlite');
+const userCooldowns = new Set();
 
 const Game = {
     prep: function(client) {
         const table = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = 'game';").get();
         if (!table['count(*)']) {
-            sql.prepare("CREATE TABLE game (id TEXT PRIMARY KEY, userId TEXT, username TEXT, guild TEXT, stage INTEGER, xp INTEGER, level INTEGER, skillPoints INTEGER, strength INTEGER, constitution INTEGER, dexterity INTEGER, intelligence INTEGER, wisdom INTEGER, charisma INTEGER, currency INTEGER);").run();
+            sql.prepare("CREATE TABLE game (id TEXT PRIMARY KEY, userId TEXT, username TEXT, guild TEXT, stage INTEGER, xp INTEGER, level INTEGER, skillPoints INTEGER, strength INTEGER, constitution INTEGER, dexterity INTEGER, intelligence INTEGER, wisdom INTEGER, charisma INTEGER, currency INTEGER, stealCoinsCooldown INTEGER);").run();
             sql.prepare("CREATE UNIQUE INDEX idx_game_id ON game (id);").run();
             sql.pragma("synchronous = 1");
             sql.pragma("journal_mode = wal");
         }
         client.getProfile = sql.prepare("SELECT * FROM game WHERE userId = ? AND guild = ?");
-        client.setProfile = sql.prepare("INSERT OR REPLACE INTO game (id, userId, username, guild, stage, xp, level, skillPoints, strength, constitution, dexterity, intelligence, wisdom, charisma, currency) VALUES (@id, @userId, @username, @guild, @stage, @xp, @level, @skillPoints, @strength, @constitution, @dexterity, @intelligence, @wisdom, @charisma, @currency);");
-        stealCoinsCooldown = false;
+        client.setProfile = sql.prepare("INSERT OR REPLACE INTO game (id, userId, username, guild, stage, xp, level, skillPoints, strength, constitution, dexterity, intelligence, wisdom, charisma, currency, stealCoinsCooldown) VALUES (@id, @userId, @username, @guild, @stage, @xp, @level, @skillPoints, @strength, @constitution, @dexterity, @intelligence, @wisdom, @charisma, @currency, @stealCoinsCooldown);");
     },
 
     profile: function(client,message) {
@@ -41,7 +41,8 @@ const Game = {
                 intelligence: 0,
                 wisdom: 0,
                 charisma: 0,
-                currency: 100
+                currency: 100,
+                stealCoinsCooldown: 0
               }
         }
         profile.xp++;
@@ -56,12 +57,7 @@ const Game = {
 
     test: function(message) {
         message.channel.send(`You currently have ${profile.xp} XP and are level ${profile.level} with ${profile.skillPoints} skill points and $${profile.currency}. You are on stage ${profile.stage}.`);
-        //console.log(profile);
-        let time = new Date();
-        let actualTime = parseInt(time.getTime().toString().slice(8)) / 1000;
-        setTimeout(function() {
-            let newTime = new Date(); 
-            console.log(actualTime - (parseInt(newTime.getTime().toString().slice(8)) / 1000))}, 5000)
+        console.log(profile);
     },
 
     flipCoin: function(message) {
@@ -97,7 +93,7 @@ const Game = {
     },
 
     stealCoins: function(client, message) {
-        if (stealCoinsCooldown === false) {
+        if (!userCooldowns.has(message.author.id)) {
             let instigatorId = message.author.id;
             let victimId = message.content.slice(14,-1);
             if (instigatorId === victimId) {
@@ -107,38 +103,47 @@ const Game = {
                 if (!message.content.slice(12).startsWith("<@")) {
                     message.channel.send("You need to tag somebody");
                 } else {
-                    stealCoinsCooldown = true;
-                    setTimeout(function() {stealCoinsCooldown = false;}, 60000)
-                    time = new Date();
-                    actualTime = parseInt(time.getTime().toString().slice(8)) / 1000;
-                    giveCoins = sql.prepare("UPDATE game SET currency = currency + 10 WHERE userId = ?");
-                    takeCoins = sql.prepare("UPDATE game SET currency = currency - 10 WHERE userId = ?");
-
-                    let randomNumber = Math.random();
-                    if (randomNumber < 0.65) {
-                        console.log("Random number: " + randomNumber)
-                        console.log("instigator: ", instigatorId, typeof instigatorId);
-                        console.log("victim: ", victimId, typeof victimId);
-                        profile.currency = profile.currency - 10;
-                        //takeCoins.run(instigatorId);
-                        giveCoins.run(victimId);
-                        message.channel.send(`Oof. Ya got caught and had to pay them off with $10.`)
+                    getVictim = sql.prepare("SELECT currency FROM game WHERE userId = ?")
+                    victim = getVictim.get(victimId);
+                    console.log(victim)
+                    if (!victim) {
+                        message.channel.send(`They haven't even set up a profile yet. Or, more likely, they haven't spoken in Discord since I last reset the database.`)
+                    } else if (victim.currency < 50) {
+                        message.channel.send(`Take it easy. They have to be holding at least $50 before you can steal from them.`)
                     } else {
-                        console.log("Random number: " + randomNumber)
-                        console.log("instigator: ", instigatorId);
-                        console.log("victim: ", victimId);
-                        profile.currency = profile.currency + 10;
-                        //giveCoins.run(instigatorId);
-                        takeCoins.run(victimId);
-                        message.channel.send(`Look at you, you sneaky boi. You managed to get $10 off of them.`)
+                        stealCoinsCooldownStart = new Date();
+                        profile.stealCoinsCooldown = Math.abs(stealCoinsCooldownStart);
+                        userCooldowns.add(message.author.id)
+                        setTimeout(function() {userCooldowns.delete(message.author.id);}, 60000)
+                        giveCoins = sql.prepare("UPDATE game SET currency = currency + ? WHERE userId = ?");
+                        takeCoins = sql.prepare("UPDATE game SET currency = currency - ? WHERE userId = ?");
+
+                        let randomNumber = Math.random();
+                        if (randomNumber < 0.65) {
+                            console.log("Random number: " + randomNumber)
+                            console.log("instigator: ", instigatorId, typeof instigatorId);
+                            console.log("victim: ", victimId, typeof victimId);
+                            profile.currency = profile.currency - 10;
+                            //takeCoins.run(instigatorId);
+                            giveCoins.run(10,victimId);
+                            message.channel.send(`Oof. Ya got caught and had to pay them off with $10.`)
+                        } else {
+                            console.log("Random number: " + randomNumber)
+                            console.log("instigator: ", instigatorId);
+                            console.log("victim: ", victimId);
+                            profile.currency = profile.currency + 10;
+                            //giveCoins.run(instigatorId);
+                            takeCoins.run(10,victimId);
+                            message.channel.send(`Look at you, you sneaky boi. You managed to get $10 off of them.`)
+                        }
+                        //client.instigatorCoins.run(instigator);
+                        //client.victimCoins.run(victim);
                     }
-                    //client.instigatorCoins.run(instigator);
-                    //client.victimCoins.run(victim);
                 }
             }
         } else {
-            let newTime = new Date();
-            let cooldownRemaining = (Math.floor((parseInt(newTime.getTime().toString().slice(8)) / 1000) - actualTime) - 60) * -1;
+            let stealCoinsCooldownCurrent = new Date();
+            let cooldownRemaining = Math.round(((Math.abs(stealCoinsCooldownCurrent - profile.stealCoinsCooldown) / 1000) - 60) * -1);
             message.channel.send(`You've gotta wait a little longer, bro. You've got ${cooldownRemaining} long ass seconds left.`)}
     },
 /*

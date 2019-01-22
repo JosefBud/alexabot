@@ -94,6 +94,4 @@ client.on('message', message => {
     }
 });
 
-var d = new Date();
-console.log(d.getTime());
 client.login(config.token);

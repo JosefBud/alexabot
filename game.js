@@ -45,7 +45,7 @@ const Game = {
               }
         }
         profile.xp++;
-        if (profile.xp >= 10) {
+        if (profile.xp >= 50) {
             profile.level++;
             profile.skillPoints = profile.skillPoints + 5;
             //message.channel.send("Congrats! You've leveled up to level " + profile.level);
@@ -387,6 +387,17 @@ const Game = {
 
                 //else {message.channel.send(`You must've typed something incorrectly, please try again.`)}
             });
+    },
+
+    getProfile: function(message) {
+        const profileEmbed = new Discord.RichEmbed();
+        message.channel.send(profileEmbed
+            .setAuthor(`${profile.username}`,message.author.avatarURL)
+            .setThumbnail(message.author.avatarURL)
+            .addField(`__Level__`,`Level: **${profile.level}** \n XP: **${profile.xp}/50**`)
+            .addField(`__Attributes__`,`Strength: **${profile.strength}** \n Constitution: **${profile.constitution}** \n Dexterity: **${profile.dexterity}** \n Intelligence: **${profile.intelligence}** \n Wisdom: **${profile.wisdom}** \n Charisma: **${profile.charisma}**`)
+            .addField(`__Skill points__`,`You have **${profile.skillPoints}** skill points to spend.`)
+            .addField(`__Currency__`,`You have **$${profile.currency}** stashed in your prison wallet.`));
     },
 
     stage: function(client,message) {

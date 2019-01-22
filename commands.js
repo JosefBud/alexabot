@@ -69,12 +69,15 @@ const Commands = {
                     if (message.content.toLowerCase().includes("yes") || message.content.toLowerCase().includes("yeah") || message.content.toLowerCase().includes("ya") || message.content.toLowerCase().includes("sure")) {
                         collector.stop();
                         if (typeof message.member.voiceChannel !== 'undefined') {
+                            collector.stop();
                             Commands.play(message,"alexa play despacito");
                         }
                         else {
+                            collector.stop();
                             message.reply(`get in a voice channel, ya bonehead`);
                         }
                     } else if (message.content.toLowerCase().includes("no") || message.content.toLowerCase().includes("nah") || message.content.toLowerCase().includes("nope")) {
+                        collector.stop();
                         message.channel.send("Okie dokie. Hope you feel better.");
                     }
                 })

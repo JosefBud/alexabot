@@ -1,10 +1,11 @@
 const Discord = require('discord.js');
 const config = require('./config.json')
 const blizzard = require('blizzard.js').initialize({
-	id: config.blizzardKey,
-	secret: config.blizzardSecret,
 	origin: 'us',
-	locale: 'en-US'
+	locale: 'en-US',
+	key: config.blizzardKey,
+	secret: config.blizzardSecret,
+	token: config.blizzardToken
 	});
 
 const BlizzardCmd = {

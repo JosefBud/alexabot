@@ -6,7 +6,25 @@ Discord bot that only plays Despacito
 
 ```
 {  
-     "token"  : "YOUR_BOT_TOKEN_HERE",
-     "prefix" : "+"     
+     "token"  : "YOUR_BOT_TOKEN_HERE"
 }
+```
+
+### You need a few modules, in this order
+
+```
+npm install discord.js yt-search
+```
+If you're on Windows:
+```
+npm install --vs2015 -g windows-build-tools
+```
+If you're on Linux:
+```
+sudo apt-get install build-essential
+Then install Python 2.7 - it MUST be 2.7
+```
+Next:
+```
+npm i node-gyp better-sqlite3
 ```

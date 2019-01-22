@@ -13,7 +13,7 @@ Discord bot that only plays Despacito
 ### You need a few modules, in this order
 
 ```
-npm install discord.js yt-search
+npm install discord.js node-opus yt-search
 ```
 If you're on Windows:
 ```
@@ -26,5 +26,5 @@ Then install Python 2.7 - it MUST be 2.7
 ```
 Next:
 ```
-npm i node-gyp better-sqlite3
+npm install node-gyp better-sqlite3
 ```

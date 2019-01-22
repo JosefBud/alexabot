@@ -56,7 +56,12 @@ const Game = {
 
     test: function(message) {
         message.channel.send(`You currently have ${profile.xp} XP and are level ${profile.level} with ${profile.skillPoints} skill points and $${profile.currency}. You are on stage ${profile.stage}.`);
-        console.log(profile);
+        //console.log(profile);
+        let time = new Date();
+        let actualTime = parseInt(time.getTime().toString().slice(8)) / 1000;
+        setTimeout(function() {
+            let newTime = new Date(); 
+            console.log(actualTime - (parseInt(newTime.getTime().toString().slice(8)) / 1000))}, 5000)
     },
 
     flipCoin: function(message) {
@@ -104,6 +109,8 @@ const Game = {
                 } else {
                     stealCoinsCooldown = true;
                     setTimeout(function() {stealCoinsCooldown = false;}, 60000)
+                    time = new Date();
+                    actualTime = parseInt(time.getTime().toString().slice(8)) / 1000;
                     giveCoins = sql.prepare("UPDATE game SET currency = currency + 10 WHERE userId = ?");
                     takeCoins = sql.prepare("UPDATE game SET currency = currency - 10 WHERE userId = ?");
 
@@ -129,7 +136,10 @@ const Game = {
                     //client.victimCoins.run(victim);
                 }
             }
-        } else {message.channel.send("You've gotta wait a little longer, bro")}
+        } else {
+            let newTime = new Date();
+            let cooldownRemaining = (Math.floor((parseInt(newTime.getTime().toString().slice(8)) / 1000) - actualTime) - 60) * -1;
+            message.channel.send(`You've gotta wait a little longer, bro. You've gotta wait ${cooldownRemaining} more seconds.`)}
     },
 /*
     createCharacter: function(message) {

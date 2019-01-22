@@ -132,6 +132,14 @@ const Game = {
                         takeCoins = sql.prepare("UPDATE game SET currency = currency - ? WHERE userId = ?");
 
                         let randomNumber = Math.random();
+                        if (randomNumber < 0.05) {
+                            console.log("Random number: " + randomNumber)
+                            console.log("instigator: ", instigatorId, typeof instigatorId);
+                            console.log("victim: ", victimId, typeof victimId);
+                            profile.currency = profile.currency + 50;
+                            takeCoins.run(50,victimId);
+                            message.channel.send(`Damn! You got super lucky. You managed to get $50 off of them! They're gonna be pissed.`);
+                        }
                         if (randomNumber < 0.65) {
                             console.log("Random number: " + randomNumber)
                             console.log("instigator: ", instigatorId, typeof instigatorId);

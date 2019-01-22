@@ -67,6 +67,7 @@ const Commands = {
                 //console.log(collector)
                 collector.on('collect', message => {
                     if (message.content.toLowerCase().includes("yes") || message.content.toLowerCase().includes("yeah") || message.content.toLowerCase().includes("ya") || message.content.toLowerCase().includes("sure")) {
+                        collector.stop();
                         if (typeof message.member.voiceChannel !== 'undefined') {
                             Commands.play(message,"alexa play despacito");
                         }

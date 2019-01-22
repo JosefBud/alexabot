@@ -85,7 +85,7 @@ const Commands = {
     dadBot: function(message,msgContent) {
         const dadEmbed = new Discord.RichEmbed();
         //message.channel.send(`Hi, ${msgContent.slice(3)}, I'm Dad!`);
-        message.channel.send(dadEmbed.setTitle(`Hi, ${msgContent.slice(3)}, I'm Dad!`).setThumbnail('https://pbs.twimg.com/media/B30zw_vIAAAh8LR.jpg'));
+        message.channel.send(dadEmbed.setTitle(`Hi, ${msgContent.slice(3)}, I'm Dad!`).setThumbnail('https://i.imgur.com/H0ciQWN.png'));
     }
 };
 

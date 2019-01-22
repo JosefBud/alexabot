@@ -6,6 +6,7 @@ const user = new Discord.Message();
 //const sql = new SQLite('./scores.sqlite');
 const Commands = require('./commands.js');
 const Game = require('./game.js');
+const BlizzardCmd = require('./blizzard.js');
 var thatsSoSad = false;
 
 client.on('ready', () => {
@@ -95,6 +96,10 @@ client.on('message', message => {
 
         if (msgContent.startsWith("alexa fuck ea")) {
             message.channel.send(`EA bAd gErAlDo gOoD`);
+        }
+
+        if (msgContent.startsWith("alexa bliz")) {
+            BlizzardCmd.test(message);
         }
     }
 });

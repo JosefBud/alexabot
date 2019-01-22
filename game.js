@@ -14,13 +14,13 @@ const Game = {
     prep: function(client) {
         const table = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = 'game';").get();
         if (!table['count(*)']) {
-            sql.prepare("CREATE TABLE game (id TEXT PRIMARY KEY, userId TEXT, username TEXT, guild TEXT, stage INTEGER, xp INTEGER, level INTEGER, skillPoints INTEGER, strength INTEGER, constitution INTEGER, dexterity INTEGER, intelligence INTEGER, wisdom INTEGER, charisma INTEGER, currency INTEGER, stealCoinsCooldown INTEGER);").run();
+            sql.prepare("CREATE TABLE game (id TEXT PRIMARY KEY, userId TEXT, username TEXT, guild TEXT, stage INTEGER, xp INTEGER, level INTEGER, skillPoints INTEGER, strength INTEGER, constitution INTEGER, dexterity INTEGER, intelligence INTEGER, wisdom INTEGER, charisma INTEGER, currency INTEGER, stealCoinsCooldown INTEGER, flipCoinCooldown INTEGER);").run();
             sql.prepare("CREATE UNIQUE INDEX idx_game_id ON game (id);").run();
             sql.pragma("synchronous = 1");
             sql.pragma("journal_mode = wal");
         }
         client.getProfile = sql.prepare("SELECT * FROM game WHERE userId = ? AND guild = ?");
-        client.setProfile = sql.prepare("INSERT OR REPLACE INTO game (id, userId, username, guild, stage, xp, level, skillPoints, strength, constitution, dexterity, intelligence, wisdom, charisma, currency, stealCoinsCooldown) VALUES (@id, @userId, @username, @guild, @stage, @xp, @level, @skillPoints, @strength, @constitution, @dexterity, @intelligence, @wisdom, @charisma, @currency, @stealCoinsCooldown);");
+        client.setProfile = sql.prepare("INSERT OR REPLACE INTO game (id, userId, username, guild, stage, xp, level, skillPoints, strength, constitution, dexterity, intelligence, wisdom, charisma, currency, stealCoinsCooldown, flipCoinCooldown) VALUES (@id, @userId, @username, @guild, @stage, @xp, @level, @skillPoints, @strength, @constitution, @dexterity, @intelligence, @wisdom, @charisma, @currency, @stealCoinsCooldown, @flipCoinCooldown);");
     },
 
     profile: function(client,message) {
@@ -42,7 +42,8 @@ const Game = {
                 wisdom: 0,
                 charisma: 0,
                 currency: 100,
-                stealCoinsCooldown: 0
+                stealCoinsCooldown: 0,
+                flipCoinCooldown: 0
               }
         }
         profile.xp++;

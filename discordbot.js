@@ -92,6 +92,10 @@ client.on('message', message => {
         if (msgContent.startsWith("im ")) {
             Commands.dadBot(message,msgContent);
         }
+
+        if (msgContent.startsWith("alexa fuck ea")) {
+            message.channel.send(`EA bAd gErAlDo gOoD`);
+        }
     }
 });
 

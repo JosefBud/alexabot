@@ -8,19 +8,20 @@ const Discord = require('discord.js');
 // const ytSearch = require( 'yt-search' )
 const SQLite = require("better-sqlite3");
 const sql = new SQLite('./game.sqlite');
-const userCooldowns = new Set();
+const userStealCoinsCooldowns = new Set();
+const userFlipCoinCooldowns = new Set();
 
 const Game = {
     prep: function(client) {
         const table = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = 'game';").get();
         if (!table['count(*)']) {
-            sql.prepare("CREATE TABLE game (id TEXT PRIMARY KEY, userId TEXT, username TEXT, guild TEXT, stage INTEGER, xp INTEGER, level INTEGER, skillPoints INTEGER, strength INTEGER, constitution INTEGER, dexterity INTEGER, intelligence INTEGER, wisdom INTEGER, charisma INTEGER, currency INTEGER, stealCoinsCooldown INTEGER, flipCoinCooldown INTEGER);").run();
+            sql.prepare("CREATE TABLE game (id TEXT PRIMARY KEY, userId TEXT, username TEXT, avatarUrl TEXT, guild TEXT, stage INTEGER, xp INTEGER, level INTEGER, skillPoints INTEGER, strength INTEGER, constitution INTEGER, dexterity INTEGER, intelligence INTEGER, wisdom INTEGER, charisma INTEGER, currency INTEGER, stealCoinsCooldown INTEGER, flipCoinCooldown INTEGER);").run();
             sql.prepare("CREATE UNIQUE INDEX idx_game_id ON game (id);").run();
             sql.pragma("synchronous = 1");
             sql.pragma("journal_mode = wal");
         }
         client.getProfile = sql.prepare("SELECT * FROM game WHERE userId = ? AND guild = ?");
-        client.setProfile = sql.prepare("INSERT OR REPLACE INTO game (id, userId, username, guild, stage, xp, level, skillPoints, strength, constitution, dexterity, intelligence, wisdom, charisma, currency, stealCoinsCooldown, flipCoinCooldown) VALUES (@id, @userId, @username, @guild, @stage, @xp, @level, @skillPoints, @strength, @constitution, @dexterity, @intelligence, @wisdom, @charisma, @currency, @stealCoinsCooldown, @flipCoinCooldown);");
+        client.setProfile = sql.prepare("INSERT OR REPLACE INTO game (id, userId, username, avatarUrl, guild, stage, xp, level, skillPoints, strength, constitution, dexterity, intelligence, wisdom, charisma, currency, stealCoinsCooldown, flipCoinCooldown) VALUES (@id, @userId, @username, @avatarUrl, @guild, @stage, @xp, @level, @skillPoints, @strength, @constitution, @dexterity, @intelligence, @wisdom, @charisma, @currency, @stealCoinsCooldown, @flipCoinCooldown);");
     },
 
     profile: function(client,message) {
@@ -30,6 +31,7 @@ const Game = {
                 id: `${message.guild.id}-${message.author.id}`,
                 userId: message.author.id,
                 username: message.author.username,
+                avatarUrl: message.author.avatarURL,
                 guild: message.guild.id,
                 stage: 0,
                 xp: 0,
@@ -62,39 +64,50 @@ const Game = {
     },
 
     flipCoin: function(message) {
-        let random = Math.random();
-        let coin;
-        if (random >= 0.5) {
-            coin = "heads"
-        } else {coin = "tails"}
-        console.log(random);
-        console.log(coin);
-        message.channel.send(`Heads or tails?`);
-        const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 5000 });
-        collector.on("collect", message => {
-            if (!message.content.startsWith("heads") && !message.content.startsWith("tails")) {
-                message.channel.send(`You must've typed the wrong thing. Try again!`)
-                collector.stop();
-                return;
-            } else if (message.content === coin) {
-                profile.currency = profile.currency + 10;
-                message.channel.send(`You win $10!`);
-                collector.stop();
-            } else {
-                profile.currency = profile.currency - 10;
-                message.channel.send(`You lose $10!`);
-                collector.stop();
-            }
-        })
-        collector.on("end", (collected,reason) => {
-            if (reason === 'time') {
-                message.channel.send(`You took too much time!`)
-            } else {return;}
-        })
+        if (!userFlipCoinCooldowns.has(message.author.id)) {
+            let random = Math.random();
+            let coin;
+            if (random >= 0.5) {
+                coin = "heads"
+            } else {coin = "tails"}
+            console.log(random);
+            console.log(coin);
+            message.channel.send(`Heads or tails?`);
+            const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 5000 });
+            collector.on("collect", message => {
+                if (!message.content.startsWith("heads") && !message.content.startsWith("tails")) {
+                    message.channel.send(`You must've typed the wrong thing. Try again!`)
+                    collector.stop();
+                    return;
+                } else if (message.content === coin) {
+                    profile.currency = profile.currency + 10;
+                    message.channel.send(`You win $10!`);
+                    collector.stop();
+                } else {
+                    profile.currency = profile.currency - 10;
+                    message.channel.send(`You lose $10!`);
+                    collector.stop();
+                }
+
+                flipCoinCooldownStart = new Date();
+                profile.flipCoinCooldown = Math.abs(flipCoinCooldownStart);
+                userFlipCoinCooldowns.add(message.author.id)
+                setTimeout(function() {userFlipCoinCooldowns.delete(message.author.id);}, 30000)
+            })
+            collector.on("end", (collected,reason) => {
+                if (reason === 'time') {
+                    message.channel.send(`You took too much time!`)
+                } else {return;}
+            })
+        } else {
+            let flipCoinCooldownCurrent = new Date();
+            let cooldownRemaining = Math.round(((Math.abs(flipCoinCooldownCurrent - profile.flipCoinCooldown) / 1000) - 30) * -1);
+            message.channel.send(`Cool those heels, slim thicc queen. You've got ${cooldownRemaining} seconds left before you can fondle my coin again.`)
+        }
     },
 
     stealCoins: function(client, message) {
-        if (!userCooldowns.has(message.author.id)) {
+        if (!userStealCoinsCooldowns.has(message.author.id)) {
             let instigatorId = message.author.id;
             let victimId = message.content.slice(14,-1);
             if (instigatorId === victimId) {
@@ -114,8 +127,8 @@ const Game = {
                     } else {
                         stealCoinsCooldownStart = new Date();
                         profile.stealCoinsCooldown = Math.abs(stealCoinsCooldownStart);
-                        userCooldowns.add(message.author.id)
-                        setTimeout(function() {userCooldowns.delete(message.author.id);}, 60000)
+                        userStealCoinsCooldowns.add(message.author.id)
+                        setTimeout(function() {userStealCoinsCooldowns.delete(message.author.id);}, 60000)
                         giveCoins = sql.prepare("UPDATE game SET currency = currency + ? WHERE userId = ?");
                         takeCoins = sql.prepare("UPDATE game SET currency = currency - ? WHERE userId = ?");
 
@@ -396,6 +409,23 @@ const Game = {
     },
 
     getProfile: function(message) {
+        if (message.content.includes("<@")) {
+            let getName = message.content.slice(16,-1);
+            let getNameRequest = sql.prepare("SELECT * FROM game WHERE userId = ?")
+            let getNameDb = getNameRequest.get(getName);
+            if (!getNameDb) {
+                message.channel.send(`They don't have a profile yet. Tell them to say something!`)
+            } else {
+                const profileEmbed = new Discord.RichEmbed();
+                message.channel.send(profileEmbed
+                    .setAuthor(`${getNameDb.username}`,getNameDb.avatarUrl)
+                    .setThumbnail(getNameDb.avatarUrl)
+                    .addField(`__Level__`,`Level: **${getNameDb.level}** \n XP: **${getNameDb.xp}/50**`)
+                    .addField(`__Attributes__`,`Strength: **${getNameDb.strength}** \n Constitution: **${getNameDb.constitution}** \n Dexterity: **${getNameDb.dexterity}** \n Intelligence: **${getNameDb.intelligence}** \n Wisdom: **${getNameDb.wisdom}** \n Charisma: **${getNameDb.charisma}**`)
+                    .addField(`__Skill points__`,`You have **${getNameDb.skillPoints}** skill points to spend.`)
+                    .addField(`__Currency__`,`You have **$${getNameDb.currency}** stashed in your prison wallet.`));
+            }
+        } else {
         const profileEmbed = new Discord.RichEmbed();
         message.channel.send(profileEmbed
             .setAuthor(`${profile.username}`,message.author.avatarURL)
@@ -404,6 +434,7 @@ const Game = {
             .addField(`__Attributes__`,`Strength: **${profile.strength}** \n Constitution: **${profile.constitution}** \n Dexterity: **${profile.dexterity}** \n Intelligence: **${profile.intelligence}** \n Wisdom: **${profile.wisdom}** \n Charisma: **${profile.charisma}**`)
             .addField(`__Skill points__`,`You have **${profile.skillPoints}** skill points to spend.`)
             .addField(`__Currency__`,`You have **$${profile.currency}** stashed in your prison wallet.`));
+        }
     },
 
     stage: function(client,message) {

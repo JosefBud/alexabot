@@ -4,7 +4,7 @@ const Discord = require('discord.js');
 // const user = new Discord.Message();
 // const broadcast = client.createVoiceBroadcast();
 const ytdl = require('ytdl-core');
-const streamOptions = { seek: 0, volume: 1 };
+const streamOptions = { seek: 0, volume: 0.5 };
 const ytSearch = require( 'yt-search' );
 // const SQLite = require("better-sqlite3");
 // const sql = new SQLite('./scores.sqlite');
@@ -14,6 +14,24 @@ const Commands = {
     test: function(message) {
             message.channel.send("this is a test message");
     },
+
+    volume: function(message) {
+        const volumeEmbed = new Discord.RichEmbed();
+        if (message.content.toLowerCase().includes("down") && !message.content.toLowerCase().includes("up")) {
+            streamOptions.volume = streamOptions.volume - 0.1;
+            message.channel.send("Volume has been turned down for future songs");
+        }
+
+        else if (message.content.toLowerCase().includes("up") && !message.content.toLowerCase().includes("down")) {
+            streamOptions.volume = streamOptions.volume - 0.1;
+            message.channel.send("Volume has been turned up for future songs");
+        } else {
+            message.channel.send(volumeEmbed
+                .addField("Setting volume for the \"Alexa play\" command","**Alexa volume down:** turns volume down 10% \n **Alexa volume up**: turns volume up 10%")
+                .setFooter(`The volume is currently at ${streamOptions.volume * 100}%`));
+        }
+    },
+
     play: function(message,msgContent) {
 // FUNCTION FOR PLAYING A SONG, ALL THREE OF THE FUNCTION ARGUMENTS ARE STRINGS
         function playSong(title,imageUrl,youtubeUrl,youtubeThumb,youtubeTitle) {

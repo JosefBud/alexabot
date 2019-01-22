@@ -70,6 +70,9 @@ client.on('message', message => {
             Game.test(message);
         }
 
+        if (msgContent.includes(`alexa volume`)) {
+            Commands.volume(message);
+        }
         if (msgContent.includes(`alexa play`)) {
            Commands.play(message,msgContent);
         }

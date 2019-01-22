@@ -83,7 +83,9 @@ const Commands = {
                 })
     },
     dadBot: function(message,msgContent) {
-        message.channel.send(`Hi, ${msgContent.slice(3)}, I'm Alexa!`);
+        const dadEmbed = new Discord.RichEmbed();
+        message.channel.send(`Hi, ${msgContent.slice(3)}, I'm Dad!`);
+        message.channel.send(dadEmbed.setImage('https://pbs.twimg.com/media/B30zw_vIAAAh8LR.jpg'));
     }
 };
 

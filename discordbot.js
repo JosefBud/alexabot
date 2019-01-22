@@ -15,7 +15,7 @@ client.on('ready', () => {
 });
 
 client.on('message', message => {
-    console.log(`${message.author.username}: ${message.content}`);
+    console.log(new Date(),`${message.author.username}: ${message.content}`);
 
 // REMOVES SPECIFIC COMMON PUNCTUATION, LIKE SAYING "ALEXA, PLAY ____" OR "ALEXA PLAY ____."
     let msgContent = message.content.toLowerCase().replace(/[,!'.]/gi,"");

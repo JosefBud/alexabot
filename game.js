@@ -84,8 +84,7 @@ const Game = {
                     message.channel.send(`You win $10!`);
                     collector.stop();
                 } else {
-                    profile.currency = profile.currency - 10;
-                    message.channel.send(`You lose $10!`);
+                    message.channel.send(`You win fuck all, nothing!`);
                     collector.stop();
                 }
 

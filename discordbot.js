@@ -15,6 +15,8 @@ client.on('ready', () => {
     Game.prep(client);
 });
 
+client.on('error', console.error);
+
 client.on('message', message => {
     let consoleTimeStamp = new Date();
     console.log(consoleTimeStamp.toLocaleDateString('en-us','America/New_York'),`(${consoleTimeStamp.toLocaleTimeString('en-us','America/New_York')})`,`${message.author.username} (${message.guild.name}): ${message.content}`);
@@ -29,59 +31,59 @@ client.on('message', message => {
 //
 // ALEXA POINTS / SQL TEST
 //
-        if (msgContent.includes(`alexa xp`)) {
+        if (msgContent.startsWith(`alexa xp`)) {
             //message.reply(`You currently have ${score.points} points and are level ${score.level}!`);
             //console.log(score)
             Game.test(message)
         }
 
-        if (msgContent.includes(`alexa stage`)) {
+        if (msgContent.startsWith(`alexa stage`)) {
             Game.stage(client,message);
 
         }
 
-        if (msgContent.includes(`alexa reset`)) {
+        if (msgContent.startsWith(`alexa reset`)) {
             Game.profileReset(message);
         }
 
-        if (msgContent.includes(`alexa spend`)) {
+        if (msgContent.startsWith(`alexa spend`)) {
             Game.spendSkillPoints(message);
         }
 
-        if (msgContent.includes(`alexa create`)) {
+        if (msgContent.startsWith(`alexa create`)) {
             Game.createCharacter(message);
         }
 
-        if (msgContent.includes(`alexa flip`)) {
+        if (msgContent.startsWith(`alexa flip`)) {
             Game.flipCoin(message);
         }
 
-        if (msgContent.includes(`alexa steal`)) {
+        if (msgContent.startsWith(`alexa steal`)) {
             Game.stealCoins(client, message);
         }
 
-        if (msgContent.includes(`alexa profile`)) {
+        if (msgContent.startsWith(`alexa profile`)) {
             Game.getProfile(message);
         }
 //
 // ALEXA TEST COMMAND
 //
-        if (msgContent.includes(`alexa test`)) {
+        if (msgContent.startsWith(`alexa test`)) {
             Game.test(message);
         }
 
-        if (msgContent.includes(`alexa volume`)) {
+        if (msgContent.startsWith(`alexa volume`)) {
             Commands.volume(message);
         }
-        if (msgContent.includes(`alexa play`)) {
+        if (msgContent.startsWith(`alexa play`)) {
            Commands.play(message,msgContent);
         }
         
-        if (msgContent.includes("alexa stfu") || msgContent.includes("alexa shut up") || msgContent.includes("alexa fuck off")) {
+        if (msgContent.startsWith("alexa stfu") || msgContent.startsWith("alexa shut up") || msgContent.startsWith("alexa fuck off")) {
             Commands.stfu(message);
         }
         
-        if (msgContent.includes("alexa buy")) {
+        if (msgContent.startsWith("alexa buy")) {
             Commands.buy(message,client);
         }
 
@@ -101,8 +103,8 @@ client.on('message', message => {
             message.channel.send(`EA bAd gErAlDo gOoD`);
         }
 
-        if (msgContent.startsWith("alexa bliz")) {
-            BlizzardCmd.test(message);
+        if (msgContent.startsWith("alexa wow profile")) {
+            BlizzardCmd.test(message, msgContent, client);
         }
 
         if (msgContent.startsWith("alexa introduce yourself")) {

@@ -27,7 +27,7 @@ const Commands = {
             message.channel.send("Volume has been turned up for future songs");
         } else {
             message.channel.send(volumeEmbed
-                .addField("Setting volume for the \"Alexa play\" command","**Alexa volume down:** turns volume down 10% \n **Alexa volume up**: turns volume up 10%")
+                .addField("Setting volume for the \"Alexa play\" command","\`\`Alexa volume down\`\` turns volume down 10% \n \`\`Alexa volume up\`\` turns volume up 10%")
                 .setFooter(`The volume is currently at ${streamOptions.volume * 100}%`));
         }
     },
@@ -53,7 +53,7 @@ const Commands = {
         if (typeof message.member.voiceChannel !== 'undefined') {
             let searchQuery = msgContent.slice(11);
             ytSearch(searchQuery, function (err,r ) {
-            if (err) throw err
+            if (err) console.log(err)
             const videos = r.videos
             firstResult = videos[0]
             playSong("Let's get jiggy with it","https://media.giphy.com/media/kLM9I1g8jsiAM/giphy.gif",`https://www.youtube.com/watch?v=${firstResult.videoId}`,`https://i.ytimg.com/vi/${firstResult.videoId}/default.jpg`,firstResult.title);

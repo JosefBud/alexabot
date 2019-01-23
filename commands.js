@@ -12,7 +12,24 @@ const embed = new Discord.RichEmbed();
 
 const Commands = {
     test: function(message) {
-            message.channel.send("this is a test message");
+        message.channel.send("this is a test message");
+    },
+
+    help: function(message) {
+        const helpEmbed = new Discord.RichEmbed();
+        message.channel.send(helpEmbed
+            .setAuthor(`Alexa commands`)
+            .addField(`Alexa can play a song`,`\`\`Alexa play [song name]\`\` will stream a song from YouTube into the voice channel you're in. This is pulling the top search result from YouTube, and YouTube search sucks sometimes, so it helps if you include the artist name.
+            \`\`Alexa STFU\`\` will disconnect Alexa from the voice channel.
+            \`\`Alexa volume\`\` will bring up the volume commands. \`\`Alexa volume down\`\` or \`\`Alexa volume up\`\` changes the volume by 10%. This doesn't work *while* you're playing a song, it only adjusts it for the next time you play a song.`)
+            .addField(`Alexa gots games, yo`,`FAIR WARNING: I'm still working on this bot and frequently reset the database, don't get too attached to your XP, level and pretend money
+            \`\`Alexa profile\`\` will show you your profile.
+            \`\`Alexa steal [@somebody]\`\` will steal some cash from another person. There may or may not be a very small chance to steal a lot more than usual.
+            \`\`Alexa flip\`\` will flip a coin. You either win money or you don't. `)
+            .addField(`Alexa still plays WoW for some reason`,`
+            \`\`Alexa WoW profile [realm name] [character name]\`\` will bring up info about that character`)
+            .addField(`Alexa is ecksdee sOoO rAnDoM`,`\`\`Alexa buy [something]\`\` will make an Amazon™ purchase and charge it to someone else's account. This is using l33t h4xx and is extremely illegal. Use with caution.`)
+            );
     },
 
     volume: function(message) {

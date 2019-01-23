@@ -52,7 +52,7 @@ const BlizzardCmd = {
                     .addField(`Average Item Level`,`${response.data.items.averageItemLevel}`, true)
 					.addField(`Achievement Points`,`${response.data.achievementPoints}`, true)
 					.addField(`Character Spec`,`${characterSpec} (${characterSpecRole})`));
-            });},200)
+            });},500)
         }
     }
 }

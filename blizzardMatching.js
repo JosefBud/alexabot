@@ -42,6 +42,7 @@ const BlizzardMatching = {
         if (response.data.faction === 0) {return "https://malamashka.files.wordpress.com/2016/02/zcvkpoo.png";}
         if (response.data.faction === 1) {return "http://torment-gaming.com/wp-content/uploads/2014/03/HordeLogo.png";}
     },
+    
     classColor: function(characterClass) {
         if (characterClass === "Warrior") {return "#C79C6E";}
         if (characterClass === "Paladin") {return "#F58CBA";}
@@ -56,6 +57,8 @@ const BlizzardMatching = {
         if (characterClass === "Druid") {return "#FF7D0A";}
         if (characterClass === "Demon Hunter") {return "#A330C9";}
     }
+
+
 };
 
 module.exports = BlizzardMatching;

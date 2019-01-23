@@ -82,6 +82,8 @@ const BlizzardCmd = {
 					var characterRace = BlizzardMatching.races(response);
 					var characterColor = BlizzardMatching.classColor(characterClass);
 					var characterFaction = BlizzardMatching.faction(response);
+					var testDate = new Date()
+					console.log(testDate);
 					
 					setTimeout(() => {message.channel.send(wowProfile
 						.setColor(characterColor)

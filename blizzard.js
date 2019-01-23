@@ -18,7 +18,8 @@ const BlizzardCmd = {
                 .setFooter(`Without the brackets, obviez.`));
             return;
         } else {
-            const wowProfile = new Discord.RichEmbed();
+			const wowProfile = new Discord.RichEmbed();
+			const wowProfileTalents = new Discord.RichEmbed();
             var messageArray = msgContent.split(" ");
             var characterName = messageArray.pop();
             messageArray.shift(); messageArray.shift(); messageArray.shift();
@@ -54,7 +55,8 @@ const BlizzardCmd = {
 				var characterFaction = BlizzardMatching.faction(response);
                 
                 message.channel.send(wowProfile
-                    .setColor(characterColor)
+					.setColor(characterColor)
+					.setThumbnail(`http://render-us.worldofwarcraft.com/character/${response.data.thumbnail.slice(0,-10).concat("","avatar.jpg")}`)
                     .setImage(`http://render-us.worldofwarcraft.com/character/${response.data.thumbnail.slice(0,-10).concat("","inset.jpg")}`)
                     .setAuthor(`${response.data.name} (${response.data.realm})`,`${characterFaction}`,`https://worldofwarcraft.com/en-us/character/${realmName}/${characterName}`)
                     .setTitle(`WoW Armory page`)
@@ -63,13 +65,14 @@ const BlizzardCmd = {
 					.addField(`Character Spec`,`${characterSpec} (${characterSpecRole})`, true)
 					.addField(`Average Item Level`,`${response.data.items.averageItemLevel}`, true)
 					.addField(`Achievement Points`,`${response.data.achievementPoints}`, true)
-					.addField(`Talents`, `**15: ${characterTalents[0].name}** \`\`(${characterTalents[0].description})\`\` 
-					**30: ${characterTalents[1].name}** \`\`(${characterTalents[1].description})\`\` 
-					**45: ${characterTalents[2].name}** \`\`(${characterTalents[2].description})\`\` 
-					**60: ${characterTalents[3].name}** \`\`(${characterTalents[3].description})\`\` 
-					**75: ${characterTalents[4].name}** \`\`(${characterTalents[4].description})\`\` 
-					**90: ${characterTalents[5].name}** \`\`(${characterTalents[5].description})\`\` 
-					**100: ${characterTalents[6].name}** \`\`(${characterTalents[6].description})\`\``, true));
+					.addField(`Level 15`, `**${characterTalents[0].name}** \`\`(${characterTalents[0].description})\`\``, true)
+					.addField(`Level 30`, `**${characterTalents[1].name}** \`\`(${characterTalents[1].description})\`\``, true)
+					.addField(`Level 45`, `**${characterTalents[2].name}** \`\`(${characterTalents[2].description})\`\``, true)
+					.addField(`Level 60`, `**${characterTalents[3].name}** \`\`(${characterTalents[3].description})\`\``, true)
+					.addField(`Level 75`, `**${characterTalents[4].name}** \`\`(${characterTalents[4].description})\`\``, true)
+					.addField(`Level 90`, `**${characterTalents[5].name}** \`\`(${characterTalents[5].description})\`\``, true)
+					.addField(`Level 100`, `**${characterTalents[6].name}** \`\`(${characterTalents[6].description})\`\``, true)
+					);
             });},750)
         }
     }

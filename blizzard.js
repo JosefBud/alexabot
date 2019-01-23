@@ -45,6 +45,13 @@ const BlizzardCmd = {
 				//setTimeout(() => {console.log(characterTalents);}, 1000)
 			})
 			.then(() => {
+				blizzard.wow.character(['stats'], {origin: 'us', realm: realmName, name: characterName})
+				.then(response => {
+					characterStats = {health: response.data.stats.health, powerType: response.data.stats.powerType.charAt(0).toUpperCase() + response.data.stats.powerType.slice(1), power: response.data.stats.power, str: response.data.stats.str, agi: response.data.stats.agi, int: response.data.stats.int, sta: response.data.stats.sta, crit: response.data.stats.critRating, critPercent: response.data.stats.crit, haste: response.data.stats.hasteRating, hastePercent: response.data.stats.haste, mastery: response.data.stats.masteryRating, masteryPercent: response.data.stats.mastery, versatility: response.data.stats.versatility, versatilityDpsBonus: response.data.stats.versatilityDamageDoneBonus, versatilityDpsTaken: response.data.stats.versatilityDamageTakenBonus, leech: response.data.stats.leechRating, leechPercent: response.data.stats.leech, armor: response.data.stats.armor, dodgePercent: response.data.stats.dodge, parryPercent: response.data.stats.parry, blockPercent: response.data.stats.block};
+				})
+
+			})
+			.then(() => {
 				blizzard.wow.character(['items'], { origin: 'us', realm: realmName, name: characterName })
 				.catch(function() {message.channel.send("That character doesn't exist, or you may have typed something wrong.")})
 				.then(response => {
@@ -62,8 +69,22 @@ const BlizzardCmd = {
 						.setAuthor(`${response.data.name} (${response.data.realm})`,`${characterFaction}`,`https://worldofwarcraft.com/en-us/character/${realmName}/${characterName}`)
 						.setTitle(`WoW Armory page`)
 						.setURL(`https://worldofwarcraft.com/en-us/character/${realmName}/${characterName}`)
-						.setDescription(`Level ${response.data.level} ${characterRace} ${characterClass}`)
-						.addField(`Character Spec`,`${characterSpec} (${characterSpecRole})`, true)
+						.setDescription(`Level ${response.data.level} ${characterRace} ${characterSpec} ${characterClass}`)
+						.addField(`Main Stats`,`**Health:** ${characterStats.health}
+						**${characterStats.powerType}:** ${characterStats.power}
+						**Strength:** ${characterStats.str}
+						**Agility:** ${characterStats.agi}
+						**Intellect:** ${characterStats.int}
+						**Stamina:** ${characterStats.sta}`,true)
+						.addField(`Secondary Stats`,`**Crit:** ${Math.round((100 * characterStats.critPercent) / 100)}% (${characterStats.crit})
+						**Haste:** ${characterStats.hastePercent}% (${characterStats.haste})
+						**Mastery:** ${characterStats.masteryPercent}% (${characterStats.mastery})
+						**Versatility:** ${characterStats.versatility} (+${characterStats.versatilityDpsBonus}% DPS/HPS done | -${characterStats.versatilityDpsTaken}% DPS taken)
+						**Leech:** ${characterStats.leechPercent}% (${characterStats.leech})
+						**Armor Rating:** ${characterStats.armor}
+						**Dodge:** ${characterStats.dodge}
+						**Parry:** ${characterStats.parry}
+						**Block:** ${characterStats.block}`, true)
 						.addField(`Average Item Level`,`${response.data.items.averageItemLevel}`, true)
 						.addField(`Achievement Points`,`${response.data.achievementPoints}`, true)
 						.addField(`Level 15`, `**${characterTalents[0].name}** \`\`(${characterTalents[0].description})\`\``, true)

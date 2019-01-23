@@ -27,7 +27,6 @@ const BlizzardCmd = {
                 realmName = messageArray.join("-");
             } else {realmName = messageArray.toString();};
 
-			/*
 			blizzard.wow.character(['talents'], {origin: 'us', realm: realmName, name: characterName})
 			.then(response => {
 				characterSpec = response.data.talents[0].spec.name;
@@ -46,7 +45,6 @@ const BlizzardCmd = {
 				//setTimeout(() => {console.log(characterTalents);}, 1000)
 			})
 			.then(() => {
-			*/
 				blizzard.wow.character(['stats'], {origin: 'us', realm: realmName, name: characterName})
 				.then(response => {
                     characterStats = {health: response.data.stats.health, 
@@ -73,7 +71,7 @@ const BlizzardCmd = {
                         blockPercent: response.data.stats.block};
 				})
 
-			//})
+			})
 			.then(() => {
 				blizzard.wow.character(['items'], { origin: 'us', realm: realmName, name: characterName })
 				.catch(function() {message.channel.send("That character doesn't exist, or you may have typed something wrong.")})

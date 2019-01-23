@@ -47,7 +47,28 @@ const BlizzardCmd = {
 			.then(() => {
 				blizzard.wow.character(['stats'], {origin: 'us', realm: realmName, name: characterName})
 				.then(response => {
-					characterStats = {health: response.data.stats.health, powerType: response.data.stats.powerType.charAt(0).toUpperCase() + response.data.stats.powerType.slice(1), power: response.data.stats.power, str: response.data.stats.str, agi: response.data.stats.agi, int: response.data.stats.int, sta: response.data.stats.sta, crit: response.data.stats.critRating, critPercent: response.data.stats.crit, haste: response.data.stats.hasteRating, hastePercent: response.data.stats.haste, mastery: response.data.stats.masteryRating, masteryPercent: response.data.stats.mastery, versatility: response.data.stats.versatility, versatilityDpsBonus: response.data.stats.versatilityDamageDoneBonus, versatilityDpsTaken: response.data.stats.versatilityDamageTakenBonus, leech: response.data.stats.leechRating, leechPercent: response.data.stats.leech, armor: response.data.stats.armor, dodgePercent: response.data.stats.dodge, parryPercent: response.data.stats.parry, blockPercent: response.data.stats.block};
+                    characterStats = {health: response.data.stats.health, 
+                        powerType: response.data.stats.powerType.charAt(0).toUpperCase() + response.data.stats.powerType.slice(1), 
+                        power: response.data.stats.power, 
+                        str: response.data.stats.str, 
+                        agi: response.data.stats.agi, 
+                        int: response.data.stats.int, 
+                        sta: response.data.stats.sta, 
+                        crit: response.data.stats.critRating, 
+                        critPercent: response.data.stats.crit, 
+                        haste: response.data.stats.hasteRating, 
+                        hastePercent: response.data.stats.haste, 
+                        mastery: response.data.stats.masteryRating, 
+                        masteryPercent: response.data.stats.mastery, 
+                        versatility: response.data.stats.versatility, 
+                        versatilityDpsBonus: response.data.stats.versatilityDamageDoneBonus, 
+                        versatilityDpsTaken: response.data.stats.versatilityDamageTakenBonus, 
+                        leech: response.data.stats.leechRating, 
+                        leechPercent: response.data.stats.leech, 
+                        armor: response.data.stats.armor, 
+                        dodgePercent: response.data.stats.dodge, 
+                        parryPercent: response.data.stats.parry, 
+                        blockPercent: response.data.stats.block};
 				})
 
 			})
@@ -62,7 +83,7 @@ const BlizzardCmd = {
 					var characterColor = BlizzardMatching.classColor(characterClass);
 					var characterFaction = BlizzardMatching.faction(response);
 					
-					message.channel.send(wowProfile
+					setTimeout(() => {message.channel.send(wowProfile
 						.setColor(characterColor)
 						.setThumbnail(`http://render-us.worldofwarcraft.com/character/${response.data.thumbnail.slice(0,-10).concat("","avatar.jpg")}`)
 						.setImage(`http://render-us.worldofwarcraft.com/character/${response.data.thumbnail.slice(0,-10).concat("","inset.jpg")}`)
@@ -76,25 +97,26 @@ const BlizzardCmd = {
 						**Agility:** ${characterStats.agi}
 						**Intellect:** ${characterStats.int}
 						**Stamina:** ${characterStats.sta}`,true)
-						.addField(`Secondary Stats`,`**Crit:** ${Math.round((100 * characterStats.critPercent) / 100)}% (${characterStats.crit})
-						**Haste:** ${characterStats.hastePercent}% (${characterStats.haste})
-						**Mastery:** ${characterStats.masteryPercent}% (${characterStats.mastery})
-						**Versatility:** ${characterStats.versatility} (+${characterStats.versatilityDpsBonus}% DPS/HPS done | -${characterStats.versatilityDpsTaken}% DPS taken)
-						**Leech:** ${characterStats.leechPercent}% (${characterStats.leech})
-						**Armor Rating:** ${characterStats.armor}
-						**Dodge:** ${characterStats.dodge}
-						**Parry:** ${characterStats.parry}
-						**Block:** ${characterStats.block}`, true)
+						.addField(`Secondary Stats`,`**Crit:** ${characterStats.critPercent.toFixed(2)}% \`\`(${characterStats.crit})\`\`
+						**Haste:** ${characterStats.hastePercent.toFixed(2)}% \`\`(${characterStats.haste})\`\`
+						**Mastery:** ${characterStats.masteryPercent.toFixed(2)}% \`\`(${characterStats.mastery})\`\`
+						**Versatility:** ${characterStats.versatility}
+						**Leech:** ${characterStats.leechPercent.toFixed(2)}% \`\`(${characterStats.leech})\`\`
+						**Armor:** ${characterStats.armor}
+						**Dodge:** ${characterStats.dodgePercent.toFixed(2)}%
+						**Parry:** ${characterStats.parryPercent.toFixed(2)}%
+						**Block:** ${characterStats.blockPercent.toFixed(2)}%`, true)
 						.addField(`Average Item Level`,`${response.data.items.averageItemLevel}`, true)
 						.addField(`Achievement Points`,`${response.data.achievementPoints}`, true)
-						.addField(`Level 15`, `**${characterTalents[0].name}** \`\`(${characterTalents[0].description})\`\``, true)
+						/*.addField(`Level 15`, `**${characterTalents[0].name}** \`\`(${characterTalents[0].description})\`\``, true)
 						.addField(`Level 30`, `**${characterTalents[1].name}** \`\`(${characterTalents[1].description})\`\``, true)
 						.addField(`Level 45`, `**${characterTalents[2].name}** \`\`(${characterTalents[2].description})\`\``, true)
 						.addField(`Level 60`, `**${characterTalents[3].name}** \`\`(${characterTalents[3].description})\`\``, true)
 						.addField(`Level 75`, `**${characterTalents[4].name}** \`\`(${characterTalents[4].description})\`\``, true)
 						.addField(`Level 90`, `**${characterTalents[5].name}** \`\`(${characterTalents[5].description})\`\``, true)
-						.addField(`Level 100`, `**${characterTalents[6].name}** \`\`(${characterTalents[6].description})\`\``, true)
+						.addField(`Level 100`, `**${characterTalents[6].name}** \`\`(${characterTalents[6].description})\`\``, true)*/
 						);
+					},500)
 				});
 			})
         }

@@ -25,8 +25,13 @@ const BlizzardCmd = {
             if (messageArray[1]) {
                 realmName = messageArray.join("-");
             } else {realmName = messageArray.toString();};
-            
-            blizzard.wow.character(['items'], { origin: 'us', realm: realmName, name: characterName })
+
+			blizzard.wow.character(['talents'], {origin: 'us', realm: realmName, name: characterName})
+			.then(response => {
+				characterSpec = response.data.talents[0].spec.name;
+				characterSpecRole = response.data.talents[0].spec.role;
+			});
+            setTimeout(() => { blizzard.wow.character(['items'], { origin: 'us', realm: realmName, name: characterName })
             .catch(function() {message.channel.send("That character doesn't exist, or you may have typed something wrong.")})
             .then(response => {
                 //console.log(response.data);
@@ -34,7 +39,8 @@ const BlizzardCmd = {
                 var characterClass = BlizzardMatching.classes(response);
                 var characterRace = BlizzardMatching.races(response);
                 var characterColor = BlizzardMatching.classColor(characterClass);
-                var characterFaction = BlizzardMatching.faction(response);
+				var characterFaction = BlizzardMatching.faction(response);
+				console.log(characterSpec);
                 
                 message.channel.send(wowProfile
                     .setColor(characterColor)
@@ -44,8 +50,9 @@ const BlizzardCmd = {
                     .setURL(`https://worldofwarcraft.com/en-us/character/${realmName}/${characterName}`)
                     .setDescription(`Level ${response.data.level} ${characterRace} ${characterClass}`)
                     .addField(`Average Item Level`,`${response.data.items.averageItemLevel}`, true)
-                    .addField(`Achievement Points`,`${response.data.achievementPoints}`, true));
-            });
+					.addField(`Achievement Points`,`${response.data.achievementPoints}`, true)
+					.addField(`Character Spec`,`${characterSpec} (${characterSpecRole})`));
+            });},200)
         }
     }
 }

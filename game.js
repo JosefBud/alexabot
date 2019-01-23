@@ -81,10 +81,10 @@ const Game = {
                     return;
                 } else if (message.content.toLowerCase() === coin) {
                     profile.currency = profile.currency + 10;
-                    message.channel.send(`You win $10!`);
+                    message.channel.send(`It's ${coin}. You win $10!`);
                     collector.stop();
                 } else {
-                    message.channel.send(`You win fuck all, nothing!`);
+                    message.channel.send(`It's ${coin}. You win fuck all, nothing!`);
                     collector.stop();
                 }
 

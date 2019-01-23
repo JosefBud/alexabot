@@ -42,38 +42,40 @@ const BlizzardCmd = {
 				}
 				//characterTalentsRaw = {tier: response.data.talents[0].talents[1].tier, name: response.data.talents[0].talents[1].spell.name}
 				//BlizzardMatching.talents(characterTalentsRaw);
-				setTimeout(() => {console.log(characterTalents);}, 1000)
-			});
-            setTimeout(() => { blizzard.wow.character(['items'], { origin: 'us', realm: realmName, name: characterName })
-            .catch(function() {message.channel.send("That character doesn't exist, or you may have typed something wrong.")})
-            .then(response => {
-                //console.log(response.data);
-                
-                var characterClass = BlizzardMatching.classes(response);
-                var characterRace = BlizzardMatching.races(response);
-                var characterColor = BlizzardMatching.classColor(characterClass);
-				var characterFaction = BlizzardMatching.faction(response);
-                
-                message.channel.send(wowProfile
-					.setColor(characterColor)
-					.setThumbnail(`http://render-us.worldofwarcraft.com/character/${response.data.thumbnail.slice(0,-10).concat("","avatar.jpg")}`)
-                    .setImage(`http://render-us.worldofwarcraft.com/character/${response.data.thumbnail.slice(0,-10).concat("","inset.jpg")}`)
-                    .setAuthor(`${response.data.name} (${response.data.realm})`,`${characterFaction}`,`https://worldofwarcraft.com/en-us/character/${realmName}/${characterName}`)
-                    .setTitle(`WoW Armory page`)
-                    .setURL(`https://worldofwarcraft.com/en-us/character/${realmName}/${characterName}`)
-					.setDescription(`Level ${response.data.level} ${characterRace} ${characterClass}`)
-					.addField(`Character Spec`,`${characterSpec} (${characterSpecRole})`, true)
-					.addField(`Average Item Level`,`${response.data.items.averageItemLevel}`, true)
-					.addField(`Achievement Points`,`${response.data.achievementPoints}`, true)
-					.addField(`Level 15`, `**${characterTalents[0].name}** \`\`(${characterTalents[0].description})\`\``, true)
-					.addField(`Level 30`, `**${characterTalents[1].name}** \`\`(${characterTalents[1].description})\`\``, true)
-					.addField(`Level 45`, `**${characterTalents[2].name}** \`\`(${characterTalents[2].description})\`\``, true)
-					.addField(`Level 60`, `**${characterTalents[3].name}** \`\`(${characterTalents[3].description})\`\``, true)
-					.addField(`Level 75`, `**${characterTalents[4].name}** \`\`(${characterTalents[4].description})\`\``, true)
-					.addField(`Level 90`, `**${characterTalents[5].name}** \`\`(${characterTalents[5].description})\`\``, true)
-					.addField(`Level 100`, `**${characterTalents[6].name}** \`\`(${characterTalents[6].description})\`\``, true)
-					);
-            });},750)
+				//setTimeout(() => {console.log(characterTalents);}, 1000)
+			})
+			.then(() => {
+				blizzard.wow.character(['items'], { origin: 'us', realm: realmName, name: characterName })
+				.catch(function() {message.channel.send("That character doesn't exist, or you may have typed something wrong.")})
+				.then(response => {
+					//console.log(response.data);
+					
+					var characterClass = BlizzardMatching.classes(response);
+					var characterRace = BlizzardMatching.races(response);
+					var characterColor = BlizzardMatching.classColor(characterClass);
+					var characterFaction = BlizzardMatching.faction(response);
+					
+					message.channel.send(wowProfile
+						.setColor(characterColor)
+						.setThumbnail(`http://render-us.worldofwarcraft.com/character/${response.data.thumbnail.slice(0,-10).concat("","avatar.jpg")}`)
+						.setImage(`http://render-us.worldofwarcraft.com/character/${response.data.thumbnail.slice(0,-10).concat("","inset.jpg")}`)
+						.setAuthor(`${response.data.name} (${response.data.realm})`,`${characterFaction}`,`https://worldofwarcraft.com/en-us/character/${realmName}/${characterName}`)
+						.setTitle(`WoW Armory page`)
+						.setURL(`https://worldofwarcraft.com/en-us/character/${realmName}/${characterName}`)
+						.setDescription(`Level ${response.data.level} ${characterRace} ${characterClass}`)
+						.addField(`Character Spec`,`${characterSpec} (${characterSpecRole})`, true)
+						.addField(`Average Item Level`,`${response.data.items.averageItemLevel}`, true)
+						.addField(`Achievement Points`,`${response.data.achievementPoints}`, true)
+						.addField(`Level 15`, `**${characterTalents[0].name}** \`\`(${characterTalents[0].description})\`\``, true)
+						.addField(`Level 30`, `**${characterTalents[1].name}** \`\`(${characterTalents[1].description})\`\``, true)
+						.addField(`Level 45`, `**${characterTalents[2].name}** \`\`(${characterTalents[2].description})\`\``, true)
+						.addField(`Level 60`, `**${characterTalents[3].name}** \`\`(${characterTalents[3].description})\`\``, true)
+						.addField(`Level 75`, `**${characterTalents[4].name}** \`\`(${characterTalents[4].description})\`\``, true)
+						.addField(`Level 90`, `**${characterTalents[5].name}** \`\`(${characterTalents[5].description})\`\``, true)
+						.addField(`Level 100`, `**${characterTalents[6].name}** \`\`(${characterTalents[6].description})\`\``, true)
+						);
+				});
+			})
         }
     }
 }

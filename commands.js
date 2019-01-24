@@ -9,6 +9,7 @@ const ytSearch = require( 'yt-search' );
 // const SQLite = require("better-sqlite3");
 // const sql = new SQLite('./scores.sqlite');
 const embed = new Discord.RichEmbed();
+var disconnectTimer;
 
 const Commands = {
     test: function(message) {
@@ -87,19 +88,40 @@ Will make an Amazon™ purchase and charge it to someone else's account. This is
                 const stream = ytdl(youtubeUrl, { filter : 'audioonly' })
                 const dispatcher = connection.playStream(stream, streamOptions);}
                 )
-            .catch(console.error);
+            .catch( (error) => {
+                if (error) {
+                setTimeout(() => {
+                    message.channel.send(`Something went wrong! Alexa is sorry, bb. Try again or try a different search term.`)
+                }, 500),
+                console.error,
+                message.guild.voiceConnection.disconnect()
+            }
+            })
             console.log(msgContent);
         }
 // ALEXA PLAY COMMAND RESPONSE
         if (typeof message.member.voiceChannel !== 'undefined') {
             let searchQuery = msgContent.slice(11);
             ytSearch(searchQuery, function (err,r ) {
-            if (err) console.log(err)
-            const videos = r.videos
-            firstResult = videos[0]
-            playSong("Let's get jiggy with it","https://media.giphy.com/media/kLM9I1g8jsiAM/giphy.gif",`https://www.youtube.com/watch?v=${firstResult.videoId}`,`https://i.ytimg.com/vi/${firstResult.videoId}/default.jpg`,firstResult.title);
-            console.log(firstResult)
-            } )
+                if (err) console.log(err)
+                const videos = r.videos
+                firstResult = videos[0]
+                playSong("Let's get jiggy with it","https://media.giphy.com/media/kLM9I1g8jsiAM/giphy.gif",`https://www.youtube.com/watch?v=${firstResult.videoId}`,`https://i.ytimg.com/vi/${firstResult.videoId}/default.jpg`,firstResult.title);
+                let songDuration = (firstResult.duration.seconds + 4) * 1000;
+                //let disconnectTimer;
+                if (disconnectTimer) {
+                    clearTimeout(disconnectTimer);
+                }
+                function autoDisconnect() {
+                    disconnectTimer = setTimeout(() => {
+                        if (message.guild.voiceConnection) {
+                            message.guild.voiceConnection.disconnect();
+                        }
+                    }, songDuration);
+                }
+                autoDisconnect();
+                console.log(disconnectTimer);
+            })
         }
         else {
                 message.reply(`get in a voice channel, ya bonehead`);

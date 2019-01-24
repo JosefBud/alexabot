@@ -13,6 +13,9 @@ client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
     console.log(client.debug);
     Game.prep(client);
+    //if (user.guild.voiceConnection) {
+    //    user.guild.voiceConnection.disconnect();
+    //}
 });
 
 client.on('error', console.error);

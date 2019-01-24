@@ -16,7 +16,7 @@ const BlizzardCmd = {
             message.channel.send(wowProfileHelp
                 .addField(`Looking up a WoW profile`,`Use \`\`Alexa WoW profile [realm name] [character name]\`\``)
                 .setFooter(`Without the brackets, obviez.`));
-            return;
+			return;
         } else {
 			const wowProfile = new Discord.RichEmbed();
 			const wowProfileTalents = new Discord.RichEmbed();

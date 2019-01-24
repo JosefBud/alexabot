@@ -28,7 +28,7 @@ const BlizzardCmd = {
             } else {realmName = messageArray.toString();};
 
 			blizzard.wow.character(['talents'], {origin: 'us', realm: realmName, name: characterName})
-			.catch(function() {message.channel.send("That character doesn't exist, or you may have typed something wrong.")})
+			.catch(function() {message.channel.send("That character doesn't exist, or you may have typed something wrong.\n```css\n Alexa WoW profile [realm name] [character name]\n```")})
 			.then(response => {
 				characterSpec = response.data.talents[0].spec.name;
 				characterSpecRole = response.data.talents[0].spec.role;
@@ -47,7 +47,7 @@ const BlizzardCmd = {
 			})
 			.then(() => {
 				blizzard.wow.character(['stats'], {origin: 'us', realm: realmName, name: characterName})
-				.catch(function() {message.channel.send("That character doesn't exist, or you may have typed something wrong.")})
+				.catch(function() {message.channel.send("That character doesn't exist, or you may have typed something wrong.\n```css\n Alexa WoW profile [realm name] [character name]\n```")})
 				.then(response => {
                     characterStats = {health: response.data.stats.health, 
                         powerType: response.data.stats.powerType.charAt(0).toUpperCase() + response.data.stats.powerType.slice(1), 
@@ -76,7 +76,7 @@ const BlizzardCmd = {
 			})
 			.then(() => {
 				blizzard.wow.character(['items'], { origin: 'us', realm: realmName, name: characterName })
-				.catch(function() {message.channel.send("That character doesn't exist, or you may have typed something wrong.")})
+				.catch(function() {message.channel.send("That character doesn't exist, or you may have typed something wrong.\n```css\n Alexa WoW profile [realm name] [character name]\n```")})
 				.then(response => {
 					//console.log(response.data);
 					

@@ -65,6 +65,11 @@ const Game = {
 
     flipCoin: function(message) {
         if (!userFlipCoinCooldowns.has(message.author.id)) {
+            getCooldown = sql.prepare("SELECT flipCoinCooldown FROM game WHERE userId = ?;")
+            setCooldown = sql.prepare("UPDATE game SET flipCoinCooldown = ? WHERE userId = ?;");
+            setInitialCooldown = sql.prepare("UPDATE game SET flipCoinCooldown = 30 WHERE userId = ?;");
+            setTimeout(() => {setInitialCooldown.run(message.author.id)}, 500);
+
             let random = Math.random();
             let coin;
             if (random >= 0.5) {
@@ -87,11 +92,25 @@ const Game = {
                     message.channel.send(`It's ${coin}. You win fuck all, nothing!`);
                     collector.stop();
                 }
+                collector.stop();
 
-                flipCoinCooldownStart = new Date();
-                profile.flipCoinCooldown = Math.abs(flipCoinCooldownStart);
+                function flipCoinCooldown() {
+                    flipCoinCooldownUser = getCooldown.get(message.author.id);
+                    flipCoinCooldownUser.flipCoinCooldown = flipCoinCooldownUser.flipCoinCooldown - 1;
+                    setCooldown.run(flipCoinCooldownUser.flipCoinCooldown, message.author.id);
+                }
+
+                var flipCoinCooldownInterval = setInterval(flipCoinCooldown, 1000)
+
+                function clearFlipCoinCooldown() {
+                    clearInterval(flipCoinCooldownInterval);
+                }
+
                 userFlipCoinCooldowns.add(message.author.id)
-                setTimeout(function() {userFlipCoinCooldowns.delete(message.author.id);}, 30000)
+                setTimeout(function() {
+                    userFlipCoinCooldowns.delete(message.author.id);
+                    clearFlipCoinCooldown();
+                }, 30000)
             })
             collector.on("end", (collected,reason) => {
                 if (reason === 'time') {
@@ -99,9 +118,8 @@ const Game = {
                 } else {return;}
             })
         } else {
-            let flipCoinCooldownCurrent = new Date();
-            let cooldownRemaining = Math.round(((Math.abs(flipCoinCooldownCurrent - profile.flipCoinCooldown) / 1000) - 30) * -1);
-            message.channel.send(`Cool those heels, slim thicc queen. You've got ${cooldownRemaining} seconds left before you can fondle my coin again.`)
+            flipCoinCooldownDb = getCooldown.get(message.author.id);
+            message.channel.send(`Cool those heels, slim thicc queen. You've got ${flipCoinCooldownDb.flipCoinCooldown} seconds left before you can fondle my coin again.`)
         }
     },
 

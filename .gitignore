@@ -7,6 +7,9 @@ config.json
 # My to-do list
 todo.md
 
+# OSX shit
+.DS_Store
+
 # Logs
 logs
 *.log

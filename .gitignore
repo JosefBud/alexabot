@@ -4,6 +4,9 @@ config.json
 # SQLite databases
 *.sqlite*
 
+# My to-do list
+todo.md
+
 # Logs
 logs
 *.log

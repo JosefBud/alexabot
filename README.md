@@ -21,11 +21,11 @@ Will show you your profile. Sort of a work in progress.
 ```
 Alexa steal [@somebody]
 ```
-Will steal some cash from another person. There may or may not be a very small chance to steal a lot more than usual.
+Will steal some cash from another person. There may or may not be a very small chance to steal a lot more than usual. This feature is entirely inspired by the same feature in the popular Dank Memer Discord bot.
 ```
 Alexa flip
 ```
-Will flip a coin. You either win money or you don't.
+Will flip a coin. You either win money or you don't. This feature is also inspired by the same feature in the Dank Memer Discord bot.
 ```
 Alexa WoW profile [realm name] [character name]
 ```

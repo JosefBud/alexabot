@@ -112,10 +112,7 @@ client.on('message', message => {
         if (msgContent.startsWith("alexa wow profile")) {
             BlizzardCmd.test(message, msgContent, client);
         }
-
-        if (msgContent.startsWith("alexa introduce yourself")) {
-            message.channel.send(`Yes, daddy...`);
-        }
+        
     }
 });
 

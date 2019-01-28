@@ -7,6 +7,7 @@ const user = new Discord.Message();
 const Commands = require('./commands.js');
 const Game = require('./game.js');
 const BlizzardCmd = require('./blizzard.js');
+const Reddit = require('./reddit.js');
 var thatsSoSad = false;
 
 client.on('ready', () => {
@@ -112,7 +113,11 @@ client.on('message', message => {
         if (msgContent.startsWith("alexa wow profile")) {
             BlizzardCmd.test(message, msgContent, client);
         }
-        
+
+        if (msgContent.startsWith("alexa give me a meme")) {
+            Reddit.randomMeme(message);
+        }
+
     }
 });
 

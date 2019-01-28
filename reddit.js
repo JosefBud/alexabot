@@ -5,7 +5,7 @@ const Reddit = {
     randomMeme: async function(message) {
         try {
             await snekfetch
-                .get('https://www.reddit.com/user/alexadiscordbot/m/memes.json?sort=top&t=week&limit=250')
+                .get('https://www.reddit.com/user/alexadiscordbot/m/memes.json?sort=top&t=week&limit=100')
                 .then(r => {redditPull = r.body.data.children});
 
                 const sfw = redditPull.filter(meme => !meme.data.over_18);
@@ -18,7 +18,7 @@ const Reddit = {
                     .setImage(sfw[random].data.url)
                     .setFooter(`From the brilliant minds of /${sfw[random].data.subreddit_name_prefixed}`)
                     );
-                //console.log(sfw[random])
+                //console.log(sfw.length)
         } catch (err) {
             return console.log(err);
         }

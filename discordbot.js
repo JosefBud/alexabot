@@ -103,8 +103,7 @@ client.on('message', message => {
 
         // DAD BOT COMMAND
         if (msgContent.startsWith("im ")) {
-            if (message.guild !== 221109478911639553) {
-                console.log(message.guild);
+            if (message.guild.id !== 221109478911639553) {
                 Commands.dadBot(message,msgContent);
             }
         }

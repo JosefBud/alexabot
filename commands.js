@@ -65,17 +65,21 @@ Will make an Amazon™ purchase and charge it to someone else's account. This is
     volume: function(message) {
         const volumeEmbed = new Discord.RichEmbed();
         if (message.content.toLowerCase().includes("down") && !message.content.toLowerCase().includes("up")) {
-            streamOptions.volume = streamOptions.volume - 0.1;
-            message.channel.send("Volume has been turned down for future songs");
+            if (streamOptions.volume > 0.2) {
+                streamOptions.volume = streamOptions.volume - 0.1;
+                message.channel.send("Volume has been turned down for future songs");
+            } else {message.channel.send("Volume is too low to be turned down further!")}
         }
 
         else if (message.content.toLowerCase().includes("up") && !message.content.toLowerCase().includes("down")) {
-            streamOptions.volume = streamOptions.volume - 0.1;
-            message.channel.send("Volume has been turned up for future songs");
+            if (streamOptions.volume < 0.99) {
+                streamOptions.volume = streamOptions.volume + 0.1;
+                message.channel.send("Volume has been turned up for future songs");
+            } else {message.channel.send("Volume is too high to be turned up further!")}
         } else {
             message.channel.send(volumeEmbed
                 .addField("Setting volume for the \"Alexa play\" command","\`Alexa volume down\` turns volume down 10% \n \`Alexa volume up\` turns volume up 10%")
-                .setFooter(`The volume is currently at ${streamOptions.volume * 100}%`));
+                .setFooter(`The volume is currently at ${Math.floor(streamOptions.volume * 100)}%`));
         }
     },
 

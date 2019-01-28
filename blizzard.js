@@ -1,17 +1,21 @@
 const Discord = require('discord.js');
 const config = require('./config.json');
 const BlizzardMatching = require('./blizzardMatching.js');
+const curl = require('curlrequest');
+//curl.request({url: 'https://us.battle.net/oauth/token', data: 'grant_type=client_credentials', user: `${config.blizzardKey}:${config.blizzardSecret}`}, function (err, token) {config.blizzardToken = token;})
+//console.log(config.blizzardToken);
 const blizzard = require('blizzard.js').initialize({
 	origin: 'us',
 	locale: 'en-US',
 	key: config.blizzardKey,
 	secret: config.blizzardSecret,
-	token: config.blizzardToken
+	token: config.blizzardToken//.access_token
     });
 
 const BlizzardCmd = {
     test: function(message, msgContent, client) {
         if (msgContent === "alexa wow profile") {
+			console.log(config.blizzardToken);
             const wowProfileHelp = new Discord.RichEmbed();
             message.channel.send(wowProfileHelp
                 .addField(`Looking up a WoW profile`,`Use \`\`Alexa WoW profile [realm name] [character name]\`\``)
@@ -28,7 +32,7 @@ const BlizzardCmd = {
             } else {realmName = messageArray.toString();};
 
 			blizzard.wow.character(['talents'], {origin: 'us', realm: realmName, name: characterName})
-			.catch(function() {message.channel.send("That character doesn't exist, or you may have typed something wrong.\n```css\n Alexa WoW profile [realm name] [character name]\n```")})
+			.catch(function(err) {console.log(err); message.channel.send("That character doesn't exist, or you may have typed something wrong.\n```css\n Alexa WoW profile [realm name] [character name]\n```")})
 			.then(response => {
 				characterSpec = response.data.talents[0].spec.name;
 				characterSpecRole = response.data.talents[0].spec.role;

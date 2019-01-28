@@ -32,7 +32,7 @@ Will disconnect Alexa from the voice channel.
 Alexa volume
 \`\`\`
 Will bring up the volume commands. \`Alexa volume down\` or \`Alexa volume up\` changes the volume by 10%. This doesn't work *while* you're playing a song, it only adjusts it for the next time you play a song.`)
-.addField(`Alexa gots games, yo`,`FAIR WARNING: I'm still working on this bot and frequently reset the database, don't get too attached to your XP, level and pretend money
+.addField(`Alexa gots games, yo`,`FAIR WARNING: I'm still working on this bot and frequently reset the database, don't get too attached to your XP, level and pretend money.
 \`\`\`css
 Alexa profile
 \`\`\`
@@ -49,8 +49,13 @@ Will flip a coin. You either win money or you don't. `)
 \`\`\`css
 Alexa WoW profile [realm name] [character name]
 \`\`\`
-Will bring up info about that character`)
-.addField(`Alexa is ecksdee sOoO rAnDoM`,`\`\`\`css
+Will bring up info about that character.`)
+.addField(`Alexa is ecksdee sOoO rAnDoM`,`
+\`\`\`css
+Alexa give me a meme
+\`\`\`
+Will give you a random fresh meme from Reddit.
+\`\`\`css
 Alexa buy [something]
 \`\`\`
 Will make an Amazon™ purchase and charge it to someone else's account. This is using l33t h4xx and is extremely illegal. Use with caution.`)

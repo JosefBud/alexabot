@@ -31,6 +31,10 @@ Alexa WoW profile [realm name] [character name]
 ```
 Will bring up info about a World of Warcraft character
 ```
+Alexa give me a meme
+```
+Will give you a random fresh meme from Reddit.
+```
 Alexa buy [something]
 ```
 Will make an Amazon™ purchase and charge it to someone else's account. This is using l33t h4xx and is extremely illegal. Use with caution.

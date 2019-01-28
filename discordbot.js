@@ -103,7 +103,9 @@ client.on('message', message => {
 
         // DAD BOT COMMAND
         if (msgContent.startsWith("im ")) {
-            Commands.dadBot(message,msgContent);
+            if (message.guild !== 221109478911639553) {
+                Commands.dadBot(message,msgContent);
+            }
         }
 
         if (msgContent.startsWith("alexa fuck ea")) {

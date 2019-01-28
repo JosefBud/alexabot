@@ -18,7 +18,7 @@ const Reddit = {
                     .setImage(sfw[random].data.url)
                     .setFooter(`From the brilliant minds of /${sfw[random].data.subreddit_name_prefixed}`)
                     );
-                //console.log(sfw[random]);
+                //console.log(sfw[random])
         } catch (err) {
             return console.log(err);
         }

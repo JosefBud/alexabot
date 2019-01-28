@@ -46,11 +46,10 @@ Will make an Amazon™ purchase and charge it to someone else's account. This is
 }
 ```
 
-### You need a few modules, in this order
+### Before you run `npm install`:
 
-```
-npm install discord.js node-opus yt-search
-```
+The Node install for better-sqlite3 requires the ability to build C++ files.
+
 If you're on Windows:
 ```
 npm install --vs2015 -g windows-build-tools
@@ -62,5 +61,5 @@ Then install Python 2.7 - it MUST be 2.7
 ```
 Next:
 ```
-npm install node-gyp better-sqlite3 blizzard.js
+npm install
 ```

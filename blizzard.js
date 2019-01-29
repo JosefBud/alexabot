@@ -1,12 +1,13 @@
 const Discord = require('discord.js');
 const config = require('./config.json');
+const blizzardToken = require('./blizzardToken.json');
 const BlizzardMatching = require('./blizzardMatching.js');
 const blizzard = require('blizzard.js').initialize({
 	origin: 'us',
 	locale: 'en-US',
 	key: config.blizzardKey,
 	secret: config.blizzardSecret,
-	token: config.blizzardToken
+	token: blizzardToken.access_token
     });
 
 const BlizzardCmd = {

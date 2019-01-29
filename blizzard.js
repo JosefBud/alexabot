@@ -1,15 +1,12 @@
 const Discord = require('discord.js');
 const config = require('./config.json');
 const BlizzardMatching = require('./blizzardMatching.js');
-const curl = require('curlrequest');
-//curl.request({url: 'https://us.battle.net/oauth/token', data: 'grant_type=client_credentials', user: `${config.blizzardKey}:${config.blizzardSecret}`}, function (err, token) {config.blizzardToken = token;})
-//console.log(config.blizzardToken);
 const blizzard = require('blizzard.js').initialize({
 	origin: 'us',
 	locale: 'en-US',
 	key: config.blizzardKey,
 	secret: config.blizzardSecret,
-	token: config.blizzardToken//.access_token
+	token: config.blizzardToken
     });
 
 const BlizzardCmd = {

@@ -1,5 +1,6 @@
 # Config json
 config.json
+blizzardToken.json
 
 # SQLite databases
 *.sqlite*

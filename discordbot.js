@@ -8,7 +8,7 @@ const Commands = require('./commands.js');
 const Game = require('./game.js');
 const BlizzardCmd = require('./blizzard.js');
 const Reddit = require('./reddit.js');
-var thatsSoSad = false;
+
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
@@ -22,6 +22,9 @@ client.on('ready', () => {
 client.on('error', console.error);
 
 client.on('message', message => {
+    if (message.channel.type === 'dm') {
+        return;
+    }
     let consoleTimeStamp = new Date();
     console.log(consoleTimeStamp.toLocaleDateString('en-us','America/New_York'),`(${consoleTimeStamp.toLocaleTimeString('en-us','America/New_York')})`,`${message.author.username} (${message.guild.name}): ${message.content}`);
 
@@ -31,7 +34,8 @@ client.on('message', message => {
 // NOT-BOT CHECK
     if (!message.author.bot) {
         Game.profile(client,message);
-    
+
+        if (msgContent.startsWith("yw")) {message.channel.send("You're welcome, Kerry.")}
 //
 // ALEXA POINTS / SQL TEST
 //

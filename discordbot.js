@@ -36,8 +36,9 @@ client.on('message', message => {
         return;
     }
     let consoleTimeStamp = new Date();
-    console.log(consoleTimeStamp.toLocaleDateString('en-us','America/New_York'),`(${consoleTimeStamp.toLocaleTimeString('en-us','America/New_York')})`,`${message.author.username} (${message.guild.name}): ${message.content}`);
-
+    if (message.guild.name !== "Discord Bot List") {
+        console.log(consoleTimeStamp.toLocaleDateString('en-us','America/New_York'),`(${consoleTimeStamp.toLocaleTimeString('en-us','America/New_York')})`,`${message.author.username} (${message.guild.name}): ${message.content}`);
+    }
 // REMOVES SPECIFIC COMMON PUNCTUATION, LIKE SAYING "ALEXA, PLAY ____" OR "ALEXA PLAY ____."
     let msgContent = message.content.toLowerCase().replace(/[,!'.]/gi,"");
 

@@ -164,7 +164,7 @@ Will make an Amazon™ purchase and charge it to someone else's account. This is
                     }, songDuration);
                 }
                 autoDisconnect();
-                console.log(disconnectTimer);
+                //console.log(disconnectTimer);
             })
         }
         else {

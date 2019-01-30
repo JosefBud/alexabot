@@ -19,12 +19,14 @@ client.on('ready', () => {
     //if (user.guild.voiceConnection) {
     //    user.guild.voiceConnection.disconnect();
     //}
+    /*
     setInterval(() => {
         dbl.postStats(client.guilds.size, client.shards.Id, client.shards.total);
     }, 1800000);
     dbl.on('posted', () => {
         console.log('Server count posted!');
       });
+      */
 });
 
 client.on('error', console.error);
@@ -42,6 +44,10 @@ client.on('message', message => {
 // NOT-BOT CHECK
     if (!message.author.bot) {
         Game.profile(client,message);
+
+        if (msgContent === "alexa give me the deets") {
+            console.log(client.guilds.map(u => u.name))
+        }
         
 //
 // ALEXA POINTS / SQL TEST

@@ -8,6 +8,7 @@ const Discord = require('discord.js');
 // const ytSearch = require( 'yt-search' )
 const SQLite = require("better-sqlite3");
 const sql = new SQLite('./game.sqlite');
+const bannedChannelsSql = new SQLite('./bannedChannels.sqlite');
 const userStealCoinsCooldowns = new Set();
 const userFlipCoinCooldowns = new Set();
 
@@ -20,6 +21,15 @@ const Game = {
             sql.pragma("synchronous = 1");
             sql.pragma("journal_mode = wal");
         }
+
+        const bannedTable = bannedChannelsSql.prepare("SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name = 'bannedChannels';").get();
+        if (!bannedTable['count(*)']) {
+            bannedChannelsSql.prepare("CREATE TABLE bannedChannels (id TEXT PRIMARY KEY, guildId TEXT, channelId TEXT);").run();
+            bannedChannelsSql.prepare("CREATE UNIQUE INDEX idx_game_id ON bannedChannels (id);").run();
+            bannedChannelsSql.pragma("synchronous = 1");
+            bannedChannelsSql.pragma("journal_mode = wal");
+        }
+
         client.getProfile = sql.prepare("SELECT * FROM game WHERE userId = ? AND guild = ?");
         client.setProfile = sql.prepare("INSERT OR REPLACE INTO game (id, userId, username, avatarUrl, guild, stage, xp, level, skillPoints, strength, constitution, dexterity, intelligence, wisdom, charisma, currency, stealCoinsCooldown, flipCoinCooldown) VALUES (@id, @userId, @username, @avatarUrl, @guild, @stage, @xp, @level, @skillPoints, @strength, @constitution, @dexterity, @intelligence, @wisdom, @charisma, @currency, @stealCoinsCooldown, @flipCoinCooldown);");
     },

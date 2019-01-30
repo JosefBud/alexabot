@@ -6,9 +6,10 @@ const Discord = require('discord.js');
 const ytdl = require('ytdl-core');
 const streamOptions = { seek: 0, volume: 0.5 };
 const ytSearch = require( 'yt-search' );
-// const SQLite = require("better-sqlite3");
-// const sql = new SQLite('./scores.sqlite');
+const SQLite = require("better-sqlite3");
+const bannedChannelsSql = new SQLite('./bannedChannels.sqlite');
 const embed = new Discord.RichEmbed();
+// const bannedChannelsSet = new Set();
 var disconnectTimer;
 
 const Commands = {
@@ -210,7 +211,24 @@ Will make an Amazon™ purchase and charge it to someone else's account. This is
         const dadEmbed = new Discord.RichEmbed();
         //message.channel.send(`Hi, ${msgContent.slice(3)}, I'm Dad!`);
         message.channel.send(dadEmbed.setTitle(`Hi, ${msgContent.slice(3)}, I'm Dad!`).setThumbnail('https://i.imgur.com/H0ciQWN.png'));
-    }
+	},
+	
+	getOut: function(message,msgContent) {
+		const getChannels = bannedChannelsSql.prepare("SELECT * FROM bannedChannels WHERE id = ?;")
+		const setChannels = bannedChannelsSql.prepare("INSERT OR REPLACE INTO bannedChannels (id, guildId, channelId) VALUES (@id, @guildId, @channelId);")
+		const channelId = msgContent.slice(19,-1);
+		
+		if (channelId.length !== 18) {
+			message.channel.send(`You may have typed something wrong. Try again and remember to only use one channel at a time, and tag it using \`#\`.`)
+		} else {
+			var bannedChannelObj = {
+				id: `${message.guild.id}-${channelId}`,
+				guildId: message.guild.id,
+				channelId: channelId
+			}
+			setChannels.run(bannedChannelObj);
+		}
+	}
 };
 
 module.exports = Commands

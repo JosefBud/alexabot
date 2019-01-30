@@ -37,6 +37,7 @@ const Reddit = {
             const random = Math.floor(Math.random() * sfw.length);
             const subEmbed = new Discord.RichEmbed();
 
+            const postTitle = sfw[random].data.title.slice(0,254);
             const urlFileExtension = sfw[random].data.url.slice(-4).replace(".","");
             if (urlFileExtension === "jpg" || urlFileExtension === "jpeg" || urlFileExtension === "gif" || urlFileExtension === "png" || urlFileExtension === "webp") {
                 subEmbed
@@ -47,15 +48,15 @@ const Reddit = {
                 subEmbed
                 .setImage("")
                 .setDescription(sfw[random].data.url)
-                .setThumbnail(sfw[random].data.thumbnail);
+                .setThumbnail("");
             }
                 message.channel.send(subEmbed
                     .setAuthor(`/u/${sfw[random].data.author}`)
-                    .setTitle(sfw[random].data.title)
+                    .setTitle(postTitle)
                     .setURL(`http://www.reddit.com${sfw[random].data.permalink}`)
-                    .setFooter(`From the brilliant minds of /${sfw[random].data.subreddit_name_prefixed}`)
+                    .setFooter(`with ${sfw[random].data.score} upboats`)
                     );
-            console.log(urlFileExtension);
+            console.log(sfw[random].data);
         } 
         catch (err) {
             return console.log(err);

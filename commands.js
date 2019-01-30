@@ -20,7 +20,9 @@ const Commands = {
         const helpEmbed = new Discord.RichEmbed();
         message.channel.send(helpEmbed
             .setAuthor(`Alexa commands`)
-.addField(`Alexa can play a song`,`\`\`\`css
+            .setTitle(`Page 1`)
+.setDescription(`
+\`\`\`css
 Alexa play [song name]
 \`\`\` 
 Will stream a song from YouTube into the voice channel you're in. This is pulling the top search result from YouTube, and YouTube search sucks sometimes, so it helps if you include the artist name.
@@ -32,6 +34,8 @@ Will disconnect Alexa from the voice channel.
 Alexa volume
 \`\`\`
 Will bring up the volume commands. \`Alexa volume down\` or \`Alexa volume up\` changes the volume by 10%. This doesn't work *while* you're playing a song, it only adjusts it for the next time you play a song.`)
+
+
 .addField(`Alexa gots games, yo`,`FAIR WARNING: I'm still working on this bot and frequently reset the database, don't get too attached to your XP, level and pretend money.
 \`\`\`css
 Alexa profile

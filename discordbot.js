@@ -2,6 +2,8 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const config = require('./config.json');
 const user = new Discord.Message();
+const DBL = require('dblapi.js');
+const dbl = new DBL(config.dblToken,client);
 //const SQLite = require("better-sqlite3");
 //const sql = new SQLite('./scores.sqlite');
 const Commands = require('./commands.js');
@@ -17,6 +19,12 @@ client.on('ready', () => {
     //if (user.guild.voiceConnection) {
     //    user.guild.voiceConnection.disconnect();
     //}
+    setInterval(() => {
+        dbl.postStats(client.guilds.size, client.shards.Id, client.shards.total);
+    }, 1800000);
+    dbl.webhook.on('posted', () => {
+        console.log('Server count posted!');
+      });
 });
 
 client.on('error', console.error);

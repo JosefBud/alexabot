@@ -36,7 +36,7 @@ client.on('message', message => {
 // ALEXA POINTS / SQL TEST
 //
         if (msgContent === "alexa" || msgContent.startsWith(`alexa help`) || msgContent.startsWith(`alexa commands`)) {
-            Commands.help(message);
+            Commands.help(message, msgContent);
         }
         if (msgContent.startsWith(`alexa xp`)) {
             //message.reply(`You currently have ${score.points} points and are level ${score.level}!`);

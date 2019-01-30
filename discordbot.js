@@ -123,12 +123,14 @@ client.on('message', message => {
         }
 
         // DAD BOT COMMAND
+        /*
         if (msgContent.startsWith("im ")) {
             if (message.guild.id !== "221109478911639553") {
                 console.log(message.guild.id)
                 Commands.dadBot(message,msgContent);
             }
         }
+        */
 
         if (msgContent.startsWith("alexa fuck ea")) {
             message.channel.send(`EA bAd gErAlDo gOoD`);

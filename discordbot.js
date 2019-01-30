@@ -19,14 +19,14 @@ client.on('ready', () => {
     //if (user.guild.voiceConnection) {
     //    user.guild.voiceConnection.disconnect();
     //}
-    /*
+    
     setInterval(() => {
         dbl.postStats(client.guilds.size, client.shards.Id, client.shards.total);
     }, 1800000);
     dbl.on('posted', () => {
         console.log('Server count posted!');
       });
-      */
+      
 });
 
 client.on('error', console.error);

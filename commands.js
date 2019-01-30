@@ -50,11 +50,16 @@ Will flip a coin. You either win money or you don't. `)
 Alexa WoW profile [realm name] [character name]
 \`\`\`
 Will bring up info about that character.`)
-.addField(`Alexa is ecksdee sOoO rAnDoM`,`
+.addField(`Alexa is a reddit normie`,`
 \`\`\`css
 Alexa give me a meme
 \`\`\`
 Will give you a random fresh meme from Reddit.
+\`\`\`css
+Alexa give me /r/[subreddit]
+\`\`\`
+Will give you a random top post of the day from that subreddit.`)
+.addField(`Alexa is ecksdee sOoO rAnDoM`,`
 \`\`\`css
 Alexa buy [something]
 \`\`\`

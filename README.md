@@ -35,6 +35,10 @@ Alexa give me a meme
 ```
 Will give you a random fresh meme from Reddit.
 ```
+Alexa give me /r/[subreddit]
+```
+Will give you a random top post of the day from that subreddit
+```
 Alexa buy [something]
 ```
 Will make an Amazon™ purchase and charge it to someone else's account. This is using l33t h4xx and is extremely illegal. Use with caution.

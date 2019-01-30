@@ -121,6 +121,10 @@ client.on('message', message => {
             Reddit.randomMeme(message);
         }
 
+        if (msgContent.startsWith("alexa give me /r/")) {
+            Reddit.giveSub(message);
+        }
+
     }
 });
 

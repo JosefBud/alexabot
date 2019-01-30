@@ -21,7 +21,7 @@ const Commands = {
         if (msgContent.slice(-1) === "1" || msgContent === "alexa" || msgContent === "alexa help" || msgContent === "alexa commands") {
         	message.channel.send(helpEmbed
             	.setAuthor(`Alexa Commands - Page 1`)
-            	.setTitle(`Use "Alexa help [page #]" (e.g. "Alexa help 1")`)
+            	.setTitle(`Use "Alexa help [page 1-4]" (e.g. "Alexa help 1")`)
             	.setDescription(`
 \`\`\`css
 Alexa play [song name]
@@ -93,7 +93,7 @@ Alexa buy [something]
 Will make an Amazon™ purchase and charge it to someone else's account. This is using l33t h4xx and is extremely illegal. Use with caution.
 				`)
 			);
-		}
+		} else {message.channel.send("You may have typed something wrong or attempted to access a page that doesn't exist. Try again using `Alexa help [1-4]` (e.g. `Alexa help 1`).")}
     },
 
     volume: function(message) {

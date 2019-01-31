@@ -32,6 +32,22 @@ Alexa play [song name]
 \`\`\` 
 Will stream a song from YouTube into the voice channel you're in. This is pulling the top search result from YouTube, and YouTube search sucks sometimes, so it helps if you include the artist name.
 \`\`\`css
+Alexa queue [song name]
+\`\`\`
+Will queue up a song to play when the current one is finished.
+\`\`\`css
+Alexa queue
+\`\`\`
+Will show the current queue of songs.
+\`\`\`css
+Alexa clear queue
+\`\`\`
+Will clear out the current queue of songs.
+\`\`\`css
+Alexa next
+\`\`\`
+Will play the next song in the queue.
+\`\`\`css
 Alexa STFU
 \`\`\` 
 Will disconnect Alexa from the voice channel.

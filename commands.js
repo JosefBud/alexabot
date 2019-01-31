@@ -135,7 +135,11 @@ Will make an Amazon™ purchase and charge it to someone else's account. This is
     play: function(message,msgContent) {
 		if (typeof message.member.voiceChannel !== 'undefined') {
             const embed = new Discord.RichEmbed();
-			var searchQuery = msgContent.slice(11);
+            var searchQuery = msgContent.slice(11);
+            if (searchQuery.includes("list=")) {
+                message.channel.send("I don't support directly linking YouTube playlists yet, bb. Don't do me dirty like that.")
+                return;
+            }
 			ytSearch(searchQuery, function (err,r ) {
 				if (err) {
 					console.log(err)

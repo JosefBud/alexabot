@@ -9,7 +9,8 @@ const ytSearch = require( 'yt-search' );
 const SQLite = require("better-sqlite3");
 const bannedChannelsSql = new SQLite('./bannedChannels.sqlite');
 const embed = new Discord.RichEmbed();
-var servers = {};
+if (!servers) {var servers = {};}
+if (!server) {var server = {queue: []};}
 // const bannedChannelsSet = new Set();
 var disconnectTimer;
 
@@ -114,39 +115,45 @@ Will make an Amazon™ purchase and charge it to someone else's account. This is
     },
 
     play: function(message,msgContent) {
-// FUNCTION FOR PLAYING A SONG, ALL THREE OF THE FUNCTION ARGUMENTS ARE STRINGS
-        function playSong(title,imageUrl,youtubeUrl,youtubeThumb,youtubeTitle) {
-            message.channel.send(embed
-                .setAuthor(`${title}, ${message.author.username}`)
-                .setThumbnail(imageUrl)
-                .setImage(youtubeThumb)
-                .setFooter(youtubeTitle));
-            const channel = message.member.voiceChannel;
-            channel.join()
-            .then(connection => {
-                const stream = ytdl(youtubeUrl, { filter : 'audioonly' })
-                const dispatcher = connection.playStream(stream, streamOptions);}
-                )
-            .catch( (error) => {
-                if (error) {
-                setTimeout(() => {
-                    message.channel.send(`Something went wrong! Alexa is sorry, bb. Try again or try a different search term.`)
-                }, 500),
-                console.error,
-                message.guild.voiceConnection.disconnect()
-            }
-            })
-            console.log(msgContent);
-        }
-// ALEXA PLAY COMMAND RESPONSE
-        if (typeof message.member.voiceChannel !== 'undefined') {
-            let searchQuery = msgContent.slice(11);
-            ytSearch(searchQuery, function (err,r ) {
-                if (err) console.log(err)
-                const videos = r.videos
-                firstResult = videos[0]
-                playSong("Let's get jiggy with it","https://media.giphy.com/media/kLM9I1g8jsiAM/giphy.gif",`https://www.youtube.com/watch?v=${firstResult.videoId}`,`https://i.ytimg.com/vi/${firstResult.videoId}/default.jpg`,firstResult.title);
-                let songDuration = (firstResult.duration.seconds + 4) * 1000;
+		if (typeof message.member.voiceChannel !== 'undefined') {
+			var searchQuery = msgContent.slice(11);
+			ytSearch(searchQuery, function (err,r ) {
+				if (err) {
+					console.log(err)
+				}
+				const videos = r.videos
+				var firstResult = videos[0]
+				message.channel.send(embed
+					.setAuthor(`Let's get jiggy with it, ${message.author.username}`)
+					.setThumbnail("https://media.giphy.com/media/kLM9I1g8jsiAM/giphy.gif")
+					.setImage(`https://i.ytimg.com/vi/${firstResult.videoId}/default.jpg`)
+					.setFooter(firstResult.title));
+					console.log(server.queue[0]);
+				const channel = message.member.voiceChannel;
+				channel.join()
+					.then(connection => {
+						const stream = ytdl(`https://www.youtube.com/watch?v=${firstResult.videoId}`, { filter : 'audioonly' })
+						const dispatcher = connection.playStream(stream, streamOptions);
+						dispatcher.on("end", () => {
+							if (server.queue[0]) {
+								Commands.play(message,`alexa play ${server.queue[0]}`)
+								server.queue.shift();
+							} else {
+								//message.guild.voiceConnection.disconnect();
+							}
+						})
+					})
+					.catch( (error) => {
+						if (error) {
+							setTimeout(() => {
+								message.channel.send(`Something went wrong! Alexa is sorry, bb. Try again or try a different search term.`)
+							}, 500),
+							console.error,
+							message.guild.voiceConnection.disconnect()
+						}
+					})
+				/*
+				let songDuration = (firstResult.duration.seconds + 4) * 1000;
                 //let disconnectTimer;
                 if (disconnectTimer) {
                     clearTimeout(disconnectTimer);
@@ -158,13 +165,13 @@ Will make an Amazon™ purchase and charge it to someone else's account. This is
                         }
                     }, songDuration);
                 }
-                autoDisconnect();
-                //console.log(disconnectTimer);
-            })
-        }
-        else {
-                message.reply(`get in a voice channel, ya bonehead`);
-        }
+				autoDisconnect();
+				*/
+			})
+		}
+		else {
+				message.reply(`get in a voice channel, ya bonehead`);
+		}
 	},
 	
 	queue: function(message) {
@@ -173,27 +180,30 @@ Will make an Amazon™ purchase and charge it to someone else's account. This is
 				queue: []
 			};
 		}
-		var server = servers[message.guild.id];
+		server = servers[message.guild.id];
 		var songRequest = message.content.slice(12);
 		server.queue.push(songRequest);
-		console.log(server);
+		console.log(server.queue);
 	},
 
+    stfu: function(message) {
+        if (message.guild.voiceConnection) {
+			server.queue = [];
+            message.channel.send(`Well fine, fuck you too`);
+			message.guild.voiceConnection.disconnect();
+        } else {
+            message.channel.send(`I'm not even doing anything, asshole`)
+        }
+	},
+	
     buy: function(message,client) {
 // PULLS RANDOM MEMBER FROM THE SERVER/GUILD MEMBER LIST FOR USE WITH THE "ALEXA BUY" COMMAND
         let everyoneArray = message.guild.members.array();
         let randomMember = everyoneArray[Math.floor(Math.random() * everyoneArray.length)];
 // ALEXA, BUY COMMAND WHICH USES THE RANDOM MEMBER
         client.fetchUser(randomMember).then(myUser => {message.reply(`your purchase was successful. The credit card charge has been applied to ${myUser.username}'s Amazon™ account.`)});
-    },
-    stfu: function(message) {
-        if (message.guild.voiceConnection) {
-            message.channel.send(`Well fine, fuck you too`);
-            message.guild.voiceConnection.disconnect();
-        } else {
-            message.channel.send(`I'm not even doing anything, asshole`)
-        }
-    },
+	},
+	
     thatsSoSad: function(message) {
         message.reply(`sorry you're sad. Would you like me to play Despacito?`);
             const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 5000 });

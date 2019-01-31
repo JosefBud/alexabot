@@ -9,6 +9,7 @@ const ytSearch = require( 'yt-search' );
 const SQLite = require("better-sqlite3");
 const bannedChannelsSql = new SQLite('./bannedChannels.sqlite');
 const embed = new Discord.RichEmbed();
+var alexaColor = "#31C4F3";
 if (!servers) {var servers = {};}
 if (!server) {var server = {queue: [], requester: []};}
 if (!playReason) {var playReason = "";}
@@ -22,7 +23,7 @@ const Commands = {
 
     help: function(message, msgContent) {
         const helpEmbed = new Discord.RichEmbed();
-        helpEmbed.setColor("#31C4F3");
+        helpEmbed.setColor(alexaColor);
         if (msgContent.slice(-1) === "1" || msgContent === "alexa" || msgContent === "alexa help" || msgContent === "alexa commands") {
         	message.channel.send(helpEmbed
             	.setAuthor(`Alexa Commands - Page 1`)
@@ -140,12 +141,15 @@ Will make an Amazon™ purchase and charge it to someone else's account. This is
 					console.log(err)
 				}
 				const videos = r.videos
-				var firstResult = videos[0]
-				message.channel.send(embed
+                var firstResult = videos[0]
+                console.log(firstResult);
+                message.channel.send(embed
+                    .setColor(alexaColor)
 					.setAuthor(`Let's get jiggy with it, ${message.author.username}`)
 					.setThumbnail("https://media.giphy.com/media/kLM9I1g8jsiAM/giphy.gif")
-					.setImage(`https://i.ytimg.com/vi/${firstResult.videoId}/mqdefault.jpg`)
-					.setFooter(firstResult.title));
+                    .setImage(`https://i.ytimg.com/vi/${firstResult.videoId}/mqdefault.jpg`)
+                    .addField(`${firstResult.title} (${firstResult.timestamp})`,`https://www.youtube.com/watch?v=${firstResult.videoId}`)
+					.setFooter(`${firstResult.views.toLocaleString()} views | Uploaded ${firstResult.ago}`));
 					console.log(server.queue[0]);
 				const channel = message.member.voiceChannel;
 				channel.join()

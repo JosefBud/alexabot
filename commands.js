@@ -9,6 +9,7 @@ const ytSearch = require( 'yt-search' );
 const SQLite = require("better-sqlite3");
 const bannedChannelsSql = new SQLite('./bannedChannels.sqlite');
 const embed = new Discord.RichEmbed();
+var servers = {};
 // const bannedChannelsSet = new Set();
 var disconnectTimer;
 
@@ -164,7 +165,20 @@ Will make an Amazon™ purchase and charge it to someone else's account. This is
         else {
                 message.reply(`get in a voice channel, ya bonehead`);
         }
-    },
+	},
+	
+	queue: function(message) {
+		if (!servers[message.guild.id]) {
+			servers[message.guild.id] = {
+				queue: []
+			};
+		}
+		var server = servers[message.guild.id];
+		var songRequest = message.content.slice(12);
+		server.queue.push(songRequest);
+		console.log(server);
+	},
+
     buy: function(message,client) {
 // PULLS RANDOM MEMBER FROM THE SERVER/GUILD MEMBER LIST FOR USE WITH THE "ALEXA BUY" COMMAND
         let everyoneArray = message.guild.members.array();

@@ -49,6 +49,10 @@ client.on('message', message => {
         if (msgContent === "alexa give me the deets") {
             console.log(client.guilds.map(u => u.name))
         }
+
+        if (msgContent.startsWith("alexa queue")) {
+            Commands.queue(message);
+        }
         
 //
 // ALEXA POINTS / SQL TEST

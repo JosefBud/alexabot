@@ -21,7 +21,7 @@ client.on('ready', () => {
     //}
     
     setInterval(() => {
-        dbl.postStats(client.guilds.size, client.shards.Id, client.shards.total);
+        dbl.postStats(client.guilds.size/*, client.shards.Id, client.shards.total*/);
     }, 1800000);
     dbl.on('posted', () => {
         console.log('Server count posted!');

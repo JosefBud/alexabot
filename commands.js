@@ -38,9 +38,7 @@ Alexa volume
 Will bring up the volume commands. \`Alexa volume down\` or \`Alexa volume up\` changes the volume by 10%. This doesn't work *while* you're playing a song, it only adjusts it for the next time you play a song.
             	`)
 			);
-		}
-        
-        if (msgContent.slice(-1) === "2") {
+		} else if (msgContent.slice(-1) === "2") {
             message.channel.send(helpEmbed
                 .setAuthor(`Alexa Commands - Page 2`)
                 .setTitle(`Use "Alexa help [page #]"`)
@@ -60,9 +58,7 @@ Alexa flip
 Will flip a coin. You either win money or you don't.
                 `)
             );
-        }
-
-        if (msgContent.slice(-1) === "3") {
+        } else if (msgContent.slice(-1) === "3") {
 			message.channel.send(helpEmbed
                 .setAuthor(`Alexa Commands - Page 3`)
                 .setTitle(`Use "Alexa help [page #]"`)
@@ -81,9 +77,7 @@ Alexa give me /r/[subreddit]
 Will give you a random top post of the day from that subreddit.
 				`)
 			);
-		}
-
-		if (msgContent.slice(-1) === "4") {
+		} else if (msgContent.slice(-1) === "4") {
 			message.channel.send(helpEmbed
                 .setAuthor(`Alexa Commands - Page 4`)
                 .setTitle(`Use "Alexa help [page #]"`)

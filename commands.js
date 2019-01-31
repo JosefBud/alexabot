@@ -22,6 +22,7 @@ const Commands = {
 
     help: function(message, msgContent) {
         const helpEmbed = new Discord.RichEmbed();
+        helpEmbed.setColor("#31C4F3");
         if (msgContent.slice(-1) === "1" || msgContent === "alexa" || msgContent === "alexa help" || msgContent === "alexa commands") {
         	message.channel.send(helpEmbed
             	.setAuthor(`Alexa Commands - Page 1`)

@@ -226,6 +226,10 @@ Will make an Amazon™ purchase and charge it to someone else's account. This is
         }
 
         var songRequest = message.content.slice(12);
+        if (songRequest.includes("list=")) {
+            message.channel.send("I don't support directly linking YouTube playlists yet, bb. Don't do me dirty like that.");
+            return;
+        }
         server.queue.push(songRequest);
         server.requester.push(message.author.username);
         

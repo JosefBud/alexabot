@@ -193,7 +193,10 @@ Will make an Amazon™ purchase and charge it to someone else's account. This is
 			})
 		}
 		else {
-				message.reply(`get in a voice channel, ya bonehead`);
+            if (server.queue[0]) {
+                message.channel.send("There's still more songs in the queue but everyone left me so I'm just gonna... leave... now... I guess...")
+                message.guild.voiceConnection.disconnect();
+            } else {message.reply(`get in a voice channel, ya bonehead`);}
 		}
 	},
 	

@@ -10,7 +10,8 @@ const SQLite = require("better-sqlite3");
 const bannedChannelsSql = new SQLite('./bannedChannels.sqlite');
 const embed = new Discord.RichEmbed();
 if (!servers) {var servers = {};}
-if (!server) {var server = {queue: []};}
+if (!server) {var server = {queue: [], requester: []};}
+if (!playReason) {var playReason = "";}
 // const bannedChannelsSet = new Set();
 var disconnectTimer;
 
@@ -135,9 +136,14 @@ Will make an Amazon™ purchase and charge it to someone else's account. This is
 						const stream = ytdl(`https://www.youtube.com/watch?v=${firstResult.videoId}`, { filter : 'audioonly' })
 						const dispatcher = connection.playStream(stream, streamOptions);
 						dispatcher.on("end", () => {
-							if (server.queue[0]) {
+                            console.log(playReason);
+                            if (playReason === "next") {
+                                playReason = "";
+                                return;
+                            } else if (server.queue[0]) {
 								Commands.play(message,`alexa play ${server.queue[0]}`)
-								server.queue.shift();
+                                server.queue.shift();
+                                server.requester.shift();
 							} else {
 								//message.guild.voiceConnection.disconnect();
 							}
@@ -177,22 +183,44 @@ Will make an Amazon™ purchase and charge it to someone else's account. This is
 	queue: function(message) {
 		if (!servers[message.guild.id]) {
 			servers[message.guild.id] = {
-				queue: []
+                queue: [],
+                requester: []
 			};
-		}
-		server = servers[message.guild.id];
-		var songRequest = message.content.slice(12);
-		server.queue.push(songRequest);
+        }
+        server = servers[message.guild.id];
+        
+        if (message.content.toLowerCase() === "alexa queue") {
+            const queueEmbed = new Discord.RichEmbed();
+            queueEmbed.setTitle("Current song queue, sorted from next to last")
+            server.queue.forEach((name, index) => {queueEmbed.addField(name, `requested by ${server.requester[index]}`, false)});
+            message.channel.send(queueEmbed);
+            return;
+        }
+
+        var songRequest = message.content.slice(12);
+        server.queue.push(songRequest);
+        server.requester.push(message.author.username);
+        
 		message.channel.send(`${message.author.username} has added *"${songRequest}"* to the queue **(warning: this feature is currently under construction)**`)
 		console.log(server.queue);
 	},
 
 	next: function(message) {
 		if (server.queue[0]) {
+            playReason = "next";
 			Commands.play(message,`alexa play ${server.queue[0]}`)
-			server.queue.shift();
+            server.queue.shift();
+            server.requester.shift();
 		} else {message.channel.send("There is no next song, silly gooth!")}
 	},
+
+    clearQueue: function(message) {
+        if (server.queue[0]) {
+            server.queue = [];
+            server.requester = [];
+            message.channel.send("The song queue has been cleared!")
+        } else {message.channel.send("There is no song queue to clear!")}
+    },
 
     stfu: function(message) {
         if (message.guild.voiceConnection) {

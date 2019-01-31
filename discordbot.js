@@ -116,6 +116,10 @@ client.on('message', message => {
         if (msgContent.startsWith("alexa next")) {
             Commands.next(message);
         }
+
+        if (msgContent.startsWith("alexa clear queue")) {
+            Commands.clearQueue(message);
+        }
         
         if (msgContent.startsWith("alexa stfu") || msgContent.startsWith("alexa shut up") || msgContent.startsWith("alexa fuck off")) {
             Commands.stfu(message);

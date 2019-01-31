@@ -49,10 +49,6 @@ client.on('message', message => {
         if (msgContent === "alexa give me the deets") {
             console.log(client.guilds.map(u => u.name))
         }
-
-        if (msgContent.startsWith("alexa queue")) {
-            Commands.queue(message);
-        }
         
 //
 // ALEXA POINTS / SQL TEST
@@ -108,8 +104,17 @@ client.on('message', message => {
         if (msgContent.startsWith(`alexa volume`)) {
             Commands.volume(message);
         }
+
         if (msgContent.startsWith(`alexa play`)) {
            Commands.play(message,msgContent);
+        }
+
+        if (msgContent.startsWith("alexa queue")) {
+            Commands.queue(message);
+        }
+
+        if (msgContent.startsWith("alexa next")) {
+            Commands.next(message);
         }
         
         if (msgContent.startsWith("alexa stfu") || msgContent.startsWith("alexa shut up") || msgContent.startsWith("alexa fuck off")) {

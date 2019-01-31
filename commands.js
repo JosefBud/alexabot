@@ -183,7 +183,15 @@ Will make an Amazon™ purchase and charge it to someone else's account. This is
 		server = servers[message.guild.id];
 		var songRequest = message.content.slice(12);
 		server.queue.push(songRequest);
+		message.channel.send(`${message.author.username} has added *"${songRequest}"* to the queue **(warning: this feature is currently under construction)**`)
 		console.log(server.queue);
+	},
+
+	next: function(message) {
+		if (server.queue[0]) {
+			Commands.play(message,`alexa play ${server.queue[0]}`)
+			server.queue.shift();
+		} else {message.channel.send("There is no next song, silly gooth!")}
 	},
 
     stfu: function(message) {

@@ -144,7 +144,7 @@ Will make an Amazon™ purchase and charge it to someone else's account. This is
 				message.channel.send(embed
 					.setAuthor(`Let's get jiggy with it, ${message.author.username}`)
 					.setThumbnail("https://media.giphy.com/media/kLM9I1g8jsiAM/giphy.gif")
-					.setImage(`https://i.ytimg.com/vi/${firstResult.videoId}/default.jpg`)
+					.setImage(`https://i.ytimg.com/vi/${firstResult.videoId}/mqdefault.jpg`)
 					.setFooter(firstResult.title));
 					console.log(server.queue[0]);
 				const channel = message.member.voiceChannel;

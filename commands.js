@@ -179,7 +179,7 @@ Will make an Amazon™ purchase and charge it to someone else's account. This is
 							setTimeout(() => {
 								message.channel.send(`Something went wrong! Alexa is sorry, bb. Try again or try a different search term.`)
 							}, 500),
-							console.error,
+							console.error
 							//message.guild.voiceConnection.disconnect()
 						}
 					})

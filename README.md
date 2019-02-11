@@ -1,5 +1,5 @@
 # alexabot
-Discord bot that does a whole gaggle of things.
+Discord bot that does a whole gaggle of things...
 
 [Bot invite](https://discordapp.com/api/oauth2/authorize?client_id=534469636381736981&permissions=8&redirect_uri=https%3A%2F%2Fdiscordapp.com%2Foauth2%2Fauthorize%3F%26client_id%3D534469636381736981%26scope%3Dbot&scope=bot)
 

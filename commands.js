@@ -42,50 +42,28 @@ const Commands = {
             message.channel.send(helpEmbed
                 .setAuthor(`Alexa Commands - Page 2`)
                 .setTitle(`Use "Alexa help [page #]"`)
-                .setDescription(`
-FAIR WARNING: I'm still working on this bot and frequently reset the database, don't get too attached to your XP, level and pretend money.
-\`\`\`css
-Alexa profile
-\`\`\`
-Will show you your profile.
-\`\`\`css
-Alexa steal [@somebody]
-\`\`\` 
-Will steal some cash from another person. There may or may not be a very small chance to steal a lot more than usual.
-\`\`\`css
-Alexa flip
-\`\`\`
-Will flip a coin. You either win money or you don't.
+                .setDescription(`*FAIR WARNING: I'm still working on this bot and frequently reset the database, don't get too attached to your XP, level and pretend money.*
+                    **Alexa profile** will show you your profile.
+                    **Alexa steal [@somebody]** will steal some cash from another person. There may or may not be a very small chance to steal a lot more than usual.
+                    **Alexa flip** will flip a coin. You either win money or you don't.
                 `)
             );
         } else if (msgContent.slice(-1) === "3") {
 			message.channel.send(helpEmbed
                 .setAuthor(`Alexa Commands - Page 3`)
                 .setTitle(`Use "Alexa help [page #]"`)
-				.setDescription(`
-\`\`\`css
-Alexa WoW profile [realm name] [character name]
-\`\`\`
-Will bring up info about that World of Warcraft character.
-\`\`\`css
-Alexa give me a meme
-\`\`\`
-Will give you a random fresh meme from Reddit.
-\`\`\`css
-Alexa give me /r/[subreddit]
-\`\`\`
-Will give you a random top post of the day from that subreddit.
+                .setDescription(`
+                    **Alexa WoW profile [realm name] [character name]** will bring up info about that World of Warcraft character.
+                    **Alexa give me a meme** will give you a random fresh meme from Reddit.
+                    **Alexa give me /r/[subreddit]** will give you a random top post of the day from that subreddit.
 				`)
 			);
 		} else if (msgContent.slice(-1) === "4") {
 			message.channel.send(helpEmbed
                 .setAuthor(`Alexa Commands - Page 4`)
                 .setTitle(`Use "Alexa help [page #]"`)
-				.setDescription(`
-\`\`\`css
-Alexa buy [something]
-\`\`\`
-Will make an Amazon™ purchase and charge it to someone else's account. This is using l33t h4xx and is extremely illegal. Use with caution.
+                .setDescription(`
+                    **Alexa buy [something]** will make an Amazon™ purchase and charge it to someone else's account. This is using l33t h4xx and is extremely illegal. Use with caution.
 				`)
 			);
 		} else {message.channel.send("You may have typed something wrong or attempted to access a page that doesn't exist. Try again using `Alexa help [1-4]` (e.g. `Alexa help 1`).")}

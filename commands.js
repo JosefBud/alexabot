@@ -27,35 +27,15 @@ const Commands = {
         	message.channel.send(helpEmbed
             	.setAuthor(`Alexa Commands - Page 1`)
             	.setTitle(`Use "Alexa help [page 1-4]" (e.g. "Alexa help 1")`)
-            	.setDescription(`
-\`\`\`css
-Alexa play [song name]
-\`\`\` 
-Will stream a song from YouTube into the voice channel you're in. This is pulling the top search result from YouTube, and YouTube search sucks sometimes, so it helps if you include the artist name.
-\`\`\`css
-Alexa queue [song name]
-\`\`\`
-Will queue up a song to play when the current one is finished.
-\`\`\`css
-Alexa queue
-\`\`\`
-Will show the current queue of songs.
-\`\`\`css
-Alexa clear queue
-\`\`\`
-Will clear out the current queue of songs.
-\`\`\`css
-Alexa next
-\`\`\`
-Will play the next song in the queue.
-\`\`\`css
-Alexa STFU
-\`\`\` 
-Will disconnect Alexa from the voice channel.
-\`\`\`css
-Alexa volume
-\`\`\`
-Will bring up the volume commands. \`Alexa volume down\` or \`Alexa volume up\` changes the volume by 10%. This doesn't work *while* you're playing a song, it only adjusts it for the next time you play a song.
+                .setDescription(`
+                    **Alexa play [song name]** will stream a song from YouTube into the voice channel you're in. This is pulling the top search result from YouTube, and YouTube search sucks sometimes, so it helps if you include the artist name.
+                    **Alexa queue [song name]** will queue up a song to play when the current one is finished.
+                    **Alexa queue** will show the current queue of songs.
+                    **Alexa clear queue** will clear out the current queue of songs.
+                    **Alexa next** will play the next song in the queue.
+                    **Alexa STFU** will disconnect Alexa from the voice channel.
+                    **Alexa volume** will bring up the volume commands and current volume.
+                    **Alexa volume down** or **Alexa volume up** changes the volume by 10%. This doesn't work *while* you're playing a song, it only adjusts it for the next time you play a song.
             	`)
 			);
 		} else if (msgContent.slice(-1) === "2") {

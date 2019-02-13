@@ -46,6 +46,7 @@ const Commands = {
                     **Alexa profile** will show you your profile.
                     **Alexa steal [@somebody]** will steal some cash from another person. There may or may not be a very small chance to steal a lot more than usual.
                     **Alexa flip** will flip a coin. You either win money or you don't.
+                    **Alexa vote** will provide the link to vote for Alexa on discordbots.org.
                 `)
             );
         } else if (msgContent.slice(-1) === "3") {

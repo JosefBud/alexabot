@@ -57,6 +57,10 @@ client.on('message', message => {
             Commands.help(message, msgContent);
         }
 
+        if (msgContent === "alexa vote") {
+            message.channel.send("Well aren't you just the sweetest lil' thang voting for me... Here ya go, qt: https://discordbots.org/bot/534469636381736981/vote");
+        }
+
         if (msgContent.startsWith(`alexa get out of`)) {
             Commands.getOut(message,msgContent);
         }

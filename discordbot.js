@@ -59,9 +59,6 @@ client.on('message', message => {
             })
         }
         
-//
-// ALEXA POINTS / SQL TEST
-//
         if (msgContent === "alexa" || msgContent.startsWith(`alexa help`) || msgContent.startsWith(`alexa commands`)) {
             Commands.help(message, msgContent);
         }
@@ -107,9 +104,7 @@ client.on('message', message => {
         if (msgContent.startsWith(`alexa profile`)) {
             Game.getProfile(message);
         }
-//
-// ALEXA TEST COMMAND
-//
+
         if (msgContent.startsWith(`alexa test`)) {
             Game.test(message);
         }

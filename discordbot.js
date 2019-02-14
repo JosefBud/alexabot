@@ -16,6 +16,7 @@ const Reddit = require('./reddit.js');
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
     console.log(client.debug);
+    client.user.setActivity('\"Alexa help\"', { type: 'LISTENING' })
     Game.prep(client);
     //if (user.guild.voiceConnection) {
     //    user.guild.voiceConnection.disconnect();

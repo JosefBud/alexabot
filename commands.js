@@ -26,7 +26,7 @@ const Commands = {
         if (msgContent.slice(-1) === "1" || msgContent === "alexa" || msgContent === "alexa help" || msgContent === "alexa commands") {
         	message.channel.send(helpEmbed
             	.setAuthor(`Alexa Commands - Page 1`)
-            	.setTitle(`Use "Alexa help [page 1-4]" (e.g. "Alexa help 1")`)
+            	.setTitle(`Use "Alexa help [1-4]" (e.g. "Alexa help 1")`)
                 .setDescription(`
                     **Alexa play [song name]** will stream a song from YouTube into the voice channel you're in. This is pulling the top search result from YouTube, and YouTube search sucks sometimes, so it helps if you include the artist name.
                     **Alexa queue [song name]** will queue up a song to play when the current one is finished.
@@ -41,7 +41,7 @@ const Commands = {
 		} else if (msgContent.slice(-1) === "2") {
             message.channel.send(helpEmbed
                 .setAuthor(`Alexa Commands - Page 2`)
-                .setTitle(`Use "Alexa help [page #]"`)
+                .setTitle(`Use "Alexa help [1-4]" (e.g. "Alexa help 1")`)
                 .setDescription(`*FAIR WARNING: I'm still working on this bot and frequently reset the database, don't get too attached to your XP, level and pretend money.*
                     **Alexa profile** will show you your profile.
                     **Alexa steal [@somebody]** will steal some cash from another person. There may or may not be a very small chance to steal a lot more than usual.
@@ -52,7 +52,7 @@ const Commands = {
         } else if (msgContent.slice(-1) === "3") {
 			message.channel.send(helpEmbed
                 .setAuthor(`Alexa Commands - Page 3`)
-                .setTitle(`Use "Alexa help [page #]"`)
+                .setTitle(`Use "Alexa help [1-4]" (e.g. "Alexa help 1")`)
                 .setDescription(`
                     **Alexa WoW profile [realm name] [character name]** will bring up info about that World of Warcraft character.
                     **Alexa give me a meme** will give you a random fresh meme from Reddit.
@@ -62,7 +62,7 @@ const Commands = {
 		} else if (msgContent.slice(-1) === "4") {
 			message.channel.send(helpEmbed
                 .setAuthor(`Alexa Commands - Page 4`)
-                .setTitle(`Use "Alexa help [page #]"`)
+                .setTitle(`Use "Alexa help [1-4]" (e.g. "Alexa help 1")`)
                 .setDescription(`
                     **Alexa buy [something]** will make an Amazon™ purchase and charge it to someone else's account. This is using l33t h4xx and is extremely illegal. Use with caution.
 				`)

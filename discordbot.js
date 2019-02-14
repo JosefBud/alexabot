@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const config = require('./config.json');
 const user = new Discord.Message();
+const fs = require('fs');
 const DBL = require('dblapi.js');
 const dbl = new DBL(config.dblToken,client);
 //const SQLite = require("better-sqlite3");
@@ -48,6 +49,14 @@ client.on('message', message => {
 
         if (msgContent === "alexa give me the deets") {
             console.log(client.guilds.map(u => u.name))
+        }
+
+        if (msgContent.startsWith("alexa")) {
+            let logIt = consoleTimeStamp.toLocaleDateString('en-us',{timeZone:'America/New_York'}) + " " + consoleTimeStamp.toLocaleTimeString('en-us',{timeZone:'America/New_York'}) + " " + message.author.username + " (" + message.guild.name + "): " + message.content;
+            fs.appendFile('alexaCalls.log', "\r\n" + logIt, (err) => {
+                if (err) throw err;
+                console.log('The "data to append" was appended to file!');
+            })
         }
         
 //

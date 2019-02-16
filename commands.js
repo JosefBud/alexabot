@@ -47,6 +47,8 @@ const Commands = {
                     **Alexa steal [@somebody]** will steal some cash from another person. There may or may not be a very small chance to steal a lot more than usual.
                     **Alexa flip** will flip a coin. You either win money or you don't.
                     **Alexa vote** will provide the link to vote for Alexa on discordbots.org.
+                    **Alexa get out of [#channel]** will stop Alexa from listening in the channel you specify.
+                    **Alexa come back to [#channel]** will bring Alexa back to a channel she was kicked out of.
                 `)
             );
         } else if (msgContent.slice(-1) === "3") {
@@ -269,9 +271,9 @@ const Commands = {
 	},
 	
 	getOut: function(message,msgContent) {
+        const channelId = msgContent.slice(19,-1);
 		const getChannels = bannedChannelsSql.prepare("SELECT * FROM bannedChannels WHERE id = ?;")
 		const setChannels = bannedChannelsSql.prepare("INSERT OR REPLACE INTO bannedChannels (id, guildId, channelId) VALUES (@id, @guildId, @channelId);")
-		const channelId = msgContent.slice(19,-1);
 		
 		if (channelId.length !== 18) {
 			message.channel.send(`You may have typed something wrong. Try again and remember to only use one channel at a time, and tag it using \`#\`.`)
@@ -281,7 +283,23 @@ const Commands = {
 				guildId: message.guild.id,
 				channelId: channelId
 			}
-			setChannels.run(bannedChannelObj);
+            setChannels.run(bannedChannelObj);
+            message.channel.send(`Okay! I'll ignore your pleas for help in that channel. Use **Alexa come back to [channel]** to bring me back there`)
+		}
+    },
+    
+    comeBack: function(message,msgContent) {
+        const channelId = msgContent.slice(21,-1);
+		const getChannels = bannedChannelsSql.prepare("SELECT * FROM bannedChannels WHERE id = ?;").get(`${message.guild.id}-${channelId}`)
+		const setChannels = bannedChannelsSql.prepare("DELETE FROM bannedChannels WHERE id = ?;")
+		
+		if (channelId.length !== 18) {
+			message.channel.send(`You may have typed something wrong. Try again and remember to only use one channel at a time, and tag it using \`#\`.`)
+		} else if (!getChannels) {
+            message.channel.send(`I'm already allowed in there, thilly!`)
+        } else {
+            setChannels.run(`${message.guild.id}-${channelId}`);
+            message.channel.send(`Okay! I'll come back. But only because you said the magic words.`)
 		}
 	}
 };

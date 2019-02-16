@@ -5,8 +5,9 @@ const user = new Discord.Message();
 const fs = require('fs');
 const DBL = require('dblapi.js');
 const dbl = new DBL(config.dblToken,client);
-//const SQLite = require("better-sqlite3");
+const SQLite = require("better-sqlite3");
 //const sql = new SQLite('./scores.sqlite');
+const bannedChannelsSql = new SQLite('./bannedChannels.sqlite');
 const Commands = require('./commands.js');
 const Game = require('./game.js');
 const BlizzardCmd = require('./blizzard.js');
@@ -37,12 +38,23 @@ client.on('message', message => {
     if (message.channel.type === 'dm') {
         return;
     }
+    let msgContent = message.content.toLowerCase().replace(/[,!'.]/gi,"");
+
+    if (msgContent.startsWith(`alexa come back to`)) {
+        Commands.comeBack(message,msgContent);
+    }
+
+    let bannedChannels = bannedChannelsSql.prepare("SELECT * FROM bannedChannels WHERE channelId = ?").get(message.channel.id);
+    if (bannedChannels) {
+        if (bannedChannels.id === `${message.guild.id}-${message.channel.id}`) {
+            return;
+        }
+    }
     let consoleTimeStamp = new Date();
     if (message.guild.name !== "Discord Bot List") {
         console.log(consoleTimeStamp.toLocaleDateString('en-us',{timeZone:'America/New_York'}),`(${consoleTimeStamp.toLocaleTimeString('en-us',{timeZone:'America/New_York'})})`,`${message.author.username} (${message.guild.name}): ${message.content}`);
     }
 // REMOVES SPECIFIC COMMON PUNCTUATION, LIKE SAYING "ALEXA, PLAY ____" OR "ALEXA PLAY ____."
-    let msgContent = message.content.toLowerCase().replace(/[,!'.]/gi,"");
 
 // NOT-BOT CHECK
     if (!message.author.bot) {
@@ -71,6 +83,7 @@ client.on('message', message => {
         if (msgContent.startsWith(`alexa get out of`)) {
             Commands.getOut(message,msgContent);
         }
+
         if (msgContent.startsWith(`alexa xp`)) {
             //message.reply(`You currently have ${score.points} points and are level ${score.level}!`);
             //console.log(score)

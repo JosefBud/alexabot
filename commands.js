@@ -4,10 +4,10 @@ const Discord = require('discord.js');
 // const user = new Discord.Message();
 // const broadcast = client.createVoiceBroadcast();
 const ytdl = require('ytdl-core');
-const streamOptions = { seek: 0, volume: 0.5 };
 const ytSearch = require( 'yt-search' );
 const SQLite = require("better-sqlite3");
 const bannedChannelsSql = new SQLite('./bannedChannels.sqlite');
+const serverVolumeSql = new SQLite('./serverVolume.sqlite');
 var alexaColor = "#31C4F3";
 if (!servers) {var servers = {};}
 if (!server) {var server = {queue: [], requester: []};}
@@ -72,22 +72,26 @@ const Commands = {
 
     volume: function(message) {
         const volumeEmbed = new Discord.RichEmbed();
+        const serverVolume = serverVolumeSql.prepare("SELECT * FROM serverVolume WHERE guildId = ?").get(message.guild.id)
+        const setServerVolume = serverVolumeSql.prepare("UPDATE serverVolume SET volume = @volume WHERE guildId = @guildId;")
         if (message.content.toLowerCase().includes("down") && !message.content.toLowerCase().includes("up")) {
-            if (streamOptions.volume > 0.2) {
-                streamOptions.volume = streamOptions.volume - 0.1;
+            if (serverVolume.volume > 0.2) {
+                serverVolume.volume = serverVolume.volume - 0.1;
+                setServerVolume.run(serverVolume);
                 message.channel.send("Volume has been turned down for future songs");
             } else {message.channel.send("Volume is too low to be turned down further!")}
         }
 
         else if (message.content.toLowerCase().includes("up") && !message.content.toLowerCase().includes("down")) {
-            if (streamOptions.volume < 0.99) {
-                streamOptions.volume = streamOptions.volume + 0.1;
+            if (serverVolume.volume < 0.99) {
+                serverVolume.volume = serverVolume.volume + 0.1;
+                setServerVolume.run(serverVolume)
                 message.channel.send("Volume has been turned up for future songs");
             } else {message.channel.send("Volume is too high to be turned up further!")}
         } else {
             message.channel.send(volumeEmbed
                 .addField("Setting volume for the \"Alexa play\" command","\`Alexa volume down\` turns volume down 10% \n \`Alexa volume up\` turns volume up 10%")
-                .setFooter(`The volume is currently at ${Math.floor(streamOptions.volume * 100)}%`));
+                .setFooter(`The volume is currently at ${Math.floor(serverVolume.volume * 100)}%`));
         }
     },
 
@@ -114,10 +118,16 @@ const Commands = {
                     .addField(`${firstResult.title} (${firstResult.timestamp})`,`https://www.youtube.com/watch?v=${firstResult.videoId}`)
 					.setFooter(`${firstResult.views.toLocaleString()} views | Uploaded ${firstResult.ago}`));
 					console.log(server.queue[0]);
-				const channel = message.member.voiceChannel;
+                const channel = message.member.voiceChannel;
+                const getServerVolume = serverVolumeSql.prepare("SELECT * FROM serverVolume WHERE guildId = ?").get(message.guild.id);
+                if (!getServerVolume) {
+                    streamOptions = {seek: 0, volume: 0.5};
+                } else {
+                    streamOptions = {seek: 0, volume: getServerVolume.volume};
+                }
 				channel.join()
 					.then(connection => {
-						const stream = ytdl(`https://www.youtube.com/watch?v=${firstResult.videoId}`, { filter : 'audioonly' })
+                        const stream = ytdl(`https://www.youtube.com/watch?v=${firstResult.videoId}`, { filter : 'audioonly' })
 						const dispatcher = connection.playStream(stream, streamOptions);
 						dispatcher.on("end", () => {
                             console.log(playReason);

@@ -9,6 +9,7 @@ const Discord = require('discord.js');
 const SQLite = require("better-sqlite3");
 const sql = new SQLite('./game.sqlite');
 const bannedChannelsSql = new SQLite('./bannedChannels.sqlite');
+const serverVolumeSql = new SQLite('./serverVolume.sqlite');
 const userStealCoinsCooldowns = new Set();
 const userFlipCoinCooldowns = new Set();
 
@@ -30,8 +31,19 @@ const Game = {
             bannedChannelsSql.pragma("journal_mode = wal");
         }
 
+        const serverVolumeTable = serverVolumeSql.prepare("SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name = 'serverVolume';").get();
+        if (!serverVolumeTable['count(*)']) {
+            serverVolumeSql.prepare("CREATE TABLE serverVolume (guildId TEXT PRIMARY KEY, volume INTEGER);").run();
+            serverVolumeSql.prepare("CREATE UNIQUE INDEX idx_serverVolume_id ON serverVolume (guildId);").run();
+            serverVolumeSql.pragma("synchronous = 1");
+            serverVolumeSql.pragma("journal_mode = wal");
+        }
+
         client.getProfile = sql.prepare("SELECT * FROM game WHERE userId = ? AND guild = ?");
         client.setProfile = sql.prepare("INSERT OR REPLACE INTO game (id, userId, username, avatarUrl, guild, stage, xp, level, skillPoints, strength, constitution, dexterity, intelligence, wisdom, charisma, currency, stealCoinsCooldown, flipCoinCooldown) VALUES (@id, @userId, @username, @avatarUrl, @guild, @stage, @xp, @level, @skillPoints, @strength, @constitution, @dexterity, @intelligence, @wisdom, @charisma, @currency, @stealCoinsCooldown, @flipCoinCooldown);");
+
+        client.getServerVolume = serverVolumeSql.prepare("SELECT * FROM serverVolume WHERE guildId = ?");
+        client.setServerVolume = serverVolumeSql.prepare("INSERT OR REPLACE INTO serverVolume (guildId, volume) VALUES (@guildId, @volume)")
     },
 
     profile: function(client,message) {
@@ -66,6 +78,15 @@ const Game = {
             profile.xp = 0;
         };
         setTimeout(function(){client.setProfile.run(profile);}, 500);
+
+        const serverVolumeCheck = client.getServerVolume.get(message.guild.id)
+        if (!serverVolumeCheck) {
+            setServerVolume = {
+                guildId: message.guild.id,
+                volume: 0.5
+            };
+            client.setServerVolume.run(setServerVolume);
+        }
     },
 
     test: function(message) {

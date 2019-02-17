@@ -35,6 +35,7 @@ const Commands = {
                     **Alexa next** will play the next song in the queue.
                     **Alexa STFU** will disconnect Alexa from the voice channel.
                     **Alexa volume** will bring up the volume commands and current volume.
+                    **Alexa volume [0-100]%** will change the volume to the number you set.
                     **Alexa volume down** or **Alexa volume up** changes the volume by 10%. This doesn't work *while* you're playing a song, it only adjusts it for the next time you play a song.
             	`)
 			);
@@ -90,7 +91,17 @@ const Commands = {
                 setServerVolume.run(serverVolume)
                 message.channel.send("Volume has been turned up for future songs");
             } else {message.channel.send("Volume is too high to be turned up further!")}
-        } else {
+        } 
+        
+        else if (parseInt(message.content.slice(13)) >= 0 && parseInt(message.content.slice(13)) <= 100) {
+            let newVolume = Math.floor(parseInt(message.content.slice(13))) / 100;
+            serverVolume.volume = newVolume;
+            setServerVolume.run(serverVolume);
+            message.channel.send(`Volume has been changed to ${newVolume * 100}% for future songs`);
+            //console.log(newVolume);
+        }
+        
+        else {
             message.channel.send(volumeEmbed
                 .addField("Setting volume for the \"Alexa play\" command","\`Alexa volume down\` turns volume down 10% \n \`Alexa volume up\` turns volume up 10%")
                 .setFooter(`The volume is currently at ${Math.floor(serverVolume.volume * 100)}%`));

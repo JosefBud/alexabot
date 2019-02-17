@@ -4,6 +4,7 @@
   "description": "alexa bot",
   "main": "discordbot.js",
   "dependencies": {
+    "algotrader": "^2.3.0",
     "better-sqlite3": "^5.3.0",
     "blizzard.js": "^3.0.0",
     "dblapi.js": "^2.3.0",

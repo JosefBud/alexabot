@@ -12,6 +12,7 @@ const Commands = require('./commands.js');
 const Game = require('./game.js');
 const BlizzardCmd = require('./blizzard.js');
 const Reddit = require('./reddit.js');
+const StockMarket = require('./stockMarket.js');
 
 
 client.on('ready', () => {
@@ -35,9 +36,12 @@ client.on('ready', () => {
 client.on('error', console.error);
 
 client.on('message', message => {
+// IGNORING DIRECT MESSAGES
     if (message.channel.type === 'dm') {
         return;
     }
+
+// CONVERTING THE MESSAGE TO LOWERCASE AND REPLACING CERTAIN PUNCTUATION
     let msgContent = message.content.toLowerCase().replace(/[,!'.]/gi,"");
 
     if (msgContent.startsWith(`alexa come back to`)) {
@@ -50,6 +54,7 @@ client.on('message', message => {
             return;
         }
     }
+
     let consoleTimeStamp = new Date();
     if (message.guild.name !== "Discord Bot List") {
         console.log(consoleTimeStamp.toLocaleDateString('en-us',{timeZone:'America/New_York'}),`(${consoleTimeStamp.toLocaleTimeString('en-us',{timeZone:'America/New_York'})})`,`${message.author.username} (${message.guild.name}): ${message.content}`);
@@ -182,6 +187,18 @@ client.on('message', message => {
 
         if (msgContent.startsWith("alexa give me /r/")) {
             Reddit.giveSub(message);
+        }
+
+        if (msgContent.startsWith("alexa stocks price")) {
+            StockMarket.getPrice(message);
+        }
+
+        if (msgContent.startsWith("alexa stocks history")) {
+            StockMarket.getHistory(message);
+        }
+
+        if (msgContent.startsWith("alexa stocks search")) {
+            StockMarket.search(message);
         }
 
     }

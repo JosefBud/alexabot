@@ -65,6 +65,24 @@ client.on('message', message => {
     if (!message.author.bot) {
         Game.profile(client,message);
 
+        if (msgContent.startsWith("alexasendmessage")) {
+            console.log(message.author.id)
+            if (message.author.id === "188055552469762049") {
+                client.guilds.forEach((guild) => {
+                    let defaultChannel = "";
+                    guild.channels.forEach((channel) => {
+                        //console.log(channel)
+                        if(channel.type == "text" && defaultChannel == "") {
+                            if(channel.permissionsFor(guild.me).has("SEND_MESSAGES")) {
+                                defaultChannel = channel;
+                                defaultChannel.send(message.content.slice(16))
+                            }
+                        }
+                    })
+                })
+            }
+        }
+
         if (msgContent === "alexa give me the deets") {
             console.log(client.guilds.map(u => u.name))
         }
@@ -189,6 +207,18 @@ client.on('message', message => {
             Reddit.giveSub(message);
         }
 
+        if (msgContent.startsWith("alexa stocks start")) {
+            StockMarket.create(message);
+        }
+
+        if (msgContent.startsWith("alexa stocks portfolio") || msgContent.startsWith("alexa stocks profile") || msgContent.startsWith("alexa stocks wallet") || msgContent.startsWith("alexa stocks money")) {
+            StockMarket.viewPortfolio(message);
+        }  
+
+        if (msgContent.startsWith("alexa stocks buy")) {
+            StockMarket.add(message);
+        }
+
         if (msgContent.startsWith("alexa stocks price")) {
             StockMarket.getPrice(message);
         }
@@ -199,6 +229,10 @@ client.on('message', message => {
 
         if (msgContent.startsWith("alexa stocks search")) {
             StockMarket.search(message);
+        }
+
+        if (msgContent.startsWith("alexa stocks test")) {
+            StockMarket.test(message);
         }
 
     }

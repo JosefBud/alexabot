@@ -10,6 +10,8 @@ const SQLite = require("better-sqlite3");
 const sql = new SQLite('./game.sqlite');
 const bannedChannelsSql = new SQLite('./bannedChannels.sqlite');
 const serverVolumeSql = new SQLite('./serverVolume.sqlite');
+const traders = new SQLite('./traders.sqlite');
+const portfolios = new SQLite('./portfolios.sqlite');
 const userStealCoinsCooldowns = new Set();
 const userFlipCoinCooldowns = new Set();
 
@@ -29,6 +31,22 @@ const Game = {
             bannedChannelsSql.prepare("CREATE UNIQUE INDEX idx_game_id ON bannedChannels (id);").run();
             bannedChannelsSql.pragma("synchronous = 1");
             bannedChannelsSql.pragma("journal_mode = wal");
+        }
+
+        const tradersTable = traders.prepare("SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name = 'traders';").get();
+        if (!tradersTable['count(*)']) {
+            traders.prepare("CREATE TABLE traders (userId TEXT PRIMARY KEY, money INTEGER);").run();
+            traders.prepare("CREATE UNIQUE INDEX idx_game_id ON traders (userId);").run();
+            traders.pragma("synchronous = 1");
+            traders.pragma("journal_mode = wal");
+        }
+
+        const portfoliosTable = portfolios.prepare("SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name = 'portfolios';").get();
+        if (!portfoliosTable['count(*)']) {
+            portfolios.prepare("CREATE TABLE portfolios (userId TEXT, symbol TEXT, companyName TEXT, qty INTEGER, purchasePrice INTEGER);").run();
+            //portfolios.prepare("CREATE UNIQUE INDEX idx_game_id ON traders (userId);").run();
+            portfolios.pragma("synchronous = 1");
+            portfolios.pragma("journal_mode = wal");
         }
 
         const serverVolumeTable = serverVolumeSql.prepare("SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name = 'serverVolume';").get();

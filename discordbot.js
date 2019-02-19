@@ -234,11 +234,15 @@ client.on('message', message => {
         if (msgContent.startsWith("alexa stocks search")) {
             StockMarket.search(message);
         }
-/*
+
+        if (msgContent.startsWith("alexa stocks leaderboard")) {
+            StockMarket.leaderboard(message);
+        }
+
         if (msgContent.startsWith("alexa stocks test")) {
             StockMarket.leaderboard(message);
         }
-*/
+
         if (msgContent.startsWith("alexa stocks help") || msgContent === "alexa stocks") {
             StockMarket.help(message);
         }

@@ -12,6 +12,7 @@ const bannedChannelsSql = new SQLite('./bannedChannels.sqlite');
 const serverVolumeSql = new SQLite('./serverVolume.sqlite');
 const traders = new SQLite('./traders.sqlite');
 const portfolios = new SQLite('./portfolios.sqlite');
+const leaderboard = new SQLite('./leaderboard.sqlite');
 const userStealCoinsCooldowns = new Set();
 const userFlipCoinCooldowns = new Set();
 
@@ -47,6 +48,14 @@ const Game = {
             //portfolios.prepare("CREATE UNIQUE INDEX idx_game_id ON traders (userId);").run();
             portfolios.pragma("synchronous = 1");
             portfolios.pragma("journal_mode = wal");
+        }
+
+        const leaderboardTable = leaderboard.prepare("SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name = 'leaderboard';").get();
+        if (!leaderboardTable['count(*)']) {
+            leaderboard.prepare("CREATE TABLE leaderboard (userId TEXT PRIMARY KEY, username TEXT, portfolioValue INTEGER);").run();
+            leaderboard.prepare("CREATE UNIQUE INDEX idx_game_id ON leaderboard (userId);").run();
+            leaderboard.pragma("synchronous = 1");
+            leaderboard.pragma("journal_mode = wal");
         }
 
         const serverVolumeTable = serverVolumeSql.prepare("SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name = 'serverVolume';").get();

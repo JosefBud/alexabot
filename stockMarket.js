@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const SQLite = require("better-sqlite3");
 const traders = new SQLite('./traders.sqlite')
 const portfolios = new SQLite('./portfolios.sqlite');
+const leaderboard = new SQLite('./leaderboard.sqlite');
 const algotrader = require('algotrader');
 const SMFunctions = require('./stockMarketFunctions.js');
 const Yahoo = algotrader.Data.Yahoo;
@@ -32,6 +33,8 @@ const StockMarket = {
                 **Alexa stocks price [symbol]** will show you the current price for shares of that company.
                 ---
                 **Alexa stocks history [symbol]** will show you a detailed history for that company's stock.
+                ---
+                **Alexa stocks leaderboard** will show you the current leaderboard for portfolio value.
             `)
             .setFooter("This game is still in sort of a beta stage. If you run into any issues/bugs or have suggestions, reach out to me on the Alexa Discord server: https://discord.gg/PysGrtD")
 
@@ -45,6 +48,7 @@ const StockMarket = {
             traders.prepare("INSERT OR REPLACE INTO traders (userId, money, username) VALUES (@userId, @money, @username)").run({userId: message.author.id, username: message.author.username, money: 50000})
             newProfile
                 .setAuthor(message.author.username, message.author.avatarURL)
+                .setColor(alexaColor)
                 .setTitle("Wallet:")
                 .setDescription("$50,000")
                 .addField("Portfolio:","You haven't purchased any stock yet!")
@@ -88,6 +92,7 @@ const StockMarket = {
                     await forEach(portfolio);
                     portfolioEmbed
                         .setAuthor(message.author.username, message.author.avatarURL)
+                        .setColor(alexaColor)
                         .setTitle("Wallet:")
                         .setDescription(`\$${money.toLocaleString('en-us',{timeZone:'America/New_York'})}`)
                         .addField("Portfolio value:", `\$${portfolioValue.toLocaleString('en-us',{timeZone:'America/New_York'})}`)
@@ -99,6 +104,7 @@ const StockMarket = {
             } else {
                 portfolioEmbed
                     .setAuthor(message.author.username, message.author.avatarURL)
+                    .setColor(alexaColor)
                     .setTitle("Wallet:")
                     .setDescription(`\$${money.toLocaleString('en-us',{timeZone:'America/New_York'})}`)
                     .addField("Portfolio:", "You haven't purchased any stock yet!")
@@ -133,6 +139,7 @@ const StockMarket = {
                 let confirmPurchase = new Discord.RichEmbed();
                 confirmPurchase
                     .setAuthor(message.author.username, message.author.avatarURL)
+                    .setColor(alexaColor)
                     .setThumbnail(SMFunctions.companyLogo)
                     .setTitle("Please confirm your purchase")
                     .setDescription(`**${qtyWanted} shares** of **${symbolWanted}** (${SMFunctions.companyName}) at **\$${SMFunctions.stockPrice.price.close}** each \n This would cost a total of **\$${cost.toFixed(2)}** and you currently have **\$${profile.money}** in your wallet`)
@@ -217,6 +224,7 @@ const StockMarket = {
                     let confirmSale = new Discord.RichEmbed();
                     confirmSale
                         .setAuthor(message.author.username, message.author.avatarURL)
+                        .setColor(alexaColor)
                         .setThumbnail(SMFunctions.companyLogo)
                         .setTitle("Please confirm your sale")
                         .setDescription(`**${qtyWanted} shares** of **${symbolWanted}** (${SMFunctions.companyName}) at **\$${SMFunctions.stockPrice.price.close}** each \n This would return a total of **\$${totalAmount.toFixed(2)}** to your wallet at a **\$${totalProfit.toFixed(2)}** profit`)
@@ -279,6 +287,7 @@ const StockMarket = {
         await SMFunctions.getLogo(SMFunctions.companySearch.symbol);
         searchEmbed
             .setAuthor(message.author.username, message.author.avatarURL)
+            .setColor(alexaColor)
             .setTitle(SMFunctions.companySearch.name)
             .setThumbnail(SMFunctions.companyLogo)
             .setURL(`https://finance.yahoo.com/quote/${SMFunctions.companySearch.symbol}`)
@@ -295,6 +304,7 @@ const StockMarket = {
         await SMFunctions.getHistory(symbol, message);
         historyEmbed
             .setAuthor(message.author.username, message.author.avatarURL)
+            .setColor(alexaColor)
             .setTitle(`${SMFunctions.stockHistory.companyName} (${SMFunctions.stockHistory.symbol})`)
             .setThumbnail(SMFunctions.companyLogo)
             .setURL(`https://finance.yahoo.com/quote/${symbol}`)
@@ -322,6 +332,7 @@ const StockMarket = {
         await SMFunctions.getPrice(symbol, message);
         getPriceEmbed
             .setAuthor(message.author.username, message.author.avatarURL, "")
+            .setColor(alexaColor)
             .setTitle(`${SMFunctions.companyName} (${symbol})`)
             .setThumbnail(`${SMFunctions.companyLogo}`)
             .setURL(`https://finance.yahoo.com/quote/${symbol}`)
@@ -332,27 +343,44 @@ const StockMarket = {
     },
 
     leaderboard: async function(message) {
-        let walletMoney = traders.prepare("SELECT money FROM traders WHERE userId = ?").get(message.author.id).money
         let portfolio = portfolios.prepare("SELECT * FROM portfolios WHERE userId = ?").all(message.author.id)
+        let leaderboardEmbed = new Discord.RichEmbed();
+        let newPortfolioValue = 0;
+        let description = "";
+        let place = 1;
+
         async function forEach(array) {
             for (let i = 0; i < array.length; i++) {
                 await SMFunctions.getPrice(portfolio[i].symbol, message);
-                let profitEach = (SMFunctions.stockPrice.price.close - portfolio[i].purchasePrice).toFixed(2);
-                let profitTotal = ((SMFunctions.stockPrice.price.close * portfolio[i].qty) - (portfolio[i].purchasePrice * portfolio[i].qty)).toFixed(2);
-                let profitPercent = (profitEach / portfolio[i].purchasePrice * 100).toFixed(2);
-                portfolioValue = portfolioValue + (SMFunctions.stockPrice.price.close * portfolio[i].qty);
-                if (profitTotal < 0) {
-                    portfolioDescription = portfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toFixed(2)} each \n Current price: \$${SMFunctions.stockPrice.price.close.toFixed(2)} | **\$${profitTotal}** total loss (${profitPercent}%) \n`;
-                } else {
-                    portfolioDescription = portfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toFixed(2)} each \n Current price: \$${SMFunctions.stockPrice.price.close.toFixed(2)} | **\$${profitTotal}** total profit (${profitPercent}%) \n`;
-                }
-                
-                //console.log(portfolioDescription)
+                newPortfolioValue = newPortfolioValue + (SMFunctions.stockPrice.price.close * portfolio[i].qty);
             }
         }
         
         async function embed() {
-            await forEach(portfolio)
+            await forEach(portfolio);
+            leaderboard.prepare("INSERT OR REPLACE INTO leaderboard (userId, username, portfolioValue) VALUES (@userId, @username, @portfolioValue)").run({userId: message.author.id, username: message.author.username, portfolioValue: newPortfolioValue})
+            let getLeaderboard = leaderboard.prepare("SELECT * FROM leaderboard ORDER BY portfolioValue DESC LIMIT 5").all();
+            getLeaderboard.forEach(user => {
+                let placement = ""
+                switch (place) {
+                    case 1: placement = "1st"; break;
+                    case 2: placement = "2nd"; break;
+                    case 3: placement = "3rd"; break;
+                    case 4: placement = "4th"; break;
+                    case 5: placement = "5th"; break;
+                }
+                description = description + `${placement}: **${user.username}** (\$${user.portfolioValue.toFixed(0)})\n`
+                place++;
+            })
+            console.log(getLeaderboard)
+            leaderboardEmbed
+                .setAuthor("Alexa Stock Market Game - Leaderboards")
+                .setColor(alexaColor)
+                .setTitle("Current leaderboard for portfolio values")
+                .setDescription(description)
+                .setFooter("Portfolio values only; doesn't include money in your wallet!")
+
+            message.channel.send(leaderboardEmbed)
         }
 
         embed();

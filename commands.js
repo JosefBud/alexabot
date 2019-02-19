@@ -54,6 +54,7 @@ const Commands = {
                     **Alexa stocks profile** or **Alexa stocks portfolio** will show you your current holdings, both in your wallet and your shares.
                     **Alexa stocks price [symbol]** will show you the current price for shares of that company.
                     **Alexa stocks history [symbol]** will show you a detailed history for that company's stock.
+                    **Alexa stocks leaderboard** will show you the current leaderboard for portfolio value.
                 `)
             );
         } else if (msgContent.slice(-1) === "3") {

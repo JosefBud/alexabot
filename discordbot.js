@@ -36,6 +36,7 @@ client.on('ready', () => {
 client.on('error', console.error);
 
 client.on('message', message => {
+    console.log(message.guild.name)
 // IGNORING DIRECT MESSAGES
     if (message.channel.type === 'dm') {
         return;
@@ -234,11 +235,11 @@ client.on('message', message => {
         if (msgContent.startsWith("alexa stocks search")) {
             StockMarket.search(message);
         }
-
+/*
         if (msgContent.startsWith("alexa stocks test")) {
-            StockMarket.test(message);
+            StockMarket.leaderboard(message);
         }
-
+*/
         if (msgContent.startsWith("alexa stocks help") || msgContent === "alexa stocks") {
             StockMarket.help(message);
         }

@@ -42,7 +42,7 @@ const StockMarket = {
         let newProfile = new Discord.RichEmbed();
         const checkExisting = traders.prepare("SELECT * FROM traders WHERE userId = ?").get(message.author.id);
         if (!checkExisting) {
-            traders.prepare("INSERT OR REPLACE INTO traders (userId, money) VALUES (@userId, @money)").run({userId: message.author.id, money: 50000})
+            traders.prepare("INSERT OR REPLACE INTO traders (userId, money, username) VALUES (@userId, @money, @username)").run({userId: message.author.id, username: message.author.username, money: 50000})
             newProfile
                 .setAuthor(message.author.username, message.author.avatarURL)
                 .setTitle("Wallet:")
@@ -329,6 +329,33 @@ const StockMarket = {
             .setFooter(`as of ${SMFunctions.stockPrice.date.toLocaleString('en-us',{timeZone:'America/New_York'})} EST`)
 
         message.channel.send(getPriceEmbed);
+    },
+
+    leaderboard: async function(message) {
+        let walletMoney = traders.prepare("SELECT money FROM traders WHERE userId = ?").get(message.author.id).money
+        let portfolio = portfolios.prepare("SELECT * FROM portfolios WHERE userId = ?").all(message.author.id)
+        async function forEach(array) {
+            for (let i = 0; i < array.length; i++) {
+                await SMFunctions.getPrice(portfolio[i].symbol, message);
+                let profitEach = (SMFunctions.stockPrice.price.close - portfolio[i].purchasePrice).toFixed(2);
+                let profitTotal = ((SMFunctions.stockPrice.price.close * portfolio[i].qty) - (portfolio[i].purchasePrice * portfolio[i].qty)).toFixed(2);
+                let profitPercent = (profitEach / portfolio[i].purchasePrice * 100).toFixed(2);
+                portfolioValue = portfolioValue + (SMFunctions.stockPrice.price.close * portfolio[i].qty);
+                if (profitTotal < 0) {
+                    portfolioDescription = portfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toFixed(2)} each \n Current price: \$${SMFunctions.stockPrice.price.close.toFixed(2)} | **\$${profitTotal}** total loss (${profitPercent}%) \n`;
+                } else {
+                    portfolioDescription = portfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toFixed(2)} each \n Current price: \$${SMFunctions.stockPrice.price.close.toFixed(2)} | **\$${profitTotal}** total profit (${profitPercent}%) \n`;
+                }
+                
+                //console.log(portfolioDescription)
+            }
+        }
+        
+        async function embed() {
+            await forEach(portfolio)
+        }
+
+        embed();
     }
 }
 module.exports = StockMarket;

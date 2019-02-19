@@ -35,7 +35,7 @@ const Game = {
 
         const tradersTable = traders.prepare("SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name = 'traders';").get();
         if (!tradersTable['count(*)']) {
-            traders.prepare("CREATE TABLE traders (userId TEXT PRIMARY KEY, money INTEGER);").run();
+            traders.prepare("CREATE TABLE traders (userId TEXT PRIMARY KEY, money INTEGER, username TEXT);").run();
             traders.prepare("CREATE UNIQUE INDEX idx_game_id ON traders (userId);").run();
             traders.pragma("synchronous = 1");
             traders.pragma("journal_mode = wal");

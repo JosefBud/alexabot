@@ -29,11 +29,11 @@ client.on('ready', () => {
         dbl.postStats(client.guilds.size/*, client.shards.Id, client.shards.total*/);
     }, 1800000);
 
-    setInterval(() => {
+    /*setInterval(() => {
         dbl.getVotes().then(votes => {
             console.log(votes);
         })
-    }, 15000)
+    }, 15000)*/
     dbl.on('posted', () => {
         console.log('Server count posted!');
       });

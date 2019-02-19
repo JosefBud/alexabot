@@ -36,7 +36,6 @@ client.on('ready', () => {
 client.on('error', console.error);
 
 client.on('message', message => {
-    console.log(message.guild.name)
 // IGNORING DIRECT MESSAGES
     if (message.channel.type === 'dm') {
         return;

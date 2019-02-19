@@ -14,9 +14,71 @@ const Game = require('./game.js');
 const BlizzardCmd = require('./blizzard.js');
 const Reddit = require('./reddit.js');
 const StockMarket = require('./stockMarket.js');
+const votes = [ { username: 'JosefBud',
+discriminator: '1654',
+id: '188055552469762049',
+avatar: '25c2cf1a7591bb4239414107dc62f82b' },
+{ username: 'JosefBud',
+discriminator: '1654',
+id: '188055552469762049',
+avatar: '25c2cf1a7591bb4239414107dc62f82b' },
+{ username: 'JosefBud',
+discriminator: '1654',
+id: '188055552469762049',
+avatar: '25c2cf1a7591bb4239414107dc62f82b' },
+{ username: 'JosefBud',
+discriminator: '1654',
+id: '188055552469762049',
+avatar: '25c2cf1a7591bb4239414107dc62f82b' },
+{ username: 'JosefBud',
+discriminator: '1654',
+id: '188055552469762049',
+avatar: '25c2cf1a7591bb4239414107dc62f82b' },
+{ username: 'JosefBud',
+discriminator: '1654',
+id: '188055552469762049',
+avatar: '25c2cf1a7591bb4239414107dc62f82b' },
+{ username: 'JosefBud',
+discriminator: '1654',
+id: '188055552469762049',
+avatar: '25c2cf1a7591bb4239414107dc62f82b' },
+{ username: 'JosefBud',
+discriminator: '1654',
+id: '188055552469762049',
+avatar: '25c2cf1a7591bb4239414107dc62f82b' },
+{ username: '☆Ash Ketchum☆',
+discriminator: '8237',
+id: '297275010031288320',
+avatar: '4b635f320e5e3d4e9185cb6e433112b0' },
+{ username: 'JosefBud',
+discriminator: '1654',
+id: '188055552469762049',
+avatar: '25c2cf1a7591bb4239414107dc62f82b' },
+{ username: 'GoldBond™',
+discriminator: '4961',
+id: '207297782195683329',
+avatar: 'a_5358e514f3b72bef28d4a4d270a391d9' },
+{ username: 'JosefBud',
+discriminator: '1654',
+id: '188055552469762049',
+avatar: '25c2cf1a7591bb4239414107dc62f82b' },
+{ username: 'JosefBud',
+discriminator: '1654',
+id: '188055552469762049',
+avatar: '25c2cf1a7591bb4239414107dc62f82b' },
+{ username: 'JosefBud',
+discriminator: '1654',
+id: '188055552469762049',
+avatar: '25c2cf1a7591bb4239414107dc62f82b' } ]
+
+
 
 
 client.on('ready', () => {
+    let oldVotes = [];
+    dbl.getVotes().then(votes => {
+        oldVotes = votes;
+    })
     console.log(`Logged in as ${client.user.tag}!`);
     console.log(client.debug);
     client.user.setActivity('\"Alexa help\"', { type: 'LISTENING' })
@@ -28,12 +90,41 @@ client.on('ready', () => {
     setInterval(() => {
         dbl.postStats(client.guilds.size/*, client.shards.Id, client.shards.total*/);
     }, 1800000);
-
-    /*setInterval(() => {
+    //setInterval(() => {console.log(oldVotes)}, 2500)
+    /*
+    setInterval(() => {
+        let newVotes = votes;
+            while (newVotes.length > oldVotes.length) {
+                let voter = newVotes.pop();
+                let voterProfile = traders.prepare("SELECT money FROM traders WHERE userId = ?").get(voter.id);
+                if (voterProfile) {
+                    let voterMoney = voterProfile.money + 5000;
+                    traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(voterMoney, voter.id)
+                    console.log(voter)
+                } else {return;}
+            }
+        //console.log("oh hey");
+        oldVotes = votes;
+    }, 15000)
+    */
+    setInterval(() => {
         dbl.getVotes().then(votes => {
-            console.log(votes);
+            let newVotes = votes;
+            while (newVotes.length > oldVotes.length) {
+                let voter = newVotes.pop();
+                let voterProfile = traders.prepare("SELECT money FROM traders WHERE userId = ?").get(voter.id);
+                if (voterProfile) {
+                    let voterMoney = voterProfile.money + 5000;
+                    traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(voterMoney, voter.id)
+                    console.log(voter)
+                } else {return;}
+            }
+            //console.log("oh hey");
+            oldVotes = votes;
         })
-    }, 15000)*/
+    }, 15000)
+    
+
     dbl.on('posted', () => {
         console.log('Server count posted!');
       });

@@ -55,7 +55,7 @@ client.on('ready', () => {
         dbl.getVotes().then(votes => {
             let newVotes = votes;
             while (newVotes.length > oldVotes.length) {
-                let voter = newVotes.pop();
+                let voter = newVotes.shift();
                 let voterProfile = traders.prepare("SELECT money FROM traders WHERE userId = ?").get(voter.id);
                 if (voterProfile) {
                     let voterMoney = voterProfile.money + 5000;

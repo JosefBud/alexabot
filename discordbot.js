@@ -41,7 +41,7 @@ client.on('message', message => {
     if (message.channel.type === 'dm') {
         return;
     }
-
+    
 // CONVERTING THE MESSAGE TO LOWERCASE AND REPLACING CERTAIN PUNCTUATION
     let msgContent = message.content.toLowerCase().replace(/[,!'.]/gi,"");
 

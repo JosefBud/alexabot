@@ -74,14 +74,14 @@ const StockMarket = {
                 async function forEach(array) {
                     for (let i = 0; i < array.length; i++) {
                         await SMFunctions.getPrice(portfolio[i].symbol, message);
-                        let profitEach = (SMFunctions.stockPrice.price.close - portfolio[i].purchasePrice).toFixed(2);
-                        let profitTotal = ((SMFunctions.stockPrice.price.close * portfolio[i].qty) - (portfolio[i].purchasePrice * portfolio[i].qty)).toFixed(2);
+                        let profitEach = (SMFunctions.stockPrice.price.last - portfolio[i].purchasePrice).toFixed(2);
+                        let profitTotal = ((SMFunctions.stockPrice.price.last * portfolio[i].qty) - (portfolio[i].purchasePrice * portfolio[i].qty)).toFixed(2);
                         let profitPercent = (profitEach / portfolio[i].purchasePrice * 100).toFixed(2);
-                        portfolioValue = portfolioValue + (SMFunctions.stockPrice.price.close * portfolio[i].qty);
+                        portfolioValue = portfolioValue + (SMFunctions.stockPrice.price.last * portfolio[i].qty);
                         if (profitTotal < 0) {
-                            portfolioDescription = portfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toFixed(2)} each \n Current price: \$${SMFunctions.stockPrice.price.close.toFixed(2)} | **\$${profitTotal}** total loss (${profitPercent}%) \n`;
+                            portfolioDescription = portfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toFixed(2)} each \n Current price: \$${SMFunctions.stockPrice.price.last} | **\$${profitTotal}** total loss (${profitPercent}%) \n`;
                         } else {
-                            portfolioDescription = portfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toFixed(2)} each \n Current price: \$${SMFunctions.stockPrice.price.close.toFixed(2)} | **\$${profitTotal}** total profit (${profitPercent}%) \n`;
+                            portfolioDescription = portfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toFixed(2)} each \n Current price: \$${SMFunctions.stockPrice.price.last} | **\$${profitTotal}** total profit (${profitPercent}%) \n`;
                         }
                         
                         //console.log(portfolioDescription)
@@ -132,7 +132,7 @@ const StockMarket = {
                     message.channel.send("You may have typed something incorrectly. Usually this error happens when the symbol you used doesn't exist or is outside of the US-based stock exchanges. Murica. \n If you tried to use the company name instead of their stock symbol, use `Alexa stocks search [company name]` or Google to find their stock symbol and try your purchase again using that symbol."); 
                     return;
                 });
-            let cost = qtyWanted * SMFunctions.stockPrice.price.close;
+            let cost = qtyWanted * SMFunctions.stockPrice.price.last;
             if (profile.money >= cost) {
                 await SMFunctions.getCompanyName(symbolWanted, message)
                 await SMFunctions.getLogo(symbolWanted, message)
@@ -142,7 +142,7 @@ const StockMarket = {
                     .setColor(alexaColor)
                     .setThumbnail(SMFunctions.companyLogo)
                     .setTitle("Please confirm your purchase")
-                    .setDescription(`**${qtyWanted} shares** of **${symbolWanted}** (${SMFunctions.companyName}) at **\$${SMFunctions.stockPrice.price.close}** each \n This would cost a total of **\$${cost.toFixed(2)}** and you currently have **\$${profile.money}** in your wallet`)
+                    .setDescription(`**${qtyWanted} shares** of **${symbolWanted}** (${SMFunctions.companyName}) at **\$${SMFunctions.stockPrice.price.last}** each \n This would cost a total of **\$${cost.toFixed(2)}** and you currently have **\$${profile.money}** in your wallet`)
                     .setFooter("Please type \"yes\" or \"no\" to confirm or cancel")
                 message.channel.send(confirmPurchase)
                 let collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 8000 });
@@ -156,7 +156,7 @@ const StockMarket = {
                                 symbol: symbolWanted,
                                 companyName: SMFunctions.companyName,
                                 qty: qtyWanted,
-                                purchasePrice: SMFunctions.stockPrice.price.close
+                                purchasePrice: SMFunctions.stockPrice.price.last
                             }
                             traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(newMoney, response.author.id)
                             portfolios.prepare("INSERT OR REPLACE INTO portfolios (userId, symbol, companyName, qty, purchasePrice) VALUES (@userId, @symbol, @companyName, @qty, @purchasePrice)").run(newPurchase);
@@ -191,7 +191,7 @@ const StockMarket = {
                     } else {return;}
                 })
             } else {
-                message.channel.send(`You don't have enough money to buy those shares! You currently have **\$${profile.money}** and those shares would cost **\$${cost}** at \$${SMFunctions.stockPrice.price.close} each`)
+                message.channel.send(`You don't have enough money to buy those shares! You currently have **\$${profile.money}** and those shares would cost **\$${cost}** at \$${SMFunctions.stockPrice.price.last} each`)
             }
         }
     },
@@ -219,7 +219,7 @@ const StockMarket = {
                     await SMFunctions.getCompanyName(symbolWanted, message)
                     await SMFunctions.getLogo(symbolWanted, message)
                     
-                    let totalAmount = SMFunctions.stockPrice.price.close * qtyWanted
+                    let totalAmount = SMFunctions.stockPrice.price.last * qtyWanted
                     let totalProfit = totalAmount - (portfolioCheck.purchasePrice * qtyWanted)
                     let confirmSale = new Discord.RichEmbed();
                     confirmSale
@@ -227,7 +227,7 @@ const StockMarket = {
                         .setColor(alexaColor)
                         .setThumbnail(SMFunctions.companyLogo)
                         .setTitle("Please confirm your sale")
-                        .setDescription(`**${qtyWanted} shares** of **${symbolWanted}** (${SMFunctions.companyName}) at **\$${SMFunctions.stockPrice.price.close}** each \n This would return a total of **\$${totalAmount.toFixed(2)}** to your wallet at a **\$${totalProfit.toFixed(2)}** profit`)
+                        .setDescription(`**${qtyWanted} shares** of **${symbolWanted}** (${SMFunctions.companyName}) at **\$${SMFunctions.stockPrice.price.last}** each \n This would return a total of **\$${totalAmount.toFixed(2)}** to your wallet at a **\$${totalProfit.toFixed(2)}** profit`)
                         .setFooter("Please type \"yes\" or \"no\" to confirm or cancel")
                     message.channel.send(confirmSale)
                     let collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 8000 });
@@ -336,7 +336,7 @@ const StockMarket = {
             .setTitle(`${SMFunctions.companyName} (${symbol})`)
             .setThumbnail(`${SMFunctions.companyLogo}`)
             .setURL(`https://finance.yahoo.com/quote/${symbol}`)
-            .setDescription(`**\$${SMFunctions.stockPrice.price.close.toFixed(2)}**`)
+            .setDescription(`**\$${SMFunctions.stockPrice.price.last}**`)
             .setFooter(`as of ${SMFunctions.stockPrice.date.toLocaleString('en-us',{timeZone:'America/New_York'})} EST`)
 
         message.channel.send(getPriceEmbed);
@@ -352,7 +352,7 @@ const StockMarket = {
         async function forEach(array) {
             for (let i = 0; i < array.length; i++) {
                 await SMFunctions.getPrice(portfolio[i].symbol, message);
-                newPortfolioValue = newPortfolioValue + (SMFunctions.stockPrice.price.close * portfolio[i].qty);
+                newPortfolioValue = newPortfolioValue + (SMFunctions.stockPrice.price.last * portfolio[i].qty);
             }
         }
         

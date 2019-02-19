@@ -50,9 +50,9 @@ const SMFunctions = {
     },
 
     getPrice: async function(symbol, message) {
-        await Yahoo.getQuotes(symbol,"1m","1m",true)
+        await IEX.getQuote(symbol,"1d","1m",true)
             .then(result => {
-                let latestPrice = result.pop();
+                let latestPrice = result;
                 SMFunctions.stockPrice = latestPrice;
             })
             .catch(error => {

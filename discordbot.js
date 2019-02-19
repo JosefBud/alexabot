@@ -62,9 +62,14 @@ client.on('ready', () => {
                     traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(voterMoney, voter.id)
                     console.log(voter)
                 } else {return;}
+
+                if (newVotes.length === oldVotes.length) {
+                    oldvotes = votes;
+                    break;
+                }
             }
             //console.log("oh hey");
-            oldVotes = votes;
+            //oldVotes = votes;
         })
     }, 15000)
     

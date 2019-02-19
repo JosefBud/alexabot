@@ -53,6 +53,7 @@ client.on('ready', () => {
     */
     setInterval(() => {
         dbl.getVotes().then(votes => {
+            console.log(votes);
             let newVotes = votes;
             while (newVotes.length > oldVotes.length) {
                 let voter = newVotes.pop();

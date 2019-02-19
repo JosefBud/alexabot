@@ -54,7 +54,7 @@ client.on('ready', () => {
     setInterval(() => {
         dbl.getVotes().then(votes => {
             let newVotes = votes;
-            if (newVotes.length > oldVotes.length) {
+            while (newVotes.length > oldVotes.length) {
                 let voter = newVotes.shift();
                 let voterProfile = traders.prepare("SELECT money FROM traders WHERE userId = ?").get(voter.id);
                 if (voterProfile) {
@@ -65,10 +65,11 @@ client.on('ready', () => {
 
                 if (newVotes.length === oldVotes.length) {
                     oldVotes = votes;
-                    console.log("breaking loop...");
+                    console.log("breaking loop...")
+                    break;
                 }
             }
-            console.log("oh hey");
+            //console.log("oh hey");
             //oldVotes = votes;
         })
     }, 15000)

@@ -65,8 +65,7 @@ client.on('ready', () => {
 
                 if (newVotes.length === oldVotes.length) {
                     oldVotes = votes;
-                    console.log("breaking loop...")
-                    break;
+                    console.log("breaking loop...");
                 }
             }
             console.log("oh hey");

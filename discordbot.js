@@ -8,6 +8,7 @@ const dbl = new DBL(config.dblToken,client);
 const SQLite = require("better-sqlite3");
 //const sql = new SQLite('./scores.sqlite');
 const bannedChannelsSql = new SQLite('./bannedChannels.sqlite');
+const traders = new SQLite('./traders.sqlite');
 const Commands = require('./commands.js');
 const Game = require('./game.js');
 const BlizzardCmd = require('./blizzard.js');
@@ -27,6 +28,12 @@ client.on('ready', () => {
     setInterval(() => {
         dbl.postStats(client.guilds.size/*, client.shards.Id, client.shards.total*/);
     }, 1800000);
+
+    setInterval(() => {
+        dbl.getVotes().then(votes => {
+            console.log(votes);
+        })
+    }, 15000)
     dbl.on('posted', () => {
         console.log('Server count posted!');
       });

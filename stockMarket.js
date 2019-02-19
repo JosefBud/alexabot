@@ -344,6 +344,8 @@ const StockMarket = {
 
     leaderboard: async function(message) {
         let portfolio = portfolios.prepare("SELECT * FROM portfolios WHERE userId = ?").all(message.author.id)
+        let test = portfolios.prepare("SELECT * FROM portfolios GROUP BY userId").all()
+        console.log(test)
         let leaderboardEmbed = new Discord.RichEmbed();
         let newPortfolioValue = 0;
         let description = "";

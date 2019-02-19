@@ -20,6 +20,7 @@ const SMFunctions = {
             })
             .catch(error => {
                 console.log(error)
+                SMFunctions.companyLogo = "";
                 message.channel.send("Someone made an oopsie. For some reason I couldn't find a company logo for that symbol, sorry!");
             })
     },
@@ -31,6 +32,7 @@ const SMFunctions = {
             })
             .catch(error => {
                 console.log(error)
+                SMFunctions.companyName = "";
                 message.channel.send(SMFunctions.oopsie);
             })
     },
@@ -42,6 +44,7 @@ const SMFunctions = {
             })
             .catch(error => {
                 console.log(error)
+                SMFunctions.companySearch = {};
                 message.channel.send(SMFunctions.oopsie);
             })
     },
@@ -54,6 +57,7 @@ const SMFunctions = {
             })
             .catch(error => {
                 console.log(error)
+                SMFunctions.stockPrice = 0;
                 message.channel.send(SMFunctions.oopsie);
             })
     },
@@ -65,6 +69,7 @@ const SMFunctions = {
             })
             .catch(error => {
                 console.log(error)
+                SMFunctions.stockHistory = {};
                 message.channel.send(SMFunctions.oopsie);
             })
     }

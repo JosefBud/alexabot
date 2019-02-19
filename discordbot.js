@@ -216,7 +216,11 @@ client.on('message', message => {
         }  
 
         if (msgContent.startsWith("alexa stocks buy")) {
-            StockMarket.add(message);
+            StockMarket.buyShares(message);
+        }
+
+        if (msgContent.startsWith("alexa stocks sell")) {
+            StockMarket.sellShares(message);
         }
 
         if (msgContent.startsWith("alexa stocks price")) {
@@ -233,6 +237,10 @@ client.on('message', message => {
 
         if (msgContent.startsWith("alexa stocks test")) {
             StockMarket.test(message);
+        }
+
+        if (msgContent.startsWith("alexa stocks help") || msgContent === "alexa stocks") {
+            StockMarket.help(message);
         }
 
     }

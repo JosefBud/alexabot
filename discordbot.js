@@ -23,7 +23,8 @@ const server = http.createServer(function(request, response) {
 		console.log("Authorization Header is: ", auth);
 		if (auth === config.httpAuth) {
             console.log("AUTHORIZED!")
-            let logItAuth = consoleTimeStamp.toLocaleDateString('en-us',{timeZone:'America/New_York'}) + " " + consoleTimeStamp.toLocaleTimeString('en-us',{timeZone:'America/New_York'}) + " " + "Somebody has voted!";
+            let authTimeStamp = new Date();
+            let logItAuth = authTimeStamp.toLocaleDateString('en-us',{timeZone:'America/New_York'}) + " " + authTimeStamp.toLocaleTimeString('en-us',{timeZone:'America/New_York'}) + " " + "Somebody has voted!";
             fs.appendFile('httpCalls.log', "\r\n" + logItAuth, (err) => {
                 if (err) throw err;
                 console.log('The "data to append" was appended to file!');
@@ -60,7 +61,8 @@ const server = http.createServer(function(request, response) {
                 });
             }
 		} else {
-            let logItDenied = consoleTimeStamp.toLocaleDateString('en-us',{timeZone:'America/New_York'}) + " " + consoleTimeStamp.toLocaleTimeString('en-us',{timeZone:'America/New_York'}) + " " + "Unauthorized HTTP request";
+            let deniedTimeStamp = new Date();
+            let logItDenied = deniedTimeStamp.toLocaleDateString('en-us',{timeZone:'America/New_York'}) + " " + deniedTimeStamp.toLocaleTimeString('en-us',{timeZone:'America/New_York'}) + " " + "Unauthorized HTTP request";
             fs.appendFile('httpCalls.log', "\r\n" + logItDenied, (err) => {
                 if (err) throw err;
                 console.log('The "data to append" was appended to file!');
@@ -146,7 +148,6 @@ client.on('message', message => {
             return;
         }
     }
-
     let consoleTimeStamp = new Date();
     if (message.guild.name !== "Discord Bot List") {
         console.log(consoleTimeStamp.toLocaleDateString('en-us',{timeZone:'America/New_York'}),`(${consoleTimeStamp.toLocaleTimeString('en-us',{timeZone:'America/New_York'})})`,`${message.author.username} (${message.guild.name}): ${message.content}`);

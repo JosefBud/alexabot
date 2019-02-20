@@ -22,9 +22,10 @@ client.on('ready', () => {
     let oldVotes = [];
     dbl.getVotes().then(votes => {
         oldVotes = votes;
+        console.log("Starting vote count received and updated.")
     })
     console.log(`Logged in as ${client.user.tag}!`);
-    console.log(client.debug);
+    //console.log(client.debug);
     client.user.setActivity('\"Alexa help\"', { type: 'LISTENING' })
     Game.prep(client);
     //if (user.guild.voiceConnection) {
@@ -62,15 +63,9 @@ client.on('ready', () => {
                     traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(voterMoney, voter.id)
                     console.log(voter)
                 } else {return;}
-
-                if (newVotes.length === oldVotes.length) {
-                    oldVotes = votes;
-                    console.log("breaking loop...")
-                    break;
-                }
             }
             //console.log("oh hey");
-            //oldVotes = votes;
+            oldVotes = votes;
         })
     }, 15000)
     

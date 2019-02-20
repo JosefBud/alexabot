@@ -8,13 +8,14 @@ const DBL = require('dblapi.js');
 const dbl = new DBL(config.dblToken,client);
 const SQLite = require("better-sqlite3");
 //const sql = new SQLite('./scores.sqlite');
-const bannedChannelsSql = new SQLite('./bannedChannels.sqlite');
-const traders = new SQLite('./traders.sqlite');
+const bannedChannelsSql = new SQLite('./db/bannedChannels.sqlite');
+const traders = new SQLite('./db/traders.sqlite');
 const Commands = require('./commands.js');
 const Game = require('./game.js');
 const BlizzardCmd = require('./blizzard.js');
 const Reddit = require('./reddit.js');
 const StockMarket = require('./stockMarket.js');
+let status = "LISTENING";
 
 const server = http.createServer(function(request, response) {
     //console.log(request);
@@ -76,12 +77,20 @@ console.log("NodeJS HTTP server started")
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
-    client.user.setActivity('\"Alexa help\"', { type: 'LISTENING' })
+    
     Game.prep(client);
     //if (user.guild.voiceConnection) {
     //    user.guild.voiceConnection.disconnect();
     //}
-    
+    setInterval(() => {
+        if (status === "LISTENING") {
+            client.user.setActivity('\"Alexa help\"', { type: status })
+            status = "PLAYING"
+        } else {
+            client.user.setActivity('\"Alexa stocks\"', { type: status })
+            status = "LISTENING"
+        }
+    }, 10000)
     setInterval(() => {
         dbl.postStats(client.guilds.size/*, client.shards.Id, client.shards.total*/);
     }, 1800000);

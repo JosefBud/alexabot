@@ -1,8 +1,8 @@
 const Discord = require('discord.js');
 const SQLite = require("better-sqlite3");
-const traders = new SQLite('./traders.sqlite')
-const portfolios = new SQLite('./portfolios.sqlite');
-const leaderboard = new SQLite('./leaderboard.sqlite');
+const traders = new SQLite('./db/traders.sqlite')
+const portfolios = new SQLite('./db/portfolios.sqlite');
+const leaderboard = new SQLite('./db/leaderboard.sqlite');
 const algotrader = require('algotrader');
 const SMFunctions = require('./stockMarketFunctions.js');
 const Yahoo = algotrader.Data.Yahoo;

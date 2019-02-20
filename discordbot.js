@@ -34,12 +34,13 @@ const server = http.createServer(function(request, response) {
 
                     console.log("Somebody has voted!")
                     console.log(post);
-                    
+
                     let voterProfile = traders.prepare("SELECT money FROM traders WHERE userId = ?").get(post.user);
                     if (voterProfile) {
                         let voterMoney = voterProfile.money + 5000;
                         traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(voterMoney, post.user)
-                        console.log(post)
+
+                        client.users.get(post.user).send("Thank you for voting! I've added $5,000 to your wallet, you can check it by using `Alexa stocks profile` in your Discord server.\n Also feel free to join the Alexa Discord server at https://discord.gg/PysGrtD")
                     } else {return;}
                 });
                 request.on('end', function () {
@@ -72,13 +73,7 @@ console.log("NodeJS HTTP server started")
 
 
 client.on('ready', () => {
-    let oldVotes = [];
-    dbl.getVotes().then(votes => {
-        oldVotes = votes;
-        console.log("Starting vote count received and updated.")
-    })
     console.log(`Logged in as ${client.user.tag}!`);
-    //console.log(client.debug);
     client.user.setActivity('\"Alexa help\"', { type: 'LISTENING' })
     Game.prep(client);
     //if (user.guild.voiceConnection) {

@@ -1,8 +1,9 @@
+const http = require('http');
+const fs = require('fs');
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const config = require('./config.json');
 const user = new Discord.Message();
-const fs = require('fs');
 const DBL = require('dblapi.js');
 const dbl = new DBL(config.dblToken,client);
 const SQLite = require("better-sqlite3");
@@ -15,7 +16,59 @@ const BlizzardCmd = require('./blizzard.js');
 const Reddit = require('./reddit.js');
 const StockMarket = require('./stockMarket.js');
 
+const server = http.createServer(function(request, response) {
+    //console.log(request);
+    
+    let auth = request.headers['authorization'];  // auth is in base64(username:password)  so we need to decode the base64
+		console.log("Authorization Header is: ", auth);
+		if (auth === config.httpAuth) {
+            console.log("AUTHORIZED!")
+            let logItAuth = consoleTimeStamp.toLocaleDateString('en-us',{timeZone:'America/New_York'}) + " " + consoleTimeStamp.toLocaleTimeString('en-us',{timeZone:'America/New_York'}) + " " + "Somebody has voted!";
+            fs.appendFile('httpCalls.log', "\r\n" + logItAuth, (err) => {
+                if (err) throw err;
+                console.log('The "data to append" was appended to file!');
+            })
+			if (request.method == 'POST') {
+                request.on('data', function (data) {
+                    let post = JSON.parse(data);
 
+                    console.log("Somebody has voted!")
+                    console.log(post);
+                    
+                    let voterProfile = traders.prepare("SELECT money FROM traders WHERE userId = ?").get(post.user);
+                    if (voterProfile) {
+                        let voterMoney = voterProfile.money + 5000;
+                        traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(voterMoney, post.user)
+                        console.log(post)
+                    } else {return;}
+                });
+                request.on('end', function () {
+                    try {
+                      let post = JSON.parse(body);
+                      // deal_with_post_data(request,post);
+                      console.log(post); // <--- here I just output the parsed JSON
+                      response.writeHead(200, {"Content-Type": "text/plain"});
+                      response.end();
+                      return;
+                    } catch (err){
+                      response.writeHead(500, {"Content-Type": "text/plain"});
+                      response.write("Bad Post Data.  Is your data a proper JSON?\n");
+                      response.end();
+                      return;
+                    }
+                });
+            }
+		} else {
+            let logItDenied = consoleTimeStamp.toLocaleDateString('en-us',{timeZone:'America/New_York'}) + " " + consoleTimeStamp.toLocaleTimeString('en-us',{timeZone:'America/New_York'}) + " " + "Unauthorized HTTP request";
+            fs.appendFile('httpCalls.log', "\r\n" + logItDenied, (err) => {
+                if (err) throw err;
+                console.log('The "data to append" was appended to file!');
+            })
+            response.end();
+        }
+});
+server.listen(60000, "0.0.0.0");
+console.log("NodeJS HTTP server started")
 
 
 client.on('ready', () => {
@@ -52,6 +105,7 @@ client.on('ready', () => {
         oldVotes = votes;
     }, 15000)
     */
+   /*
     setInterval(() => {
         dbl.getVotes().then(votes => {
             let newVotes = votes;
@@ -68,7 +122,7 @@ client.on('ready', () => {
             oldVotes = votes;
         })
     }, 15000)
-    
+    */
 
     dbl.on('posted', () => {
         console.log('Server count posted!');

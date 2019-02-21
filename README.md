@@ -17,43 +17,26 @@ Discord bot that does a whole gaggle of things...
 
 ### Stock Market Game commands
 `Alexa stocks` or `Alexa stocks help` will bring up this list of commands
-
 `Alexa stocks start` is the starting point. This will create a profile for you in the stock market and give you $50,000 to make your investments.
-
 `Alexa stocks search [company name]` will provide the stock **symbol** for that company. This is important, because everything else relies on using stock symbols, **not** company names.
-
 `Alexa stocks buy [quantity] [symbol]` will buy shares in the company.
-
 `Alexa stocks sell [quantity] [symbol]` will sell shares back and return the money to your wallet.
-
 `Alexa stocks profile` or `Alexa stocks portfolio` will show you your current holdings, both in your wallet and your shares.
-
 `Alexa stocks price [symbol]` will show you the current price for shares of that company.
-
 `Alexa stocks history [symbol]` will show you a detailed history for that company's stock.
-
 `Alexa stocks leaderboard` will show you the current leaderboard for portfolio value.
 
 ### Miscellaneous commands
-`Alexa profile` will show you your profile.
-
-`Alexa steal [@somebody]` will steal some cash from another person. There may or may not be a very small chance to steal a lot more than usual.
-
-`Alexa flip` will flip a coin. You either win money or you don't.
-
-`Alexa vote` will provide the link to vote for Alexa on discordbots.org.
-
-`Alexa get out of [#channel]` will stop Alexa from listening in the channel you specify.
-
-`Alexa come back to [#channel]` will bring Alexa back to a channel she was kicked out of.
-
-`Alexa WoW profile [realm name] [character name]` will bring up info about that World of Warcraft character.
-
-`Alexa give me a meme` will give you a random fresh meme from Reddit.
-
-`Alexa give me /r/[subreddit]` will give you a random top post of the day from that subreddit.
-
-`Alexa buy [something]` will make an Amazon™ purchase and charge it to someone else's account. This is using l33t h4xx and is extremely illegal. Use with caution.
+`Alexa profile` will show you your profile.  
+`Alexa steal [@somebody]` will steal some cash from another person. There may or may not be a very small chance to steal a lot more than usual.  
+`Alexa flip` will flip a coin. You either win money or you don't.  
+`Alexa vote` will provide the link to vote for Alexa on discordbots.org.  
+`Alexa get out of [#channel]` will stop Alexa from listening in the channel you specify.  
+`Alexa come back to [#channel]` will bring Alexa back to a channel she was kicked out of.  
+`Alexa WoW profile [realm name] [character name]` will bring up info about that World of Warcraft character.  
+`Alexa give me a meme` will give you a random fresh meme from Reddit.  
+`Alexa give me /r/[subreddit]` will give you a random top post of the day from that subreddit.  
+`Alexa buy [something]` will make an Amazon™ purchase and charge it to someone else's account. This is using l33t h4xx and is extremely illegal. Use with caution.  
 
 ### You need to add a `config.json` file with the following:
 

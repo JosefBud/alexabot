@@ -19,21 +19,13 @@ const StockMarket = {
             .setTitle("Play the slowest game in the world: buy shares in various companies and sell them later at a profit! Can you make more than your friends?")
             .setDescription(`
                 **Alexa stocks** or **Alexa stocks help** will bring up this list of commands
-                ---
                 **Alexa stocks start** is the starting point. This will create a profile for you in the stock market and give you $50,000 to make your investments.
-                ---
                 **Alexa stocks search [company name]** will provide the stock **symbol** for that company. This is important, because everything else relies on using stock symbols, **not** company names.
-                ---
                 **Alexa stocks buy [quantity] [symbol]** will buy shares in the company.
-                ---
                 **Alexa stocks sell [quantity] [symbol]** will sell shares back and return the money to your wallet.
-                ---
                 **Alexa stocks profile** or **Alexa stocks portfolio** will show you your current holdings, both in your wallet and your shares.
-                ---
                 **Alexa stocks price [symbol]** will show you the current price for shares of that company.
-                ---
                 **Alexa stocks history [symbol]** will show you a detailed history for that company's stock.
-                ---
                 **Alexa stocks leaderboard** will show you the current leaderboard for portfolio value.
             `)
             .setFooter("This game is still in sort of a beta stage. If you run into any issues/bugs or have suggestions, reach out to me on the Alexa Discord server: https://discord.gg/PysGrtD")

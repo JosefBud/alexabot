@@ -4,25 +4,16 @@ Discord bot that does a whole gaggle of things...
 [Bot invite](https://discordapp.com/api/oauth2/authorize?client_id=534469636381736981&permissions=8&redirect_uri=https%3A%2F%2Fdiscordapp.com%2Foauth2%2Fauthorize%3F%26client_id%3D534469636381736981%26scope%3Dbot&scope=bot)
 
 ### Music commands
-`Alexa help [1-4]` will display the commands, separated by "pages" 1-4.
-
-`Alexa play [song name]` will stream a song from YouTube into the voice channel you're in. This is pulling the top search result from YouTube, and YouTube search sucks sometimes, so it helps if you include the artist name.
-
-`Alexa queue [song name]` will queue up a song to play when the current one is finished.
-
-`Alexa queue` will show the current queue of songs.
-
-`Alexa clear queue` will clear out the current queue of songs.
-
-`Alexa next` will play the next song in the queue.
-
-`Alexa STFU` will disconnect Alexa from the voice channel.
-
-`Alexa volume` will bring up the volume commands and current volume.
-
-`Alexa volume [0-100]%` will change the volume to the number you set.
-
-`Alexa volume down` or `Alexa volume up` changes the volume by 10%. This doesn't work *while* you're playing a song, it only adjusts it for the next time you play a song.
+`Alexa help [1-4]` will display the commands, separated by "pages" 1-4.  
+`Alexa play [song name]` will stream a song from YouTube into the voice channel you're in. This is pulling the top search result from YouTube, and YouTube search sucks sometimes, so it helps if you include the artist name.  
+`Alexa queue [song name]` will queue up a song to play when the current one is finished.  
+`Alexa queue` will show the current queue of songs.  
+`Alexa clear queue` will clear out the current queue of songs.  
+`Alexa next` will play the next song in the queue.  
+`Alexa STFU` will disconnect Alexa from the voice channel.  
+`Alexa volume` will bring up the volume commands and current volume.  
+`Alexa volume [0-100]%` will change the volume to the number you set.  
+`Alexa volume down` or `Alexa volume up` changes the volume by 10%. This doesn't work *while* you're playing a song, it only adjusts it for the next time you play a song.  
 
 ### Stock Market Game commands
 `Alexa stocks` or `Alexa stocks help` will bring up this list of commands

@@ -360,6 +360,34 @@ const StockMarket = {
     },
 
     leaderboard: async function(message) {
+        let leaderboardEmbed = new Discord.RichEmbed();
+        let description = "";
+        let place = 1;
+        let getLeaderboard = leaderboard.prepare("SELECT * FROM leaderboard ORDER BY portfolioValue DESC LIMIT 5").all();
+        getLeaderboard.forEach(user => {
+            let placement = "";
+            let ending = " ";
+            switch (place) {
+                case 1: placement = "🥇🥇"; ending = "🥇🥇"; break;
+                case 2: placement = "🥈🥈"; ending = "🥈🥈"; break;
+                case 3: placement = "🥉🥉"; ending = "🥉🥉\n \n **Honorable Mentions:**"; break;
+                case 4: placement = "4th place: "; break;
+                case 5: placement = "5th place: "; break;
+            }
+            description = description + `${placement} **${user.username}** (\$${user.portfolioValue.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}) ${ending}\n`
+            place++;
+        })
+        leaderboardEmbed
+            .setAuthor("Alexa Stock Market Game - Leaderboards")
+            .setColor(alexaColor)
+            .setTitle("Current leaderboard for profile values")
+            .setDescription(description)
+            .setFooter("Vote for Alexa to put an extra $5,000 in your wallet every day! Try \"Alexa vote\"")
+
+        message.channel.send(leaderboardEmbed)
+    } 
+    /*
+    leaderboard: async function(message) {
         let portfolio = portfolios.prepare("SELECT * FROM portfolios WHERE userId = ?").all(message.author.id)
         let profile = traders.prepare("SELECT money FROM traders WHERE userId = ?").get(message.author.id)
         let test = portfolios.prepare("SELECT * FROM portfolios GROUP BY userId").all()
@@ -433,5 +461,6 @@ const StockMarket = {
             message.channel.send(leaderboardEmbed)
         }
     }
+    */
 }
 module.exports = StockMarket;

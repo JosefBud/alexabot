@@ -7,7 +7,8 @@ var alexaColor = "#31C4F3";
 
 
 setInterval(() => {
-    console.log("LEADERBOARD UPDATE JOB STARTING")
+    let startTime = new Date();
+    console.log(`${startTime.toLocaleTimeString('en-us',{timeZone:'America/New_York'})}: LEADERBOARD UPDATE JOB STARTING`)
     async function assignLeaderboard() {
         let tradersArray = traders.prepare("SELECT * FROM traders;").all();
         async function forEachTrader(array) {
@@ -31,7 +32,8 @@ setInterval(() => {
             }
         }
         await forEachTrader(tradersArray);
-        console.log("LEADERBOARD UPDATE JOB DONE");
+        let endTime = new Date();
+        console.log(`${endTime.toLocaleTimeString('en-us',{timeZone:'America/New_York'})}: LEADERBOARD UPDATE JOB DONE`);
     }
 
     assignLeaderboard();

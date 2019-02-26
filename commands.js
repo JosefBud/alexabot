@@ -63,6 +63,7 @@ const Commands = {
                 .setAuthor(`Alexa Commands - Page 3`)
                 .setTitle(`Use "Alexa help [1-4]" (e.g. "Alexa help 1")`)
                 .setDescription(`
+                    **Alexa minesweeper** will generate a random game of Minesweeper, 6x6 with 5 bombs.
                     **Alexa profile** will show you your profile.
                     **Alexa steal [@somebody]** will steal some cash from another person. There may or may not be a very small chance to steal a lot more than usual.
                     **Alexa flip** will flip a coin. You either win money or you don't.

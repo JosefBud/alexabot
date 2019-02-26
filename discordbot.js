@@ -245,7 +245,7 @@ client.on('message', message => {
         }
 
         if (msgContent.startsWith(`alexa test`)) {
-            Game.test(message);
+            Commands.test(message);
         }
 
         if (msgContent.startsWith(`alexa volume`)) {
@@ -307,6 +307,10 @@ client.on('message', message => {
 
         if (msgContent.startsWith("alexa give me /r/")) {
             Reddit.giveSub(message);
+        }
+
+        if (msgContent.startsWith("alexa minesweeper")) {
+            Commands.minesweeper(message);
         }
 
         if (msgContent.startsWith("alexa stocks start")) {

@@ -39,4 +39,4 @@ setInterval(() => {
     }
 
     assignLeaderboard();
-}, 30000)
+}, 60000)

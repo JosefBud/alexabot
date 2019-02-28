@@ -19,9 +19,11 @@ setInterval(() => {
 
                     async function forEachPortfolio(portfolioArray) {
                         for (c = 0; c < portfolioArray.length; c++) {
-                            await SMFunctions.getPrice(portfolio[c].symbol);
-                            //console.log(tradersArray[b].userId + " portfolio")
-                            newPortfolioValue = newPortfolioValue + (SMFunctions.stockPrice.price.last * portfolio[c].qty);
+                            if (portfolio[c]) {
+                                await SMFunctions.getPrice(portfolio[c].symbol);
+                                console.log(portfolio)
+                                newPortfolioValue = newPortfolioValue + (SMFunctions.stockPrice.price.last * portfolio[c].qty);
+                            } else {return;}
                         }
                     }
 

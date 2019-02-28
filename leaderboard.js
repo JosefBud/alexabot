@@ -37,4 +37,4 @@ setInterval(() => {
     }
 
     assignLeaderboard();
-}, 15000)
+}, 30000)

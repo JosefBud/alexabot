@@ -21,7 +21,7 @@ setInterval(() => {
                         for (c = 0; c < portfolioArray.length; c++) {
                             if (portfolio[c]) {
                                 await SMFunctions.getPrice(portfolio[c].symbol);
-                                console.log(portfolio)
+                                //console.log(portfolio)
                                 newPortfolioValue = newPortfolioValue + (SMFunctions.stockPrice.price.last * portfolio[c].qty);
                             } else {return;}
                         }

@@ -52,6 +52,16 @@ const StockMarket = {
     },
 
     viewPortfolio: async function(message) {
+        message.channel.send("Pulling prices")
+            .then(newMessage => {
+                setTimeout(() => {newMessage.edit("Pulling prices.")}, 300)
+                setTimeout(() => {newMessage.edit("Pulling prices..")}, 600)
+                setTimeout(() => {newMessage.edit("Pulling prices...")}, 900)
+                setTimeout(() => {newMessage.edit("Pulling prices....")}, 1200)
+                setTimeout(() => {newMessage.edit("Pulling prices.....")}, 1500)
+                setTimeout(() => {newMessage.delete()}, 1800)
+            })
+            .catch(err => {console.log(err)});
         let portfolio = portfolios.prepare("SELECT * FROM portfolios WHERE userId = ?").all(message.author.id);
         let money = traders.prepare("SELECT money FROM traders WHERE userId = ?").get(message.author.id);
         let portfolioDescription = "";

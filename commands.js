@@ -175,6 +175,7 @@ const Commands = {
                             console.log("next is the reason")
                             return;
                         }
+                        
 
                         const getServerQueue = songQueue.prepare("SELECT * FROM songQueue WHERE guildId = ? ORDER BY sortOrder ASC").get(message.guild.id);
                         console.log(getServerQueue);
@@ -225,9 +226,9 @@ const Commands = {
             //
             // PLAY BY USING A DIRECT LINK TO THE VIDEO
             //
-            if (msgContent.includes("?v=") || msgContent.includes("youtu.be/")) {
+            if (caseSensitiveContent.includes("?v=") || caseSensitiveContent.includes("youtu.be/")) {
                 let getVideoId;
-                if (msgContent.includes("youtu.be/")) {
+                if (caseSensitiveContent.includes("youtu.be/")) {
                     getVideoId = caseSensitiveContent.split("youtu.be/")[1];
                 } else {
                     getVideoId = caseSensitiveContent.split("?v=")[1];

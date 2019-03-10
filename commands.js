@@ -209,7 +209,7 @@ const Commands = {
                 
                 Commands.queue(message);
 
-                if (searchQuery.toLowerCase().includes("?v=")) {
+                if (msgContent.includes("?v=")) {
                     Commands.play(message, caseSensitiveContent.split("&list=")[0], caseSensitiveContent.split("&list=")[0]);
 
                     setTimeout(() => {
@@ -257,7 +257,7 @@ const Commands = {
                     playThis(message, videoObj);
                     return;
                 })
-                
+                return;
             }
 
             //
@@ -279,9 +279,11 @@ const Commands = {
                 }
                 
                 playThis(message, videoObj);
+                return;
 			})
 		} else {
             message.reply(`get in a voice channel, ya bonehead`);
+            return;
 		}
 	},
 	

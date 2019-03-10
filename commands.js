@@ -175,13 +175,18 @@ const Commands = {
                             console.log("next is the reason")
                             return;
                         }
-                        
+
+                        if (endReason === "play") {
+                            endReason = "none";
+                            console.log("play is the reason")
+                            return;
+                        }
 
                         const getServerQueue = songQueue.prepare("SELECT * FROM songQueue WHERE guildId = ? ORDER BY sortOrder ASC").get(message.guild.id);
                         console.log(getServerQueue);
                         if (getServerQueue) {
                             console.log("should be playing the next song")
-                            Commands.play(message,`alexa play https://youtube.com/watch?v=${getServerQueue.videoId}`, `alexa play https://youtube.com/watch?v=${getServerQueue.videoId}`);
+                            Commands.play(message,`alexa play fromalexaqueue https://youtube.com/watch?v=${getServerQueue.videoId}`, `alexa play fromalexaqueue https://youtube.com/watch?v=${getServerQueue.videoId}`);
                             songQueue.prepare("DELETE FROM songQueue WHERE guildId = ? AND videoId = ?").run(message.guild.id, getServerQueue.videoId);
                             endReason = "none";
                         } else {
@@ -255,6 +260,10 @@ const Commands = {
                         seconds: parseInt(result.player_response.videoDetails.lengthSeconds)
                     }
                     
+                    if ((caseSensitiveContent.includes("fromalexaqueue")) == false) {
+                        endReason = "play"
+                    }
+
                     playThis(message, videoObj);
                     return;
                 })
@@ -279,6 +288,10 @@ const Commands = {
                     seconds: firstResult.seconds
                 }
                 
+                if ((caseSensitiveContent.includes("fromalexaqueue")) == false) {
+                    endReason = "play"
+                }
+
                 playThis(message, videoObj);
                 return;
 			})

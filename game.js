@@ -13,6 +13,7 @@ const serverVolumeSql = new SQLite('./db/serverVolume.sqlite');
 const traders = new SQLite('./db/traders.sqlite');
 const portfolios = new SQLite('./db/portfolios.sqlite');
 const leaderboard = new SQLite('./db/leaderboard.sqlite');
+const songQueue = new SQLite('./db/songQueue.sqlite');
 const userStealCoinsCooldowns = new Set();
 const userFlipCoinCooldowns = new Set();
 
@@ -64,6 +65,14 @@ const Game = {
             serverVolumeSql.prepare("CREATE UNIQUE INDEX idx_serverVolume_id ON serverVolume (guildId);").run();
             serverVolumeSql.pragma("synchronous = 1");
             serverVolumeSql.pragma("journal_mode = wal");
+        }
+
+        const songQueueTable = songQueue.prepare("SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name = 'songQueue';").get();
+        if (!songQueueTable['count(*)']) {
+            songQueue.prepare("CREATE TABLE songQueue (guildId TEXT, videoId TEXT, videoTitle TEXT, videoUploader TEXT, videoLength INTEGER, requestedBy TEXT, sortOrder INTEGER);").run();
+            //songQueue.prepare("CREATE UNIQUE INDEX idx_songQueue_id ON songQueue (guildId);").run();
+            songQueue.pragma("synchronous = 1");
+            songQueue.pragma("journal_mode = wal");
         }
 
         client.getProfile = sql.prepare("SELECT * FROM game WHERE userId = ? AND guild = ?");

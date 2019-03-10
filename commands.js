@@ -6,14 +6,14 @@ const Discord = require('discord.js');
 const ytdl = require('ytdl-core');
 const ytSearch = require( 'yt-search' );
 const SQLite = require("better-sqlite3");
+const ytlist = require("youtube-playlist");
 const bannedChannelsSql = new SQLite('./db/bannedChannels.sqlite');
 const serverVolumeSql = new SQLite('./db/serverVolume.sqlite');
+const songQueue = new SQLite('./db/songQueue.sqlite');
 const StockMarket = require('./stockMarket.js');
 const Arrays = require('./arrays.js');
 var alexaColor = "#31C4F3";
-if (!servers) {var servers = {};}
-if (!server) {var server = {queue: [], requester: []};}
-if (!playReason) {var playReason = "";}
+let endReason = "none";
 // const bannedChannelsSet = new Set();
 var disconnectTimer;
 
@@ -125,137 +125,392 @@ const Commands = {
         }
     },
 
-    play: function(message,msgContent) {
-		if (typeof message.member.voiceChannel !== 'undefined') {
+    play: async function(message, msgContent, caseSensitiveContent) {
+        async function playThis(message, video) {
+            //endReason = "none";
             const embed = new Discord.RichEmbed();
-            var searchQuery = msgContent.slice(11);
-            if (searchQuery.includes("list=")) {
-                message.channel.send("I don't support directly linking YouTube playlists yet, bb. Don't do me dirty like that.")
-                return;
+            embed
+                .setColor(alexaColor)
+                .setAuthor(`Let's get jiggy with it, ${message.author.username}`)
+                .setThumbnail("https://media.giphy.com/media/kLM9I1g8jsiAM/giphy.gif")
+                .setImage(`https://i.ytimg.com/vi/${video.videoId}/mqdefault.jpg`)
+                .addField(`${video.name}`,`https://www.youtube.com/watch?v=${video.videoId}`)
+                .setFooter(`If Alexa connected to the voice channel but isn't outputting any sound, just tell her to STFU and then try again. This is a known bug.`)
+            message.channel.send(embed);
+
+            console.log("playing:");
+            console.log(video);
+            const channel = message.member.voiceChannel;
+            const getServerVolume = serverVolumeSql.prepare("SELECT * FROM serverVolume WHERE guildId = ?").get(message.guild.id);
+            if (!getServerVolume) {
+                streamOptions = {volume: 0.5};
+            } else {
+                streamOptions = {volume: getServerVolume.volume};
             }
-			ytSearch(searchQuery, function (err,r ) {
-				if (err) {
-					console.log(err)
-				}
-				const videos = r.videos
-                var firstResult = videos[0]
-                console.log(firstResult);
-                message.channel.send(embed
-                    .setColor(alexaColor)
-					.setAuthor(`Let's get jiggy with it, ${message.author.username}`)
-					.setThumbnail("https://media.giphy.com/media/kLM9I1g8jsiAM/giphy.gif")
-                    .setImage(`https://i.ytimg.com/vi/${firstResult.videoId}/mqdefault.jpg`)
-                    .addField(`${firstResult.title} (${firstResult.timestamp})`,`https://www.youtube.com/watch?v=${firstResult.videoId}`)
-					.setFooter(`${firstResult.views.toLocaleString()} views | Uploaded ${firstResult.ago}`));
-					console.log(server.queue[0]);
-                const channel = message.member.voiceChannel;
-                const getServerVolume = serverVolumeSql.prepare("SELECT * FROM serverVolume WHERE guildId = ?").get(message.guild.id);
-                if (!getServerVolume) {
-                    streamOptions = {seek: 0, volume: 0.5};
-                } else {
-                    streamOptions = {seek: 0, volume: getServerVolume.volume};
-                }
-				channel.join()
-					.then(connection => {
-                        const stream = ytdl(`https://www.youtube.com/watch?v=${firstResult.videoId}`, { filter : 'audioonly' })
-						const dispatcher = connection.playStream(stream, streamOptions);
-						dispatcher.on("end", () => {
-                            console.log(playReason);
-                            if (playReason === "next") {
-                                playReason = "";
-                                return;
-                            } else if (server.queue[0]) {
-								Commands.play(message,`alexa play ${server.queue[0]}`)
-                                server.queue.shift();
-                                server.requester.shift();
-							} else {
-								//message.guild.voiceConnection.disconnect();
-							}
-						})
-					})
-					.catch( (error) => {
-						if (error) {
-							setTimeout(() => {
-								message.channel.send(`Something went wrong! Alexa is sorry, bb. Try again or try a different search term.`)
-							}, 500),
-							console.error,
-							message.guild.voiceConnection.disconnect()
-						}
-					})
-				/*
-				let songDuration = (firstResult.duration.seconds + 4) * 1000;
-                //let disconnectTimer;
-                if (disconnectTimer) {
-                    clearTimeout(disconnectTimer);
-                }
-                function autoDisconnect() {
-                    disconnectTimer = setTimeout(() => {
-                        if (message.guild.voiceConnection) {
-                            message.guild.voiceConnection.disconnect();
+            channel.join()
+                .then(connection => {
+                    let ytdlOptions = {};
+                    if (video.seconds === 0) {
+                        ytdlOptions = {quality: 'highestaudio'};
+                        console.log(ytdlOptions);
+                        console.log(video.seconds);
+                    } else {
+                        ytdlOptions = {quality: 'highestaudio', filter: 'audioonly'};
+                        console.log(ytdlOptions);
+                        console.log(video.seconds);
+                    }
+                    const stream = ytdl(`https://www.youtube.com/watch?v=${video.videoId}`, ytdlOptions)
+                    const dispatcher = connection.playStream(stream, streamOptions);
+                    dispatcher.on("end", () => {
+                        console.log("dispatcher ended")
+                        if (endReason === "stfu") {
+                            endReason = "none";
+                            console.log("stfu is the reason")
+                            //message.guild.voiceConnection.disconnect();
+                            return;
                         }
-                    }, songDuration);
+
+                        if (endReason === "next") {
+                            endReason = "none";
+                            console.log("next is the reason")
+                            return;
+                        }
+
+                        const getServerQueue = songQueue.prepare("SELECT * FROM songQueue WHERE guildId = ? ORDER BY sortOrder ASC").get(message.guild.id);
+                        console.log(getServerQueue);
+                        if (getServerQueue) {
+                            console.log("should be playing the next song")
+                            Commands.play(message,`alexa play https://youtube.com/watch?v=${getServerQueue.videoId}`, `alexa play https://youtube.com/watch?v=${getServerQueue.videoId}`);
+                            songQueue.prepare("DELETE FROM songQueue WHERE guildId = ? AND videoId = ?").run(message.guild.id, getServerQueue.videoId);
+                            endReason = "none";
+                        } else {
+                            //message.guild.voiceConnection.disconnect();
+                        }
+                    })
+                })
+                .catch( (error) => {
+                    if (error) {
+                        setTimeout(() => {
+                            message.channel.send(`Something went wrong! Alexa is sorry, bb. Try again or try a different search term.`)
+                        }, 500),
+                        console.log(error),
+                        message.guild.voiceConnection.disconnect()
+                    }
+                })
+        }
+
+		if (typeof message.member.voiceChannel !== "undefined") {
+            var searchQuery = msgContent.slice(11);
+
+            //
+            // PLAY BY USING A DIRECT LINK TO A YOUTUBE PLAYLIST, WHICH ADDS THE PLAYLIST TO THE SERVER QUEUE AND PLAYS THE VIDEO ID IN THE URL
+            //
+            if (msgContent.includes("list=")) {
+                
+                Commands.queue(message);
+
+                if (searchQuery.toLowerCase().includes("?v=")) {
+                    Commands.play(message, caseSensitiveContent.split("&list=")[0], caseSensitiveContent.split("&list=")[0]);
+
+                    setTimeout(() => {
+                        songQueue.prepare("DELETE FROM songQueue WHERE guildId = ? AND videoId = ?").run(message.guild.id, caseSensitiveContent.split("&list=")[0].split("?v=")[1])
+                    }, 2000)
+                    
+                    return;
+                } else {
+                    return;
                 }
-				autoDisconnect();
-				*/
+            }
+
+            //
+            // PLAY BY USING A DIRECT LINK TO THE VIDEO
+            //
+            if (msgContent.includes("?v=") || msgContent.includes("youtu.be/")) {
+                let getVideoId;
+                if (msgContent.includes("youtu.be/")) {
+                    getVideoId = caseSensitiveContent.split("youtu.be/")[1];
+                } else {
+                    getVideoId = caseSensitiveContent.split("?v=")[1];
+                }
+    
+                if (getVideoId.includes("&")) {
+                    getVideoId = getVideoId.split("&")[0];
+                }
+    
+                if (getVideoId.includes("?t=")) {
+                    getVideoId = getVideoId.split("?t=")[0];
+                }
+                console.log(getVideoId)
+                ytdl.getBasicInfo(`https://youtube.com/watch?v=${getVideoId}`, function (err, result) {
+                    if (err) {
+                        console.log(err);
+                        message.channel.send("YouTube made an oopsie! For some reason the video you requested (either directly or in the queue) doesn't want to play. It might be deleted or region-locked to outside of the US.\nIf you're getting this message from a video in the queue, it should have continued on anyway.\nIf you're trying to play this video directly, sorry, dude. Pick another one.");
+                        Commands.next(message);
+                        return;
+                    }
+                    let videoObj = {
+                        videoId: getVideoId,
+                        name: result.player_response.videoDetails.title,
+                        seconds: parseInt(result.player_response.videoDetails.lengthSeconds)
+                    }
+                    
+                    playThis(message, videoObj);
+                    return;
+                })
+                
+            }
+
+            //
+            // PLAY BY USING YOUTUBE SEARCH
+            //
+			ytSearch(searchQuery, function (err, result) {
+				if (err) {
+                    console.log(err)
+                    message.channel.send(`Something went wrong! Alexa is sorry, bb. Try again or try a different search term.`)
+                    return;
+                }
+                
+				const videos = result.videos
+                var firstResult = videos[0]
+                let videoObj = {
+                    videoId: firstResult.videoId,
+                    name: firstResult.title,
+                    seconds: firstResult.seconds
+                }
+                
+                playThis(message, videoObj);
 			})
-		}
-		else {
-            if (server.queue[0]) {
-                message.channel.send("There's still more songs in the queue but everyone left me so I'm just gonna... leave... now... I guess...")
-                message.guild.voiceConnection.disconnect();
-            } else {message.reply(`get in a voice channel, ya bonehead`);}
+		} else {
+            message.reply(`get in a voice channel, ya bonehead`);
 		}
 	},
 	
-	queue: function(message) {
-		if (!servers[message.guild.id]) {
-			servers[message.guild.id] = {
-                queue: [],
-                requester: []
-			};
-        }
-        server = servers[message.guild.id];
-        
+	queue: async function(message) {
         if (message.content.toLowerCase() === "alexa queue") {
             const queueEmbed = new Discord.RichEmbed();
-            queueEmbed.setTitle("Current song queue, sorted from next to last")
-            server.queue.forEach((name, index) => {queueEmbed.addField(name, `requested by ${server.requester[index]}`, false)});
-            message.channel.send(queueEmbed);
+            const getServerQueue = songQueue.prepare("SELECT * FROM songQueue WHERE guildId = ? ORDER BY sortOrder ASC").all(message.guild.id);
+            
+            if (!getServerQueue[0]) {
+                message.channel.send("There is no queue right now!");
+                return;
+            } else {
+                let serverQueueList = "";
+                let serverQueueListExtra = "";
+                getServerQueue.forEach(element => {
+                    if (serverQueueList.length < 1900) {
+                        serverQueueList += `**${element.videoTitle}** (requested by ${element.requestedBy})\n`
+                    } else {
+                        if (serverQueueListExtra.length < 900) {
+                            serverQueueListExtra += `**${element.videoTitle}** (requested by ${element.requestedBy})\n`
+                        } else {
+                            return;
+                        }
+                    }
+                })
+                queueEmbed
+                    .setTitle("Current song queue, sorted from next to last")
+                    .setDescription(serverQueueList)
+
+                if (serverQueueListExtra.length > 0) {
+                    queueEmbed
+                        .addField("Continued...", serverQueueListExtra);
+                }
+
+                message.channel.send(queueEmbed);
+                return;
+            }
+        }
+
+        let songRequest = message.content.slice(12);
+        const setServerQueue = songQueue.prepare("INSERT OR REPLACE INTO songQueue (guildId, videoId, videoTitle, videoUploader, videoLength, requestedBy, sortOrder) VALUES (@guildId, @videoId, @videoTitle, @videoUploader, @videoLength, @requestedBy, @sortOrder)");
+        //let firstResult;
+
+        //
+        // CHECK IF IT'S A YOUTUBE PLAYLIST
+        //
+        if (songRequest.includes("list=")) {
+            let listId = songRequest.split("list=")[1];
+            
+            if (listId.includes("&")) {
+                listId = listId.split("&")[0];
+            }
+
+            ytlist(`https://www.youtube.com/playlist?list=${listId}`, ['id', 'name'])
+                .then(playlist => {
+                    if (!playlist.data.playlist[0]) {
+                        message.channel.send("Oh noes, something went wrong. It looks like that playlist doesn't exist! If it does exist and this is a bug, please report it on the Alexa Discord server here: https://discord.gg/PysGrtD");
+                        return;
+                    }
+                    
+                    message.channel.send("Adding to queue...");
+                    const getCurrentSort = songQueue.prepare("SELECT sortOrder FROM songQueue WHERE guildId = ? ORDER BY sortOrder DESC").get(message.guild.id)
+                    let sortOrder = 0;
+
+                    if (getCurrentSort) {
+                        sortOrder = getCurrentSort + 1;
+                    }
+                    //
+                    // ITERATE THROUGH EACH ENTRY IN THE PLAYLIST ARRAY AND ADD IT TO THE SERVER'S QUEUE DB
+                    //
+                    playlist.data.playlist.forEach(video => {
+                        
+                        let addToSongQueue = {
+                            guildId: message.guild.id,
+                            videoId: video.id,
+                            videoTitle: video.name,
+                            videoUploader: "",
+                            videoLength: 1,
+                            requestedBy: message.author.username,
+                            sortOrder: sortOrder + 1
+                        }
+                        
+                        setServerQueue.run(addToSongQueue);
+                        sortOrder++;
+                        //
+                        // IF IT'S ADDED THE LAST VIDEO, PULL THE SERVER'S QUEUE DB AND SEND IT IN AN EMBED
+                        // FOR SOME REASON PUTTING THIS CODE OUTSIDE OF THE FOREACH FUNCTION CAUSED IT TO RUN BEFORE THE FOREACH FUNCTION WAS OVER
+                        // ADDING 'AWAIT' BEFORE YTLIST FUNCTION AND PUTTING THE DB PULL & EMBED AFTER THE 'AWAIT YTLIST' FUNCTION DIDN'T HELP EITHER
+                        // AND I'M TOO MUCH OF A JAVASCRIPT NEWB TO FIGURE OUT WHY
+                        //
+                        if (video.id === playlist.data.playlist[(playlist.data.playlist.length - 1)].id) {
+                            const getServerQueue = songQueue.prepare("SELECT * FROM songQueue WHERE guildId = ? ORDER BY sortOrder ASC").all(message.guild.id);
+                            
+                            if (getServerQueue[0]) {
+                                let queueEmbed = new Discord.RichEmbed();
+                                let serverQueueList = "";
+                                let serverQueueListExtra = "";
+                                getServerQueue.forEach(element => {
+                                    if (serverQueueList.length < 1900) {
+                                        serverQueueList += `**${element.videoTitle}** (requested by ${element.requestedBy})\n`
+                                    } else {
+                                        if (serverQueueListExtra.length < 900) {
+                                            serverQueueListExtra += `**${element.videoTitle}** (requested by ${element.requestedBy})\n`
+                                        } else {
+                                            return;
+                                        }
+                                    }
+                                })
+                                queueEmbed
+                                    .setTitle(`${message.author.username} has added the following songs to the queue:`)
+                                    .setDescription(serverQueueList)
+                                    .setFooter("Please note, I can only add a maximum of 100 songs from a YouTube playlist!")
+
+                                if (serverQueueListExtra.length > 0) {
+                                    queueEmbed
+                                        .addField("Continued...", serverQueueListExtra);
+                                }
+
+                                message.channel.send(queueEmbed);
+                                return;
+                            } else {
+                                return;
+                            }
+                        }
+                    })
+                })
+                .catch(err => {
+                    console.log(err);
+                    message.channel.send("Oh noes, something went wrong. It looks like that playlist doesn't exist! If it does exist and this is a bug, please report it on the Alexa Discord server here: https://discord.gg/PysGrtD")
+                    return;
+                })
             return;
         }
 
-        var songRequest = message.content.slice(12);
-        if (songRequest.includes("list=")) {
-            message.channel.send("I don't support directly linking YouTube playlists yet, bb. Don't do me dirty like that.");
+        if (songRequest.includes("?v=") || songRequest.includes("youtu.be/")) {
+            let videoId;
+            if (songRequest.includes("youtu.be/")) {
+                videoId = songRequest.split("youtu.be/")[1];
+            } else {
+                videoId = songRequest.split("?v=")[1];
+            }
+
+            if (videoId.includes("&")) {
+                videoId = videoId.split("&")[0];
+            }
+
+            if (videoId.includes("?t=")) {
+                videoId = videoId.split("?t=")[0];
+            }
+            
+            ytdl.getBasicInfo(`https://youtube.com/watch?v=${videoId}`, function (err, result) {
+                if (err) {
+                    console.log(err);
+                    message.channel.send("Oh noes, something went wrong. It looks like that video doesn't exist! If it does exist and this is a bug, please report it on the Alexa Discord server here: https://discord.gg/PysGrtD");
+                    return;
+                }
+
+                let lastVideo = songQueue.prepare("SELECT sortOrder FROM songQueue WHERE guildId = ? ORDER BY sortOrder DESC").get(message.guild.id)
+                if (!lastVideo) {
+                    lastVideo = 0;
+                }
+
+                let addToSongQueue = {
+                    guildId: message.guild.id,
+                    videoId: result.player_response.videoDetails.videoId,
+                    videoTitle: result.player_response.videoDetails.title,
+                    videoUploader: result.player_response.videoDetails.author,
+                    videoLength: parseInt(result.player_response.videoDetails.lengthSeconds),
+                    requestedBy: message.author.username,
+                    sortOrder: lastVideo + 1
+                }
+                
+
+                setServerQueue.run(addToSongQueue);
+                message.channel.send(`${message.author.username} has added **"${result.player_response.videoDetails.title}"** to the queue`)
+            })
             return;
         }
-        server.queue.push(songRequest);
-        server.requester.push(message.author.username);
         
-		message.channel.send(`${message.author.username} has added *"${songRequest}"* to the queue **(warning: this feature is currently under construction)**`)
-		console.log(server.queue);
+        ytSearch(songRequest, function (err, r) {
+            if (err) {
+                console.log(err)
+                message.channel.send("Oh noes, something went wrong. Sorry! If you feel like it, report this bug on the Alexa Discord server: https://discord.gg/PysGrtD");
+            }
+            const results = r.videos;
+            let firstResult = results[0];
+
+            let lastVideo = songQueue.prepare("SELECT sortOrder FROM songQueue WHERE guildId = ? ORDER BY sortOrder DESC").get(message.guild.id)
+            
+            if (!lastVideo) {
+                lastVideo = {sortOrder: 0};
+            }
+
+            let addToSongQueue = {
+                guildId: message.guild.id,
+                videoId: firstResult.videoId,
+                videoTitle: firstResult.title,
+                videoUploader: firstResult.author.name,
+                videoLength: firstResult.seconds,
+                requestedBy: message.author.username,
+                sortOrder: lastVideo.sortOrder + 1
+            };
+            setServerQueue.run(addToSongQueue);
+		    message.channel.send(`${message.author.username} has added **${firstResult.title}** to the queue`);
+        })
 	},
 
 	next: function(message) {
-		if (server.queue[0]) {
-            playReason = "next";
-			Commands.play(message,`alexa play ${server.queue[0]}`)
-            server.queue.shift();
-            server.requester.shift();
+        const getServerQueue = songQueue.prepare("SELECT * FROM songQueue WHERE guildId = ? ORDER BY sortOrder ASC").get(message.guild.id);
+		if (getServerQueue) {
+            endReason = "next";
+            Commands.play(message,`alexa play https://youtu.be/${getServerQueue.videoId}`, `alexa play https://youtu.be/${getServerQueue.videoId}`)
+            songQueue.prepare("DELETE FROM songQueue WHERE guildId = ? AND videoId = ?").run(message.guild.id, getServerQueue.videoId);
+            setTimeout(() => {endReason = "none";}, 1000)
 		} else {message.channel.send("There is no next song, silly gooth!")}
 	},
 
     clearQueue: function(message) {
-        if (server.queue[0]) {
-            server.queue = [];
-            server.requester = [];
-            message.channel.send("The song queue has been cleared!")
-        } else {message.channel.send("There is no song queue to clear!")}
+        const getServerQueue = songQueue.prepare("SELECT * FROM songQueue WHERE guildId = ?").all(message.guild.id);
+        
+        if (getServerQueue[0]) {
+            songQueue.prepare("DELETE FROM songQueue WHERE guildId = ?").run(message.guild.id);
+            message.channel.send("The song queue has been cleared!");
+        } else {message.channel.send("There is no song queue to clear!");};
     },
 
     stfu: function(message) {
         if (message.guild.voiceConnection) {
-			server.queue = [];
+            endReason = "stfu";
             message.channel.send(`Well fine, fuck you too`);
 			message.guild.voiceConnection.disconnect();
         } else {
@@ -280,7 +535,7 @@ const Commands = {
                         collector.stop();
                         if (typeof message.member.voiceChannel !== 'undefined') {
                             collector.stop();
-                            Commands.play(message,"alexa play despacito");
+                            Commands.play(message, "alexa play despacito", "alexa play despacito");
                         }
                         else {
                             collector.stop();

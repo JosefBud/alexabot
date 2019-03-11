@@ -189,8 +189,9 @@ const Commands = {
                             Commands.play(message,`alexa play fromalexaqueue https://youtube.com/watch?v=${getServerQueue.videoId}`, `alexa play fromalexaqueue https://youtube.com/watch?v=${getServerQueue.videoId}`);
                             songQueue.prepare("DELETE FROM songQueue WHERE guildId = ? AND videoId = ?").run(message.guild.id, getServerQueue.videoId);
                             endReason = "none";
+                            return;
                         } else {
-                            //message.guild.voiceConnection.disconnect();
+                            message.guild.voiceConnection.disconnect();
                         }
                     })
                 })
@@ -260,8 +261,10 @@ const Commands = {
                         seconds: parseInt(result.player_response.videoDetails.lengthSeconds)
                     }
                     
-                    if ((caseSensitiveContent.includes("fromalexaqueue")) == false) {
-                        endReason = "play"
+                    if ((caseSensitiveContent.includes("fromalexaqueue")) === false) {
+                        if (message.guild.voiceConnection) {
+                            endReason = "play"
+                        } else {endReason = "none"}
                     }
 
                     playThis(message, videoObj);
@@ -288,8 +291,10 @@ const Commands = {
                     seconds: firstResult.seconds
                 }
                 
-                if ((caseSensitiveContent.includes("fromalexaqueue")) == false) {
-                    endReason = "play"
+                if ((caseSensitiveContent.includes("fromalexaqueue")) === false) {
+                    if (message.guild.voiceConnection) {
+                        endReason = "play"
+                    } else {endReason = "none"}
                 }
 
                 playThis(message, videoObj);

@@ -178,15 +178,22 @@ const Commands = {
                             return;
                         }
 
+                        if (endReason === "play") {
+                            endReason = "none";
+                            console.log("play is the reason")
+                            return;
+                        }
+
                         const getServerQueue = songQueue.prepare("SELECT * FROM songQueue WHERE guildId = ? ORDER BY sortOrder ASC").get(message.guild.id);
                         console.log(getServerQueue);
                         if (getServerQueue) {
                             console.log("should be playing the next song")
-                            Commands.play(message,`alexa play https://youtube.com/watch?v=${getServerQueue.videoId}`, `alexa play https://youtube.com/watch?v=${getServerQueue.videoId}`);
+                            Commands.play(message,`alexa play fromalexaqueue https://youtube.com/watch?v=${getServerQueue.videoId}`, `alexa play fromalexaqueue https://youtube.com/watch?v=${getServerQueue.videoId}`);
                             songQueue.prepare("DELETE FROM songQueue WHERE guildId = ? AND videoId = ?").run(message.guild.id, getServerQueue.videoId);
                             endReason = "none";
+                            return;
                         } else {
-                            //message.guild.voiceConnection.disconnect();
+                            message.guild.voiceConnection.disconnect();
                         }
                     })
                 })
@@ -227,9 +234,9 @@ const Commands = {
             //
             // PLAY BY USING A DIRECT LINK TO THE VIDEO
             //
-            if (msgContent.includes("?v=") || msgContent.includes("youtu.be/")) {
+            if (caseSensitiveContent.includes("?v=") || caseSensitiveContent.includes("youtu.be/")) {
                 let getVideoId;
-                if (msgContent.includes("youtu.be/")) {
+                if (caseSensitiveContent.includes("youtu.be/")) {
                     getVideoId = caseSensitiveContent.split("youtu.be/")[1];
                 } else {
                     getVideoId = caseSensitiveContent.split("?v=")[1];
@@ -256,6 +263,12 @@ const Commands = {
                         seconds: parseInt(result.player_response.videoDetails.lengthSeconds)
                     }
                     
+                    if ((caseSensitiveContent.includes("fromalexaqueue")) === false) {
+                        if (message.guild.voiceConnection) {
+                            endReason = "play"
+                        } else {endReason = "none"}
+                    }
+
                     playThis(message, videoObj);
                     return;
                 })
@@ -280,6 +293,12 @@ const Commands = {
                     seconds: firstResult.seconds
                 }
                 
+                if ((caseSensitiveContent.includes("fromalexaqueue")) === false) {
+                    if (message.guild.voiceConnection) {
+                        endReason = "play"
+                    } else {endReason = "none"}
+                }
+
                 playThis(message, videoObj);
                 return;
 			})

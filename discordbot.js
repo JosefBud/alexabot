@@ -162,6 +162,7 @@ client.on('message', message => {
         }
         
         if (msgContent === "alexa" || msgContent.startsWith("alexa help") || msgContent.startsWith("alexa commands")) {Commands.help(message, msgContent);}
+        if (msgContent.startsWith("alexa test")) {Commands.test(message);}
         if (msgContent.startsWith("alexa vote")) {message.channel.send("Well aren't you just the sweetest lil' thang voting for me... Here ya go, qt: https://discordbots.org/bot/534469636381736981/vote");}
         if (msgContent.startsWith("alexa get out of")) {Commands.getOut(message,msgContent);}
         if (msgContent.startsWith("alexa xp")) {Game.test(message)}
@@ -172,7 +173,6 @@ client.on('message', message => {
         if (msgContent.startsWith("alexa flip")) {Game.flipCoin(message);}
         if (msgContent.startsWith("alexa steal")) {Game.stealCoins(client, message);}
         if (msgContent.startsWith("alexa profile")) {Game.getProfile(message);}
-        if (msgContent.startsWith("alexa test")) {Commands.test(message);}
         if (msgContent.startsWith("alexa volume")) {Commands.volume(message);}
         if (msgContent.startsWith("alexa play")) {Commands.play(message,msgContent,message.content);}
         if (msgContent.startsWith("alexa queue")) {Commands.queue(message);}
@@ -194,8 +194,8 @@ client.on('message', message => {
         if (msgContent.startsWith("alexa stocks history")) {StockMarket.getHistory(message);}
         if (msgContent.startsWith("alexa stocks search")) {StockMarket.search(message);}
         if (msgContent.startsWith("alexa stocks leaderboard")) {StockMarket.leaderboard(message);}
-        if (msgContent.startsWith("alexa stocks test")) {StockMarket.leaderboard(message);}
         if (msgContent.startsWith("alexa stocks help") || msgContent === "alexa stocks") {StockMarket.help(message);}
+        if (msgContent.startsWith("alexa what is the weather") || msgContent.startsWith("alexa how is the weather")) {Commands.whatIsWeather(message);}
     }
 });
 

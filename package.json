@@ -13,11 +13,13 @@
     "erlpack": "github:discordapp/erlpack",
     "ffmpeg": "^0.0.4",
     "libsodium-wrappers": "^0.7.3",
+    "moment": "^2.24.0",
     "node-gyp": "^3.8.0",
     "node-opus": "^0.2.9",
     "opusscript": "^0.0.6",
     "snekfetch": "^4.0.4",
     "sodium": "^3.0.2",
+    "weather-js": "^2.0.0",
     "youtube-playlist": "^1.0.2",
     "yt-search": "^0.4.1",
     "ytdl": "^0.11.1"

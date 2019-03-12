@@ -131,6 +131,11 @@ const Commands = {
     play: async function(message, msgContent, caseSensitiveContent) {
         async function playThis(message, video) {
             //endReason = "none";
+            if (video.videoId.length !== 11) {
+                message.channel.send("That video doesn't seem to have a valid video ID. If you think this message is an error, please let me know on the Alexa Discord server: https://discord.gg/PysGrtD")
+                return;
+            }
+
             const embed = new Discord.RichEmbed();
             embed
                 .setColor(alexaColor)
@@ -251,6 +256,12 @@ const Commands = {
                     getVideoId = getVideoId.split("?t=")[0];
                 }
                 console.log(getVideoId)
+
+                if (getVideoId.length !== 11) {
+                    message.channel.send("That video doesn't seem to have a valid video ID. If you think this message is an error, please let me know on the Alexa Discord server: https://discord.gg/PysGrtD");
+                    return;
+                }
+
                 ytdl.getBasicInfo(`https://youtube.com/watch?v=${getVideoId}`, function (err, result) {
                     if (err) {
                         console.log(err);
@@ -292,6 +303,11 @@ const Commands = {
                     videoId: firstResult.videoId,
                     name: firstResult.title,
                     seconds: firstResult.seconds
+                }
+
+                if (firstResult.videoId.length !== 11) {
+                    message.channel.send("That video doesn't seem to have a valid video ID. If you think this message is an error, please let me know on the Alexa Discord server: https://discord.gg/PysGrtD")
+                    return;
                 }
                 
                 if ((caseSensitiveContent.includes("fromalexaqueue")) === false) {
@@ -455,6 +471,11 @@ const Commands = {
             if (videoId.includes("?t=")) {
                 videoId = videoId.split("?t=")[0];
             }
+
+            if (videoId.length !== 11) {
+                message.channel.send("That video doesn't seem to have a valid video ID. If you think this message is an error, please let me know on the Alexa Discord server: https://discord.gg/PysGrtD")
+                return;
+            }
             
             ytdl.getBasicInfo(`https://youtube.com/watch?v=${videoId}`, function (err, result) {
                 if (err) {
@@ -497,6 +518,11 @@ const Commands = {
             
             if (!lastVideo) {
                 lastVideo = {sortOrder: 0};
+            }
+
+            if (firstResult.videoId.length !== 11) {
+                message.channel.send("That video doesn't seem to have a valid video ID. If you think this message is an error, please let me know on the Alexa Discord server: https://discord.gg/PysGrtD")
+                return;
             }
 
             let addToSongQueue = {

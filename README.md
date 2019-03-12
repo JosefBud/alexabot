@@ -27,6 +27,8 @@ Discord bot that does a whole gaggle of things...
 `Alexa stocks leaderboard` will show you the current leaderboard for portfolio value.  
 
 ### Miscellaneous commands
+`Alexa what is the weather in [location]` will show you the weather for the location you ask for. You can use a city or a postal code, the latter will be more accurate.
+`Alexa minesweeper` will generate a random game of Minesweeper, 6x6 with 5 bombs.
 `Alexa profile` will show you your profile.  
 `Alexa steal [@somebody]` will steal some cash from another person. There may or may not be a very small chance to steal a lot more than usual.  
 `Alexa flip` will flip a coin. You either win money or you don't.  

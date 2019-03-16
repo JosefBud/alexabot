@@ -3,6 +3,8 @@ Discord bot that does a whole gaggle of things...
 
 [Bot invite](https://discordapp.com/api/oauth2/authorize?client_id=534469636381736981&permissions=8&redirect_uri=https%3A%2F%2Fdiscordapp.com%2Foauth2%2Fauthorize%3F%26client_id%3D534469636381736981%26scope%3Dbot&scope=bot)
 
+[![Discord Bots](https://discordbots.org/api/widget/534469636381736981.svg)](https://discordbots.org/bot/534469636381736981)
+
 ### Music commands
 `Alexa help [1-4]` will display the commands, separated by "pages" 1-4.  
 `Alexa play [song name]` will stream a song from YouTube into the voice channel you're in. This is pulling the top search result from YouTube, and YouTube search sucks sometimes, so it helps if you include the artist name.  

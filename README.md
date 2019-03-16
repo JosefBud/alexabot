@@ -41,37 +41,3 @@ Discord bot that does a whole gaggle of things...
 `Alexa give me a meme` will give you a random fresh meme from Reddit.  
 `Alexa give me /r/[subreddit]` will give you a random top post of the day from that subreddit.  
 `Alexa buy [something]` will make an Amazon™ purchase and charge it to someone else's account. This is using l33t h4xx and is extremely illegal. Use with caution.  
-
-### You need to add a `config.json` file with the following:
-
-```
-{  
-     "token" : "YOUR_BOT_TOKEN_HERE",
-     "blizzardKey" : "YOUR_BLIZZARD_API_CLIENT_KEY",
-     "blizzardSecret" : "YOUR_BLIZZARD_API_CLIENT_SECRET"
-}
-```
-
-### You need to generate a `blizzardToken.json` file and keep it updated:
-Blizzard's API requests require your client's static key & secret (in the config.json file) but also require an OAuth token that expires after 24 hours. You can find their docs on this here:
-https://develop.battle.net/documentation/guides/using-oauth/client-credentials-flow
-
-I chose to run the `curl` request in cron every 12 hours on the server and output the response to a file, `blizzardToken.json`, but you can do whatever works best for you.
-
-### Before you run `npm install`:
-
-The Node install for better-sqlite3 requires the ability to build C++ files.
-
-If you're on Windows:
-```
-npm install --vs2015 -g windows-build-tools
-```
-If you're on Linux:
-```
-sudo apt-get install build-essential
-Then install Python 2.7 - it MUST be 2.7
-```
-Next:
-```
-npm install
-```

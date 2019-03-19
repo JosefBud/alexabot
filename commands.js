@@ -163,7 +163,7 @@ const Commands = {
                         console.log(ytdlOptions);
                         console.log(video.seconds);
                     } else {
-                        ytdlOptions = {quality: 'highestaudio', filter: 'audioonly'};
+                        ytdlOptions = {quality: 'highestaudio'};
                         console.log(ytdlOptions);
                         console.log(video.seconds);
                     }

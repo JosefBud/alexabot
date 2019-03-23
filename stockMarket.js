@@ -30,7 +30,13 @@ const StockMarket = {
             `)
             .setFooter("This game is still in sort of a beta stage. If you run into any issues/bugs or have suggestions, reach out to me on the Alexa Discord server: https://discord.gg/PysGrtD")
 
-        message.channel.send(helpEmbed)
+        if (message.channel.type === "dm") {
+            message.reply(helpEmbed);
+            return;
+        } else {
+            message.channel.send(helpEmbed);
+            return;
+        }
     },
 
     create: async function(message) {

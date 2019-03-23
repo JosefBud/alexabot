@@ -104,14 +104,24 @@ client.on('ready', () => {
 client.on('error', console.error);
 
 client.on('message', message => {
+    let msgContent = message.content.toLowerCase().replace(/[,!'.]/gi,"");
+
     // IGNORING DIRECT MESSAGES
     if (message.channel.type === 'dm') {
+        if (!message.author.bot) {
+            Commands.help(message, msgContent);
+            let consoleTimeStamp = new Date();
+            let logIt = consoleTimeStamp.toLocaleDateString('en-us',{timeZone:'America/New_York'}) + " " + consoleTimeStamp.toLocaleTimeString('en-us',{timeZone:'America/New_York'}) + " " + message.author.username + ": " + message.content;
+            fs.appendFile('alexaDMs.log', "\r\n" + logIt, (err) => {
+                if (err) throw err;
+                console.log('Alexa has received a DM.');
+            })
+        }
+
         return;
-        
     }
     
     // CONVERTING THE MESSAGE TO LOWERCASE AND REPLACING CERTAIN PUNCTUATION
-    let msgContent = message.content.toLowerCase().replace(/[,!'.]/gi,"");
 
     if (msgContent.startsWith(`alexa come back to`)) {
         Commands.comeBack(message,msgContent);

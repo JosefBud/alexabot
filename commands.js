@@ -28,7 +28,7 @@ const Commands = {
         const helpEmbed = new Discord.RichEmbed();
         helpEmbed.setColor(alexaColor);
         if (msgContent.slice(-1) === "1" || msgContent === "alexa" || msgContent === "alexa help" || msgContent === "alexa commands") {
-        	message.channel.send(helpEmbed
+        	helpEmbed
             	.setAuthor(`Alexa Commands - Page 1`)
             	.setTitle(`Use "Alexa help [1-4]" (e.g. "Alexa help 1")`)
                 .setDescription(`
@@ -41,10 +41,35 @@ const Commands = {
                     **Alexa volume** will bring up the volume commands and current volume.
                     **Alexa volume [0-100]%** will change the volume to the number you set.
                     **Alexa volume down** or **Alexa volume up** changes the volume by 10%. This doesn't work *while* you're playing a song, it only adjusts it for the next time you play a song.
-            	`)
-			);
-		} else if (msgContent.slice(-1) === "2") {
-            message.channel.send(helpEmbed
+                `)
+                
+            if (message.channel.type === "dm") {
+                message.reply(helpEmbed);
+                return;
+            } else {
+                message.channel.send(helpEmbed);
+                return;
+            }
+		} else if (message.channel.type === "dm" && msgContent === "help") {
+            helpEmbed
+            	.setAuthor(`Alexa Commands - Page 1`)
+            	.setTitle(`Use "Alexa help [1-4]" (e.g. "Alexa help 1")`)
+                .setDescription(`
+                    **Alexa play [song name]** will stream a song from YouTube into the voice channel you're in. This is pulling the top search result from YouTube, and YouTube search sucks sometimes, so it helps if you include the artist name.
+                    **Alexa queue [song name]** will queue up a song to play when the current one is finished.
+                    **Alexa queue** will show the current queue of songs.
+                    **Alexa clear queue** will clear out the current queue of songs.
+                    **Alexa next** will play the next song in the queue.
+                    **Alexa STFU** will disconnect Alexa from the voice channel.
+                    **Alexa volume** will bring up the volume commands and current volume.
+                    **Alexa volume [0-100]%** will change the volume to the number you set.
+                    **Alexa volume down** or **Alexa volume up** changes the volume by 10%. This doesn't work *while* you're playing a song, it only adjusts it for the next time you play a song.
+                `)
+
+            message.reply(helpEmbed);
+            return;
+        } else if (msgContent.slice(-1) === "2") {
+            helpEmbed
                 .setAuthor(`Alexa Commands - Page 2`)
                 .setTitle(`Use "Alexa help [1-4]" (e.g. "Alexa help 1")`)
                 .setDescription(`
@@ -59,9 +84,16 @@ const Commands = {
                     **Alexa stocks history [symbol]** will show you a detailed history for that company's stock.
                     **Alexa stocks leaderboard** will show you the current leaderboard for portfolio value.
                 `)
-            );
+
+            if (message.channel.type === "dm") {
+                message.reply(helpEmbed);
+                return;
+            } else {
+                message.channel.send(helpEmbed);
+                return;
+            }
         } else if (msgContent.slice(-1) === "3") {
-			message.channel.send(helpEmbed
+			helpEmbed
                 .setAuthor(`Alexa Commands - Page 3`)
                 .setTitle(`Use "Alexa help [1-4]" (e.g. "Alexa help 1")`)
                 .setDescription(`
@@ -73,10 +105,17 @@ const Commands = {
                     **Alexa vote** will provide the link to vote for Alexa on discordbots.org.
                     **Alexa get out of [#channel]** will stop Alexa from listening in the channel you specify.
                     **Alexa come back to [#channel]** will bring Alexa back to a channel she was kicked out of.
-				`)
-			);
+                `)
+                
+            if (message.channel.type === "dm") {
+                message.reply(helpEmbed);
+                return;
+            } else {
+                message.channel.send(helpEmbed);
+                return;
+            }
 		} else if (msgContent.slice(-1) === "4") {
-			message.channel.send(helpEmbed
+			helpEmbed
                 .setAuthor(`Alexa Commands - Page 4`)
                 .setTitle(`Use "Alexa help [1-4]" (e.g. "Alexa help 1")`)
                 .setDescription(`
@@ -84,12 +123,25 @@ const Commands = {
                     **Alexa give me a meme** will give you a random fresh meme from Reddit.
                     **Alexa give me /r/[subreddit]** will give you a random top post of the day from that subreddit.
                     **Alexa buy [something]** will make an Amazon™ purchase and charge it to someone else's account. This is using l33t h4xx and is extremely illegal. Use with caution.
-				`)
-			);
+                `)
+                
+            if (message.channel.type === "dm") {
+                message.reply(helpEmbed);
+                return;
+            } else {
+                message.channel.send(helpEmbed);
+                return;
+            }
 		} else if (msgContent === "alexa help stocks") {
             StockMarket.help(message);
         } else {
-            message.channel.send("You may have typed something wrong or attempted to access a page that doesn't exist. Try again using `Alexa help [1-4]` (e.g. `Alexa help 1`).")
+            if (message.channel.type === "dm") {
+                message.reply("I can only give you the help menu. Try `Alexa help` or go through the help pages by using `Alexa help [1-4]` (e.g. `Alexa help 3`)")
+                return;
+            } else {
+                message.channel.send("You may have typed something wrong or attempted to access a page that doesn't exist. Try again using `Alexa help [1-4]` (e.g. `Alexa help 3`).");
+                return;
+            }
         }
     },
 

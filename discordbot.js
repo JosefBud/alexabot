@@ -107,6 +107,7 @@ client.on('message', message => {
     // IGNORING DIRECT MESSAGES
     if (message.channel.type === 'dm') {
         return;
+        //
     }
     
     // CONVERTING THE MESSAGE TO LOWERCASE AND REPLACING CERTAIN PUNCTUATION

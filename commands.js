@@ -192,8 +192,8 @@ const Commands = {
             embed
                 .setColor(alexaColor)
                 .setAuthor(`Let's get jiggy with it, ${message.author.username}`)
-                .setThumbnail("https://media.giphy.com/media/kLM9I1g8jsiAM/giphy.gif")
-                .setImage(`https://i.ytimg.com/vi/${video.videoId}/mqdefault.jpg`)
+                .setThumbnail(`https://i.ytimg.com/vi/${video.videoId}/mqdefault.jpg`)
+                .setImage(`https://media.giphy.com/media/8Bl2dceNUgY7sylmiU/giphy.gif`)
                 .addField(`${video.name}`,`https://www.youtube.com/watch?v=${video.videoId}`)
                 .setFooter(`If Alexa connected to the voice channel but isn't outputting any sound, just tell her to STFU and then try again. This is a known bug.`)
             message.channel.send(embed);

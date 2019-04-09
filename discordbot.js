@@ -15,6 +15,7 @@ const Game = require('./game.js');
 const BlizzardCmd = require('./blizzard.js');
 const Reddit = require('./reddit.js');
 const StockMarket = require('./stockMarket.js');
+const Dnd = require('./dnd.js');
 let status = "LISTENING";
 
 const server = http.createServer(function(request, response) {
@@ -207,6 +208,9 @@ client.on('message', message => {
         if (msgContent.startsWith("alexa stocks leaderboard")) {StockMarket.leaderboard(message);}
         if (msgContent.startsWith("alexa stocks help") || msgContent === "alexa stocks") {StockMarket.help(message);}
         if (msgContent.startsWith("alexa what is the weather") || msgContent.startsWith("alexa how is the weather")) {Commands.whatIsWeather(message);}
+        if (msgContent.startsWith("alexa dnd item")) {Dnd.itemLookup(message);}
+        if (msgContent.startsWith("alexa dnd spell")) {Dnd.spellLookup(message);}
+        if (msgContent.startsWith("alexa dnd feat")) {Dnd.featLookup(message);}
     }
 });
 

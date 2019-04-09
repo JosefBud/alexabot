@@ -14,7 +14,7 @@ const serverVolumeSql = new SQLite('./db/serverVolume.sqlite');
 const songQueue = new SQLite('./db/songQueue.sqlite');
 const StockMarket = require('./stockMarket.js');
 const Arrays = require('./arrays.js');
-var alexaColor = "#31C4F3";
+const alexaColor = "#31C4F3";
 let endReason = "none";
 // const bannedChannelsSet = new Set();
 var disconnectTimer;

@@ -8,7 +8,7 @@ const SMFunctions = require('./stockMarketFunctions.js');
 const Yahoo = algotrader.Data.Yahoo;
 const Query = algotrader.Data.Query;
 const IEX = algotrader.Data.IEX;
-var alexaColor = "#31C4F3";
+const alexaColor = "#31C4F3";
 
 const StockMarket = {
     help: async function (message) {

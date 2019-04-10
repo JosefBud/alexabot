@@ -3,8 +3,93 @@ const alexaColor = "#31C4F3";
 const DndItems = require('./dndDb/dndItems.js');
 const DndSpells = require('./dndDb/dndSpells.js');
 const DndFeats = require('./dndDb/dndFeats.js');
+const DndClassFeats = require('./dndDb/dndClassFeats.js');
 
 const Dnd = {
+    dndEmbed: async function (message, finalResult) {
+        let resultEmbed = new Discord.RichEmbed();
+        let description = "";
+        let extraDescription = "";
+        let classFeatLevel = 0;
+
+        if (finalResult.feature) {
+            classFeatLevel = finalResult._level;
+            finalResult = finalResult.feature;
+        }
+
+        finalResult.text.forEach((text) => {
+            if (text.startsWith("Source: ")) {
+                resultEmbed
+                    .setFooter(text)
+            } else {
+                if (description.length < 1750) {
+                    description += `${text}\n\n`;
+                } else {
+                    extraDescription += `${text}\n\n`;
+                }
+            }
+        })
+
+        resultEmbed
+            .setColor(alexaColor)
+            .setDescription(description)
+
+        if (finalResult.ritual && finalResult.ritual === "NO") {
+            resultEmbed.setAuthor(finalResult.name);
+        } else if (finalResult.ritual && finalResult.ritual === "YES") {
+            resultEmbed.setAuthor(finalResult.name + " (Ritual)");
+        } else {
+            resultEmbed.setAuthor(finalResult.name);
+        }
+
+        if (extraDescription.length > 1) {
+            resultEmbed
+                .addField("Continued...", extraDescription, false);
+        }
+
+        // ITEMS
+        if (finalResult.type) {
+            let itemType;
+            switch(finalResult.type) {
+                case "$": itemType = "Currency"; break;
+                case "A": itemType = "Ammunition"; break;
+                case "G": itemType = "Adventuring Gear"; break;
+                case "HA": itemType = "Heavy Armor"; break;
+                case "MA": itemType = "Medium Armor"; break;
+                case "LA": itemType = "Light Armor"; break;
+                case "M": itemType = "Melee Weapon"; break;
+                case "R": itemType = "Ranged Weapon"; break;
+                case "P": itemType = "Potion"; break;
+                case "RD": itemType = "Rod"; break;
+                case "RG": itemType = "Ring"; break;
+                case "SC": itemType = "Scroll"; break;
+                case "ST": itemType = "Staff"; break;
+                case "W": itemType = "Wondrous Item"; break;
+                case "WD": itemType = "Wand"; break;
+                default: itemType = finalResult.type; break;
+            }
+            resultEmbed.addField("Type", itemType, true)
+        }
+        if (finalResult.weight) {resultEmbed.addField("Weight", finalResult.weight, true)}
+
+        // SPELLS
+        if (finalResult.classes) {resultEmbed.addField("Classes", finalResult.classes, false)}
+        if (finalResult.level) {resultEmbed.addField("Spell Level", finalResult.level, true)}
+        if (finalResult.school) {resultEmbed.addField("School", finalResult.school, true)}
+        if (finalResult.time && finalResult.time.length > 0) {resultEmbed.addField("Time to cast", finalResult.time, true)}
+        if (finalResult.range && finalResult.range.length > 0) {resultEmbed.addField("Range", finalResult.range, true)}
+        if (finalResult.components && finalResult.components.length > 0) {resultEmbed.addField("Components", finalResult.components, true)}
+        if (finalResult.duration && finalResult.duration.length > 0) {resultEmbed.addField("Duration", finalResult.duration, true)}
+
+        // FEATS
+        if (finalResult.prerequisite && finalResult.prerequisite.length > 0) {resultEmbed.addField("Prerequisite", finalResult.prerequisite, false);}
+
+        // CLASS FEATS
+        if (classFeatLevel > 0) {resultEmbed.addField("Character Level", classFeatLevel, true)}
+
+        message.channel.send(resultEmbed);
+    },
+
     itemLookup: async function (message) {
         let query = message.content.toLowerCase().slice(15);
         let results = [];
@@ -35,43 +120,8 @@ const Dnd = {
                 if (responseInt) {
                     if (results[responseInt - 1]) {
                         let finalResult = results[responseInt - 1];
-                        let resultEmbed = new Discord.RichEmbed();
-                        let description = "";
-                        let extraDescription = "";
 
-                        finalResult.text.forEach((text) => {
-                            if (text === null) {
-                                text = " ";
-                            }
-
-                            if (text.startsWith("Source: ")) {
-                                resultEmbed
-                                    .setFooter(text)
-                            } else {
-                                if (description.length < 1750) {
-                                    description += `${text}\n\n`;
-                                } else {
-                                    extraDescription += `${text}\n\n`;
-                                }
-                            }
-                        })
-
-                        resultEmbed
-                            .setAuthor(finalResult.name)
-                            .setColor(alexaColor)
-                            .setDescription(description)
-
-                        if (extraDescription.length > 1) {
-                            resultEmbed
-                                .addField("Continued...", extraDescription, false);
-                        }
-
-                        resultEmbed
-                            .addField("Type", finalResult.type, true)
-                            .addField("Weight", finalResult.weight, true)
-
-                        message.channel.send(resultEmbed);
-
+                        Dnd.dndEmbed(message, finalResult);
                     } else {
                         message.channel.send("It looks like that number wasn't an option. Please try again, starting over.");
                     }
@@ -88,42 +138,7 @@ const Dnd = {
             })
         } else {
             let finalResult = results[0];
-            let resultEmbed = new Discord.RichEmbed();
-            let description = "";
-            let extraDescription = "";
-
-            finalResult.text.forEach((text) => {
-                if (text === null) {
-                    text = " ";
-                }
-
-                if (text.startsWith("Source: ")) {
-                    resultEmbed
-                        .setFooter(text)
-                } else {
-                    if (description.length < 1750) {
-                        description += `${text}\n\n`;
-                    } else {
-                        extraDescription += `${text}\n\n`;
-                    }
-                }
-            })
-
-            resultEmbed
-                .setAuthor(finalResult.name)
-                .setColor(alexaColor)
-                .setDescription(description)
-
-            if (extraDescription.length > 1) {
-                resultEmbed
-                    .addField("Continued...", extraDescription, false);
-            }
-
-            resultEmbed
-                .addField("Type", finalResult.type, true)
-                .addField("Weight", finalResult.weight, true)
-
-            message.channel.send(resultEmbed);
+            Dnd.dndEmbed(message, finalResult);
         }
     },
 
@@ -157,71 +172,7 @@ const Dnd = {
                 if (responseInt) {
                     if (results[responseInt - 1]) {
                         let finalResult = results[responseInt - 1];
-                        let resultEmbed = new Discord.RichEmbed();
-                        let description = "";
-                        let extraDescription = "";
-
-                        finalResult.text.forEach((text) => {
-                            if (text === null) {
-                                text = " ";
-                            }
-
-                            if (text.startsWith("Source: ")) {
-                                resultEmbed
-                                    .setFooter(text)
-                            } else {
-                                if (description.length < 1750) {
-                                    description += `${text}\n\n`;
-                                } else {
-                                    extraDescription += `${text}\n\n`;
-                                }
-                            }
-                        })
-
-                        resultEmbed
-                            .setColor(alexaColor)
-                            .setDescription(description)
-
-                        if (finalResult.ritual === "NO") {
-                            resultEmbed
-                                .setAuthor(finalResult.name)
-                        } else {
-                            resultEmbed
-                                .setAuthor(finalResult.name + "*(Ritual)*")
-                        }
-
-                        if (extraDescription.length > 1) {
-                            resultEmbed
-                                .addField("Continued...", extraDescription, false);
-                        }
-
-                        resultEmbed
-                            .addField("Classes", finalResult.classes, false)
-                            .addField("Spell Level", finalResult.level, true)
-                            .addField("School", finalResult.school, true)
-
-                        if (finalResult.time.length > 0) {
-                            resultEmbed
-                                .addField("Time to cast", finalResult.time, true)
-                        }
-
-                        if (finalResult.range.length > 0) {
-                            resultEmbed
-                                .addField("Range", finalResult.range, true)
-                        }
-
-                        if (finalResult.components.length > 0) {
-                            resultEmbed
-                                .addField("Components", finalResult.components, true)
-                        }
-
-                        if (finalResult.duration.length > 0) {
-                            resultEmbed
-                                .addField("Duration", finalResult.duration, true)
-                        }
-
-                        message.channel.send(resultEmbed);
-
+                        Dnd.dndEmbed(message, finalResult);
                     } else {
                         message.channel.send("It looks like that number wasn't an option. Please try again, starting over.");
                     }
@@ -238,70 +189,7 @@ const Dnd = {
             })
         } else {
             let finalResult = results[0];
-            let resultEmbed = new Discord.RichEmbed();
-            let description = "";
-            let extraDescription = "";
-
-            finalResult.text.forEach((text) => {
-                if (text === null) {
-                    text = " ";
-                }
-
-                if (text.startsWith("Source: ")) {
-                    resultEmbed
-                        .setFooter(text)
-                } else {
-                    if (description.length < 1750) {
-                        description += `${text}\n\n`;
-                    } else {
-                        extraDescription += `${text}\n\n`;
-                    }
-                }
-            })
-
-            resultEmbed
-                .setColor(alexaColor)
-                .setDescription(description)
-
-            if (finalResult.ritual === "NO") {
-                resultEmbed
-                    .setAuthor(finalResult.name)
-            } else {
-                resultEmbed
-                    .setAuthor(finalResult.name + "*(Ritual)*")
-            }
-
-            if (extraDescription.length > 1) {
-                resultEmbed
-                    .addField("Continued...", extraDescription, false);
-            }
-
-            resultEmbed
-                .addField("Classes", finalResult.classes, false)
-                .addField("Spell Level", finalResult.level, true)
-                .addField("School", finalResult.school, true)
-
-            if (finalResult.time.length > 0) {
-                resultEmbed
-                    .addField("Time to cast", finalResult.time, true)
-            }
-
-            if (finalResult.range.length > 0) {
-                resultEmbed
-                    .addField("Range", finalResult.range, true)
-            }
-
-            if (finalResult.components.length > 0) {
-                resultEmbed
-                    .addField("Components", finalResult.components, true)
-            }
-
-            if (finalResult.duration.length > 0) {
-                resultEmbed
-                    .addField("Duration", finalResult.duration, true)
-            }
-
-            message.channel.send(resultEmbed);
+            Dnd.dndEmbed(message, finalResult);
         }
     },
 
@@ -335,42 +223,7 @@ const Dnd = {
                 if (responseInt) {
                     if (results[responseInt - 1]) {
                         let finalResult = results[responseInt - 1];
-                        let resultEmbed = new Discord.RichEmbed();
-                        let description = "";
-                        let extraDescription = "";
-
-                        finalResult.text.forEach((text) => {
-                            if (text === null) {
-                                text = " ";
-                            }
-
-                            if (text.startsWith("Source: ")) {
-                                resultEmbed
-                                    .setFooter(text)
-                            } else {
-                                if (description.length < 1750) {
-                                    description += `${text}\n\n`;
-                                } else {
-                                    extraDescription += `${text}\n\n`;
-                                }
-                            }
-                        })
-
-                        resultEmbed
-                            .setColor(alexaColor)
-                            .setDescription(description)
-                            .setAuthor(finalResult.name)
-
-                        if (extraDescription.length > 1) {
-                            resultEmbed
-                                .addField("Continued...", extraDescription, false);
-                        }
-
-                        if (finalResult.prerequisite.length > 0) {
-                            resultEmbed.addField("Prerequisite", finalResult.prerequisite, false);
-                        }
-
-                        message.channel.send(resultEmbed);
+                        Dnd.dndEmbed(message, finalResult);
 
                     } else {
                         message.channel.send("It looks like that number wasn't an option. Please try again, starting over.");
@@ -388,42 +241,67 @@ const Dnd = {
             })
         } else {
             let finalResult = results[0];
-            let resultEmbed = new Discord.RichEmbed();
-            let description = "";
-            let extraDescription = "";
+            Dnd.dndEmbed(message, finalResult);
+        }
+    },
 
-            finalResult.text.forEach((text) => {
-                if (text === null) {
-                    text = " ";
-                }
+    classFeatLookup: async function(message, charClass, query) {
+        let classObj;
+        let results = [];
+        DndClassFeats.forEach((thisOne) => {
+            if (thisOne.name === charClass) {
+                classObj = thisOne;
+            } else {
+                return;
+            }
+        })
 
-                if (text.startsWith("Source: ")) {
-                    resultEmbed
-                        .setFooter(text)
-                } else {
-                    if (description.length < 1750) {
-                        description += `${text}\n\n`;
-                    } else {
-                        extraDescription += `${text}\n\n`;
-                    }
-                }
+        classObj.autolevel.forEach((thisOne) => {
+            if (thisOne.feature && thisOne.feature.name.toLowerCase().includes(query)) {
+                results.push(thisOne);
+            }
+        })
+
+        if (results[1]) {
+            let choicesEmbed = new Discord.RichEmbed();
+            let choices = "";
+            let choiceNumber = 1;
+
+            results.forEach((classFeat) => {
+                choices += `**${choiceNumber}.)** ${classFeat.feature.name}\n`;
+                choiceNumber++;
             })
 
-            resultEmbed
-                .setColor(alexaColor)
-                .setDescription(description)
-                .setAuthor(finalResult.name)
+            choicesEmbed
+                .setTitle("There are multiple results. Please respond with the **number** next to the one you were looking for.")
+                .setDescription(choices);
+            message.channel.send(choicesEmbed);
 
-            if (extraDescription.length > 1) {
-                resultEmbed
-                    .addField("Continued...", extraDescription, false);
-            }
+            let collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 8000 });
+            collector.on("collect", response => {
+                let responseInt = parseInt(response);
+                if (responseInt) {
+                    if (results[responseInt - 1]) {
+                        let finalResult = results[responseInt - 1];
+                        Dnd.dndEmbed(message, finalResult);
 
-            if (finalResult.prerequisite.length > 0) {
-                resultEmbed.addField("Prerequisite", finalResult.prerequisite, false);
-            }
+                    } else {
+                        message.channel.send("It looks like that number wasn't an option. Please try again, starting over.");
+                    }
+                } else {
+                    message.channel.send("I need *just* the number, by itself. Please try again, starting over.");
+                }
 
-            message.channel.send(resultEmbed);
+                collector.stop();
+            })
+            collector.on("end", (collected, reason) => {
+                if (reason === "time") {
+                    message.channel.send("You took too much time to respond!")
+                } else {return;}
+            })
+        } else {
+            let finalResult = results[0];
+            Dnd.dndEmbed(message, finalResult);
         }
     }
 }

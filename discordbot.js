@@ -211,6 +211,21 @@ client.on('message', message => {
         if (msgContent.startsWith("alexa dnd item")) {Dnd.itemLookup(message);}
         if (msgContent.startsWith("alexa dnd spell")) {Dnd.spellLookup(message);}
         if (msgContent.startsWith("alexa dnd feat")) {Dnd.featLookup(message);}
+        if (msgContent.startsWith("alexa dnd artificer")) {let query = message.content.toLowerCase().slice(20); Dnd.classFeatLookup(message, "Artificer", query);}
+        if (msgContent.startsWith("alexa dnd barbarian")) {let query = message.content.toLowerCase().slice(20); Dnd.classFeatLookup(message, "Barbarian", query);}
+        if (msgContent.startsWith("alexa dnd bard")) {let query = message.content.toLowerCase().slice(15); Dnd.classFeatLookup(message, "Bard", query);}
+        if (msgContent.startsWith("alexa dnd cleric")) {let query = message.content.toLowerCase().slice(17); Dnd.classFeatLookup(message, "Cleric", query);}
+        if (msgContent.startsWith("alexa dnd druid")) {let query = message.content.toLowerCase().slice(16); Dnd.classFeatLookup(message, "Druid", query);}
+        if (msgContent.startsWith("alexa dnd fighter")) {let query = message.content.toLowerCase().slice(17); Dnd.classFeatLookup(message, "Fighter", query);}
+        if (msgContent.startsWith("alexa dnd monk")) {let query = message.content.toLowerCase().slice(15); Dnd.classFeatLookup(message, "Monk", query);}
+        if (msgContent.startsWith("alexa dnd mystic")) {let query = message.content.toLowerCase().slice(17); Dnd.classFeatLookup(message, "Mystic", query);}
+        if (msgContent.startsWith("alexa dnd paladin")) {let query = message.content.toLowerCase().slice(18); Dnd.classFeatLookup(message, "Paladin", query);}
+        if (msgContent.startsWith("alexa dnd ranger")) {let query = message.content.toLowerCase().slice(17); Dnd.classFeatLookup(message, "Ranger", query);}
+        if (msgContent.startsWith("alexa dnd rogue")) {let query = message.content.toLowerCase().slice(16); Dnd.classFeatLookup(message, "Rogue", query);}
+        if (msgContent.startsWith("alexa dnd rune scribe")) {let query = message.content.toLowerCase().slice(22); Dnd.classFeatLookup(message, "Rune Scribe", query);}
+        if (msgContent.startsWith("alexa dnd sorcerer")) {let query = message.content.toLowerCase().slice(19); Dnd.classFeatLookup(message, "Sorcerer", query);}
+        if (msgContent.startsWith("alexa dnd warlock")) {let query = message.content.toLowerCase().slice(18); Dnd.classFeatLookup(message, "Warlock", query);}
+        if (msgContent.startsWith("alexa dnd wizard")) {let query = message.content.toLowerCase().slice(17); Dnd.classFeatLookup(message, "Wizard", query);}
     }
 });
 

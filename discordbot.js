@@ -105,7 +105,7 @@ client.on('ready', () => {
 client.on('error', console.error);
 
 client.on('message', message => {
-    let msgContent = message.content.toLowerCase().replace(/[,!'.]/gi,"");
+    let msgContent = message.content.toLowerCase().replace(/[,'.]/gi,"");
 
     // IGNORING DIRECT MESSAGES
     if (message.channel.type === 'dm') {

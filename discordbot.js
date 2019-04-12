@@ -209,7 +209,7 @@ client.on('message', message => {
         if (msgContent.startsWith("alexa stocks help") || msgContent === "alexa stocks") {StockMarket.help(message);}
         if (msgContent.startsWith("alexa what is the weather") || msgContent.startsWith("alexa how is the weather")) {Commands.whatIsWeather(message);}
         if (msgContent.startsWith("!it") && message.guild.name == "the Alexa Experiment") {Dnd.itemLookup(message);}
-        if (msgContent.startsWith("!sp") && message.guild.name == "the Alexa Experiment") {Dnd.spellLookup(message);}
+        if (msgContent.startsWith("!sp") && message.guild.name == "the Alexa Experiment") {Dnd.spellLookup(message); console.log("test")}
         if (msgContent.startsWith("!f") && message.guild.name == "the Alexa Experiment") {Dnd.featLookup(message);}
         if (msgContent.startsWith("!artificer") && message.guild.name == "the Alexa Experiment") {let query = message.content.toLowerCase().slice(11); Dnd.classFeatLookup(message, "Artificer", query);}
         if (msgContent.startsWith("!barbarian") && message.guild.name == "the Alexa Experiment") {let query = message.content.toLowerCase().slice(11); Dnd.classFeatLookup(message, "Barbarian", query);}

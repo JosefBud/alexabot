@@ -114,7 +114,7 @@ const StockMarket = {
                         .setDescription(`**\$${money.money.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}**`)
                         .addField("Portfolio value:", `**\$${portfolioValue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}**`)
                         .addField("Portfolio:", portfolioDescription)
-                        .setFooter("Vote for Alexa to put an extra $5,000 in your wallet every day! Try \"Alexa vote\"")
+                        .setFooter("Vote for Alexa to put an extra $500 ($1,000 on weekends) in your wallet every day! Try \"Alexa vote\"")
 
                     if (addedPortfolioDescription) {
                         portfolioEmbed
@@ -133,7 +133,7 @@ const StockMarket = {
                     .setTitle("Wallet:")
                     .setDescription(`\$${money.money.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`)
                     .addField("Portfolio:", "You haven't purchased any stock yet!")
-                    .setFooter("Vote for Alexa to put an extra $5,000 in your wallet every day! Try \"Alexa vote\"")
+                    .setFooter("Vote for Alexa to put an extra $500 ($1,000 on weekends) in your wallet every day! Try \"Alexa vote\"")
             
                 message.channel.send(portfolioEmbed)
             }
@@ -398,7 +398,7 @@ const StockMarket = {
             .setColor(alexaColor)
             .setTitle("Current leaderboard for profile values")
             .setDescription(description)
-            .setFooter("Vote for Alexa to put an extra $5,000 in your wallet every day! Try \"Alexa vote\"")
+            .setFooter("Vote for Alexa to put an extra $500 ($1,000 on weekends) in your wallet every day! Try \"Alexa vote\"")
 
         message.channel.send(leaderboardEmbed)
     } 
@@ -445,7 +445,7 @@ const StockMarket = {
                     .setColor(alexaColor)
                     .setTitle("Current leaderboard for profile values")
                     .setDescription(description)
-                    .setFooter("Vote for Alexa to put an extra $5,000 in your wallet every day! Try \"Alexa vote\".")
+                    .setFooter("Vote for Alexa to put an extra $500 ($1,000 on weekends) in your wallet every day! Try \"Alexa vote\"")
 
                 message.channel.send(leaderboardEmbed)
             }
@@ -472,7 +472,7 @@ const StockMarket = {
                 .setColor(alexaColor)
                 .setTitle("Current leaderboard for profile values")
                 .setDescription(description)
-                .setFooter("Vote for Alexa to put an extra $5,000 in your wallet every day! Try \"Alexa vote\"")
+                .setFooter("Vote for Alexa to put an extra $500 ($1,000 on weekends) in your wallet every day! Try \"Alexa vote\"")
 
             message.channel.send(leaderboardEmbed)
         }

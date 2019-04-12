@@ -39,10 +39,20 @@ const server = http.createServer(function(request, response) {
 
                     let voterProfile = traders.prepare("SELECT money FROM traders WHERE userId = ?").get(post.user);
                     if (voterProfile) {
-                        let voterMoney = voterProfile.money + 5000;
-                        traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(voterMoney, post.user)
+                        let currentDate = new Date();
+                        let dayOfWeek = currentDate.getDay();
+                        console.log(dayOfWeek);
+                        if (dayOfWeek === 5 || dayOfWeek === 6 || dayOfWeek === 0) {
+                            let voterMoney = voterProfile.money + 1000;
+                            traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(voterMoney, post.user)
 
-                        client.users.get(post.user).send("Thank you for voting! I've added $5,000 to your wallet, you can check it by using `Alexa stocks profile` in your Discord server.\n Also feel free to join the Alexa Discord server at https://discord.gg/PysGrtD")
+                            client.users.get(post.user).send("Thank you for voting! I've added $1,000 to your wallet, you can check it by using `Alexa stocks profile` in your Discord server.\n Also feel free to join the Alexa Discord server at https://discord.gg/PysGrtD")
+                        } else {
+                            let voterMoney = voterProfile.money + 500;
+                            traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(voterMoney, post.user)
+                            
+                            client.users.get(post.user).send("Thank you for voting! I've added $500 to your wallet, you can check it by using `Alexa stocks profile` in your Discord server.\n Also feel free to join the Alexa Discord server at https://discord.gg/PysGrtD")
+                        }
                     } else {return;}
                 });
                 request.on('end', function () {

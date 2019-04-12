@@ -91,7 +91,7 @@ const Dnd = {
     },
 
     itemLookup: async function (message) {
-        let query = message.content.toLowerCase().slice(15);
+        let query = message.content.toLowerCase().slice(4);
         let results = [];
         DndItems.forEach((item) => {
             if (item.name.toLowerCase().includes(query)) {
@@ -143,7 +143,7 @@ const Dnd = {
     },
 
     spellLookup: async function (message) {
-        let query = message.content.toLowerCase().slice(16);
+        let query = message.content.toLowerCase().slice(4);
         let results = [];
         DndSpells.forEach((spell) => {
             if (spell.name.toLowerCase().includes(query)) {
@@ -194,7 +194,7 @@ const Dnd = {
     },
 
     featLookup: async function (message) {
-        let query = message.content.toLowerCase().slice(16);
+        let query = message.content.toLowerCase().slice(3);
         let results = [];
         DndFeats.forEach((feat) => {
             if (feat.name.toLowerCase().includes(query)) {

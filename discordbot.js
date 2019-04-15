@@ -16,6 +16,7 @@ const BlizzardCmd = require('./blizzard.js');
 const Reddit = require('./reddit.js');
 const StockMarket = require('./stockMarket.js');
 const Dnd = require('./dnd.js');
+const dndServers = new Set(["271172684543426560", "567383493416321064"])
 let status = "LISTENING";
 
 const server = http.createServer(function(request, response) {
@@ -218,24 +219,24 @@ client.on('message', message => {
         if (msgContent.startsWith("alexa stocks leaderboard")) {StockMarket.leaderboard(message);}
         if (msgContent.startsWith("alexa stocks help") || msgContent === "alexa stocks") {StockMarket.help(message);}
         if (msgContent.startsWith("alexa what is the weather") || msgContent.startsWith("alexa how is the weather")) {Commands.whatIsWeather(message);}
-        if (msgContent.startsWith("!it") && message.guild.id === "271172684543426560") {Dnd.itemLookup(message);}
-        if (msgContent.startsWith("!sp") && message.guild.id === "271172684543426560") {Dnd.spellLookup(message); console.log("test")}
-        if (msgContent.startsWith("!f") && message.guild.id === "271172684543426560") {Dnd.featLookup(message);}
-        if (msgContent.startsWith("!artificer") && message.guild.id === "271172684543426560") {let query = message.content.toLowerCase().slice(11); Dnd.classFeatLookup(message, "Artificer", query);}
-        if (msgContent.startsWith("!barbarian") && message.guild.id === "271172684543426560") {let query = message.content.toLowerCase().slice(11); Dnd.classFeatLookup(message, "Barbarian", query);}
-        if (msgContent.startsWith("!bard") && message.guild.id === "271172684543426560") {let query = message.content.toLowerCase().slice(6); Dnd.classFeatLookup(message, "Bard", query);}
-        if (msgContent.startsWith("!cleric") && message.guild.id === "271172684543426560") {let query = message.content.toLowerCase().slice(8); Dnd.classFeatLookup(message, "Cleric", query);}
-        if (msgContent.startsWith("!druid") && message.guild.id === "271172684543426560") {let query = message.content.toLowerCase().slice(5); Dnd.classFeatLookup(message, "Druid", query);}
-        if (msgContent.startsWith("!fighter") && message.guild.id === "271172684543426560") {let query = message.content.toLowerCase().slice(8); Dnd.classFeatLookup(message, "Fighter", query);}
-        if (msgContent.startsWith("!monk") && message.guild.id === "271172684543426560") {let query = message.content.toLowerCase().slice(6); Dnd.classFeatLookup(message, "Monk", query);}
-        if (msgContent.startsWith("!mystic") && message.guild.id === "271172684543426560") {let query = message.content.toLowerCase().slice(8); Dnd.classFeatLookup(message, "Mystic", query);}
-        if (msgContent.startsWith("!paladin") && message.guild.id === "271172684543426560") {let query = message.content.toLowerCase().slice(9); Dnd.classFeatLookup(message, "Paladin", query);}
-        if (msgContent.startsWith("!ranger") && message.guild.id === "271172684543426560") {let query = message.content.toLowerCase().slice(8); Dnd.classFeatLookup(message, "Ranger", query);}
-        if (msgContent.startsWith("!rogue") && message.guild.id === "271172684543426560") {let query = message.content.toLowerCase().slice(7); Dnd.classFeatLookup(message, "Rogue", query);}
-        if (msgContent.startsWith("!rune scribe") && message.guild.id === "271172684543426560") {let query = message.content.toLowerCase().slice(13); Dnd.classFeatLookup(message, "Rune Scribe", query);}
-        if (msgContent.startsWith("!sorcerer") && message.guild.id === "271172684543426560") {let query = message.content.toLowerCase().slice(10); Dnd.classFeatLookup(message, "Sorcerer", query);}
-        if (msgContent.startsWith("!warlock") && message.guild.id === "271172684543426560") {let query = message.content.toLowerCase().slice(9); Dnd.classFeatLookup(message, "Warlock", query);}
-        if (msgContent.startsWith("!wizard") && message.guild.id === "271172684543426560") {let query = message.content.toLowerCase().slice(8); Dnd.classFeatLookup(message, "Wizard", query);}
+        if (msgContent.startsWith("!it") && dndServers.has(message.guild.id)) {Dnd.itemLookup(message);}
+        if (msgContent.startsWith("!sp") && dndServers.has(message.guild.id)) {Dnd.spellLookup(message); console.log("test")}
+        if (msgContent.startsWith("!f") && dndServers.has(message.guild.id)) {Dnd.featLookup(message);}
+        if (msgContent.startsWith("!artificer") && dndServers.has(message.guild.id)) {let query = message.content.toLowerCase().slice(11); Dnd.classFeatLookup(message, "Artificer", query);}
+        if (msgContent.startsWith("!barbarian") && dndServers.has(message.guild.id)) {let query = message.content.toLowerCase().slice(11); Dnd.classFeatLookup(message, "Barbarian", query);}
+        if (msgContent.startsWith("!bard") && dndServers.has(message.guild.id)) {let query = message.content.toLowerCase().slice(6); Dnd.classFeatLookup(message, "Bard", query);}
+        if (msgContent.startsWith("!cleric") && dndServers.has(message.guild.id)) {let query = message.content.toLowerCase().slice(8); Dnd.classFeatLookup(message, "Cleric", query);}
+        if (msgContent.startsWith("!druid") && dndServers.has(message.guild.id)) {let query = message.content.toLowerCase().slice(5); Dnd.classFeatLookup(message, "Druid", query);}
+        if (msgContent.startsWith("!fighter") && dndServers.has(message.guild.id)) {let query = message.content.toLowerCase().slice(8); Dnd.classFeatLookup(message, "Fighter", query);}
+        if (msgContent.startsWith("!monk") && dndServers.has(message.guild.id)) {let query = message.content.toLowerCase().slice(6); Dnd.classFeatLookup(message, "Monk", query);}
+        if (msgContent.startsWith("!mystic") && dndServers.has(message.guild.id)) {let query = message.content.toLowerCase().slice(8); Dnd.classFeatLookup(message, "Mystic", query);}
+        if (msgContent.startsWith("!paladin") && dndServers.has(message.guild.id)) {let query = message.content.toLowerCase().slice(9); Dnd.classFeatLookup(message, "Paladin", query);}
+        if (msgContent.startsWith("!ranger") && dndServers.has(message.guild.id)) {let query = message.content.toLowerCase().slice(8); Dnd.classFeatLookup(message, "Ranger", query);}
+        if (msgContent.startsWith("!rogue") && dndServers.has(message.guild.id)) {let query = message.content.toLowerCase().slice(7); Dnd.classFeatLookup(message, "Rogue", query);}
+        if (msgContent.startsWith("!rune scribe") && dndServers.has(message.guild.id)) {let query = message.content.toLowerCase().slice(13); Dnd.classFeatLookup(message, "Rune Scribe", query);}
+        if (msgContent.startsWith("!sorcerer") && dndServers.has(message.guild.id)) {let query = message.content.toLowerCase().slice(10); Dnd.classFeatLookup(message, "Sorcerer", query);}
+        if (msgContent.startsWith("!warlock") && dndServers.has(message.guild.id)) {let query = message.content.toLowerCase().slice(9); Dnd.classFeatLookup(message, "Warlock", query);}
+        if (msgContent.startsWith("!wizard") && dndServers.has(message.guild.id)) {let query = message.content.toLowerCase().slice(8); Dnd.classFeatLookup(message, "Wizard", query);}
     }
 });
 

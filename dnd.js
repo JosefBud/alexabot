@@ -1,9 +1,9 @@
 const Discord = require('discord.js');
 const alexaColor = "#31C4F3";
-const DndItems = require('./dndDb/dndItems.js');
-const DndSpells = require('./dndDb/dndSpells.js');
-const DndFeats = require('./dndDb/dndFeats.js');
-const DndClassFeats = require('./dndDb/dndClassFeats.js');
+const DndItems = require('./dndDb/dndItems.json');
+const DndSpells = require('./dndDb/dndSpells.json');
+const DndFeats = require('./dndDb/dndFeats.json');
+const DndClassFeats = require('./dndDb/dndClassFeats.json');
 
 const Dnd = {
     dndEmbed: async function (message, finalResult) {

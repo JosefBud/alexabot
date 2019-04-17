@@ -16,7 +16,8 @@ const BlizzardCmd = require('./blizzard.js');
 const Reddit = require('./reddit.js');
 const StockMarket = require('./stockMarket.js');
 const Dnd = require('./dnd.js');
-const dndServers = new Set(["271172684543426560", "567383493416321064"])
+const dndServers = new Set(["271172684543426560", "567383493416321064", "534471291248443423"])
+// ^^ the Alexa Experiment, The Safe Space, Bot Test ^^
 let status = "LISTENING";
 
 const server = http.createServer(function(request, response) {

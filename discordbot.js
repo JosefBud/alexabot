@@ -95,7 +95,7 @@ client.on('ready', () => {
     // SETTING BOT STATUS BETWEEN 'LISTENING TO ALEXA HELP' AND 'PLAYING ALEXA STOCKS'
     setInterval(() => {
         if (status === "LISTENING") {
-            client.user.setActivity('\"Alexa help\"', { type: status })
+            client.user.setActivity(`on ${client.guilds.size} servers`, { type: status })
             status = "PLAYING"
         } else {
             client.user.setActivity('\"Alexa stocks\"', { type: status })

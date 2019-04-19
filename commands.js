@@ -15,7 +15,7 @@ const serverVolumeSql = new SQLite('./db/serverVolume.sqlite');
 const songQueue = new SQLite('./db/songQueue.sqlite');
 const StockMarket = require('./stockMarket.js');
 const Arrays = require('./arrays.js');
-const currentlyPlaying = require('./currentlyPlaying.json');
+// let currentlyPlaying = require('./currentlyPlaying.json');
 const alexaColor = "#31C4F3";
 let endReason = "none";
 // const bannedChannelsSet = new Set();
@@ -211,9 +211,10 @@ const Commands = {
             }
             
             if (!message.guild.voiceConnection) {
+                let currentlyPlaying = require('./currentlyPlaying.json');
                 currentlyPlaying.total++;
-                currentlyPlaying.servers.push(message.guild.name);
-                fs.writeFile('./currentlyPlaying.json', JSON.stringify({"total": currentlyPlaying.total, "servers": currentlyPlaying.servers}), (err) => {
+                currentlyPlaying.servers.push(message.guild.id);
+                fs.writeFile('./currentlyPlaying.json', JSON.stringify(currentlyPlaying), (err) => {
                     if (err) throw err;
                 })
             }
@@ -266,15 +267,16 @@ const Commands = {
                         } else {
                             message.guild.voiceConnection.disconnect();
                             let arrayNum = 0;
+                            let currentlyPlaying = require('./currentlyPlaying.json');
                             currentlyPlaying.servers.forEach((element) => {
-                                if (message.guild.name === element) {
+                                if (message.guild.id === element) {
                                     currentlyPlaying.servers.splice(arrayNum, 1);
                                     currentlyPlaying.total--;
                                 } else {
                                     arrayNum++;
                                 }
                             });
-                            fs.writeFile('./currentlyPlaying.json', JSON.stringify({"total": currentlyPlaying.total, "servers": currentlyPlaying.servers}), (err) => {
+                            fs.writeFile('./currentlyPlaying.json', JSON.stringify(currentlyPlaying), (err) => {
                                 if (err) throw err;
                             });
                         }
@@ -288,15 +290,16 @@ const Commands = {
                         console.log(error);
                         message.guild.voiceConnection.disconnect();
                         let arrayNum = 0;
+                        let currentlyPlaying = require('./currentlyPlaying.json');
                         currentlyPlaying.servers.forEach((element) => {
-                            if (message.guild.name === element) {
+                            if (message.guild.id === element) {
                                 currentlyPlaying.servers.splice(arrayNum, 1);
                                 currentlyPlaying.total--;
                             } else {
                                 arrayNum++;
                             }
                         });
-                        fs.writeFile('./currentlyPlaying.json', JSON.stringify({"total": currentlyPlaying.total, "servers": currentlyPlaying.servers}), (err) => {
+                        fs.writeFile('./currentlyPlaying.json', JSON.stringify(currentlyPlaying), (err) => {
                             if (err) throw err;
                         });
                     }
@@ -653,15 +656,16 @@ const Commands = {
             message.channel.send(`Well fine, fuck you too`);
             message.guild.voiceConnection.disconnect();
             let arrayNum = 0;
+            let currentlyPlaying = require('./currentlyPlaying.json');
             currentlyPlaying.servers.forEach((element) => {
-                if (message.guild.name === element) {
+                if (message.guild.id === element) {
                     currentlyPlaying.servers.splice(arrayNum, 1);
                     currentlyPlaying.total--;
                 } else {
                     arrayNum++;
                 }
             });
-            fs.writeFile('./currentlyPlaying.json', JSON.stringify({"total": currentlyPlaying.total, "servers": currentlyPlaying.servers}), (err) => {
+            fs.writeFile('./currentlyPlaying.json', JSON.stringify(currentlyPlaying), (err) => {
                 if (err) throw err;
             });
         } else {

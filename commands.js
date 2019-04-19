@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
-// const client = new Discord.Client();
+const fs = require('fs');
+const client = new Discord.Client();
 // const config = require('./config.json');
 // const user = new Discord.Message();
 // const broadcast = client.createVoiceBroadcast();
@@ -14,6 +15,7 @@ const serverVolumeSql = new SQLite('./db/serverVolume.sqlite');
 const songQueue = new SQLite('./db/songQueue.sqlite');
 const StockMarket = require('./stockMarket.js');
 const Arrays = require('./arrays.js');
+const currentlyPlaying = require('./currentlyPlaying.json');
 const alexaColor = "#31C4F3";
 let endReason = "none";
 // const bannedChannelsSet = new Set();
@@ -207,8 +209,18 @@ const Commands = {
             } else {
                 streamOptions = {volume: getServerVolume.volume};
             }
+            
+            if (!message.guild.voiceConnection) {
+                currentlyPlaying.total++;
+                currentlyPlaying.servers.push(message.guild.name);
+                fs.writeFile('./currentlyPlaying.json', JSON.stringify({"total": currentlyPlaying.total, "servers": currentlyPlaying.servers}), (err) => {
+                    if (err) throw err;
+                })
+            }
+
             channel.join()
                 .then(connection => {
+
                     let ytdlOptions = {};
                     if (video.seconds === 0) {
                         ytdlOptions = {quality: 'highestaudio'};
@@ -221,6 +233,7 @@ const Commands = {
                     }
                     const stream = ytdl(`https://www.youtube.com/watch?v=${video.videoId}`, ytdlOptions)
                     const dispatcher = connection.playStream(stream, streamOptions);
+
                     dispatcher.on("end", () => {
                         console.log("dispatcher ended")
                         if (endReason === "stfu") {
@@ -252,6 +265,18 @@ const Commands = {
                             return;
                         } else {
                             message.guild.voiceConnection.disconnect();
+                            let arrayNum = 0;
+                            currentlyPlaying.servers.forEach((element) => {
+                                if (message.guild.name === element) {
+                                    currentlyPlaying.servers.splice(arrayNum, 1);
+                                    currentlyPlaying.total--;
+                                } else {
+                                    arrayNum++;
+                                }
+                            });
+                            fs.writeFile('./currentlyPlaying.json', JSON.stringify({"total": currentlyPlaying.total, "servers": currentlyPlaying.servers}), (err) => {
+                                if (err) throw err;
+                            });
                         }
                     })
                 })
@@ -259,9 +284,21 @@ const Commands = {
                     if (error) {
                         setTimeout(() => {
                             message.channel.send(`Something went wrong! Alexa is sorry, bb. Try again or try a different search term.`)
-                        }, 500),
-                        console.log(error),
-                        message.guild.voiceConnection.disconnect()
+                        }, 500);
+                        console.log(error);
+                        message.guild.voiceConnection.disconnect();
+                        let arrayNum = 0;
+                        currentlyPlaying.servers.forEach((element) => {
+                            if (message.guild.name === element) {
+                                currentlyPlaying.servers.splice(arrayNum, 1);
+                                currentlyPlaying.total--;
+                            } else {
+                                arrayNum++;
+                            }
+                        });
+                        fs.writeFile('./currentlyPlaying.json', JSON.stringify({"total": currentlyPlaying.total, "servers": currentlyPlaying.servers}), (err) => {
+                            if (err) throw err;
+                        });
                     }
                 })
         }
@@ -614,7 +651,19 @@ const Commands = {
         if (message.guild.voiceConnection) {
             endReason = "stfu";
             message.channel.send(`Well fine, fuck you too`);
-			message.guild.voiceConnection.disconnect();
+            message.guild.voiceConnection.disconnect();
+            let arrayNum = 0;
+            currentlyPlaying.servers.forEach((element) => {
+                if (message.guild.name === element) {
+                    currentlyPlaying.servers.splice(arrayNum, 1);
+                    currentlyPlaying.total--;
+                } else {
+                    arrayNum++;
+                }
+            });
+            fs.writeFile('./currentlyPlaying.json', JSON.stringify({"total": currentlyPlaying.total, "servers": currentlyPlaying.servers}), (err) => {
+                if (err) throw err;
+            });
         } else {
             message.channel.send(`I'm not even doing anything, asshole`)
         }

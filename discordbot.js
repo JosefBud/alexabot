@@ -111,6 +111,11 @@ client.on('ready', () => {
     dbl.on('posted', () => {
         console.log('Server count posted!');
       });
+
+    fs.writeFile('./currentlyPlaying.json', JSON.stringify({
+        "total": 0,
+        "servers": []
+    }), (err) => {if (err) throw err;})
       
 });
 

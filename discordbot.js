@@ -209,7 +209,12 @@ client.on('message', message => {
         if (msgContent.replace(/[o]/gi,"").includes("thats s sad") || msgContent.replace(/[o]/gi,"").includes("that is s sad") || msgContent.replace(/[o]/gi,"").includes("that is just s sad")) {Commands.thatsSoSad(message);}
         if (msgContent.startsWith("alexa fuck ea")) {message.channel.send("EA bAd gErAlDo gOoD");}
         if (msgContent.startsWith("alexa wow profile")) {BlizzardCmd.test(message, msgContent, client);}
-        if (msgContent.startsWith("alexa give me a meme")) {Reddit.randomMeme(message);}
+        if (msgContent.startsWith("alexa give me a meme")) {
+            Reddit.randomMeme(message);
+            let memesProvided = require('./memesProvided.json');
+            memesProvided.memesProvided++;
+            fs.writeFile('./memesProvided.json', JSON.stringify(memesProvided), (err) => {if (err) throw err;});
+        }
         if (msgContent.startsWith("alexa give me /r/")) {Reddit.giveSub(message);}
         if (msgContent.startsWith("alexa minesweeper")) {Commands.minesweeper(message);}
         if (msgContent.startsWith("alexa stocks start")) {StockMarket.create(message);}

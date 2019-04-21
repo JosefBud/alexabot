@@ -4,10 +4,8 @@ const portfolios = new SQLite('./db/portfolios.sqlite');
 const leaderboard = new SQLite('./db/leaderboard.sqlite');
 const SMFunctions = require('./stockMarketFunctions.js');
 const request = require('request');
-const myModule = require('./discordbot.js');
 var alexaColor = "#31C4F3";
 
-console.log(myModule.myName);
 
 setInterval(() => {
     let startTime = new Date();

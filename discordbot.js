@@ -92,9 +92,7 @@ client.on('ready', () => {
     
     Game.prep(client);
 
-    let IMEMBER = client.users.size;
-    console.log("member count:")
-    console.log(IMEMBER)
+    console.log(client.users.size)
 
     // SETTING BOT STATUS BETWEEN 'LISTENING TO ALEXA HELP' AND 'PLAYING ALEXA STOCKS'
     setInterval(() => {
@@ -115,11 +113,6 @@ client.on('ready', () => {
     dbl.on('posted', () => {
         console.log('Server count posted!');
       });
-
-    fs.writeFile('./currentlyPlaying.json', JSON.stringify({
-        "total": 0,
-        "servers": []
-    }), (err) => {if (err) throw err;})
     
 });
 

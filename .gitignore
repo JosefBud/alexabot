@@ -2,6 +2,10 @@
 config.json
 blizzardToken.json
 
+# Random JSON files
+currentlyPlaying.json
+memesProvided.json
+
 # SQLite databases
 *.sqlite*
 

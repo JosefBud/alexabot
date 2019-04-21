@@ -92,6 +92,10 @@ client.on('ready', () => {
     
     Game.prep(client);
 
+    let IMEMBER = client.users.size;
+    console.log("member count:")
+    console.log(IMEMBER)
+
     // SETTING BOT STATUS BETWEEN 'LISTENING TO ALEXA HELP' AND 'PLAYING ALEXA STOCKS'
     setInterval(() => {
         if (status === "LISTENING") {
@@ -116,7 +120,7 @@ client.on('ready', () => {
         "total": 0,
         "servers": []
     }), (err) => {if (err) throw err;})
-      
+    
 });
 
 client.on('error', console.error);

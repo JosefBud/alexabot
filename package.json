@@ -17,6 +17,7 @@
     "node-gyp": "^3.8.0",
     "node-opus": "^0.2.9",
     "opusscript": "^0.0.6",
+    "request": "^2.88.0",
     "snekfetch": "^4.0.4",
     "sodium": "^3.0.2",
     "weather-js": "^2.0.0",

@@ -3,6 +3,7 @@ const traders = new SQLite('./db/traders.sqlite')
 const portfolios = new SQLite('./db/portfolios.sqlite');
 const leaderboard = new SQLite('./db/leaderboard.sqlite');
 const SMFunctions = require('./stockMarketFunctions.js');
+const request = require('request');
 var alexaColor = "#31C4F3";
 
 
@@ -39,4 +40,18 @@ setInterval(() => {
     }
 
     assignLeaderboard();
-}, 60000)
+
+    async function updateCurrentPlayers() {
+        let numOfTraders = traders.prepare("SELECT COUNT(userId) FROM traders;").get();
+        numOfTraders = numOfTraders["COUNT(userId)"];
+
+        request({
+            method: 'POST',
+            uri: 'http://www.alexadiscord.com:8080',
+            body: {"stockPlayers": numOfTraders},
+            json: true
+        })
+    }
+
+    updateCurrentPlayers();
+}, 60000);

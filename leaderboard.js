@@ -51,6 +51,8 @@ setInterval(() => {
             body: {"stockPlayers": numOfTraders},
             json: true
         })
+
+        console.log("stock market game player count updated");
     }
 
     updateCurrentPlayers();

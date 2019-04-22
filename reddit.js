@@ -5,7 +5,7 @@ const Reddit = {
     randomMeme: async function(message) {
         try {
             await snekfetch
-                .get('https://www.reddit.com/user/alexadiscordbot/m/memes.json?sort=top&t=day&limit=100')
+                .get('https://www.reddit.com/user/alexadiscordbot/m/memes.json?sort=top&t=day&limit=40')
                 .then(r => {redditPull = r.body.data.children});
 
                 const sfw = redditPull.filter(meme => !meme.data.over_18);
@@ -30,7 +30,7 @@ const Reddit = {
             const requestedSub = message.content.slice(17);
             console.log(requestedSub);
             await snekfetch
-                .get(`https://www.reddit.com/r/${requestedSub}.json?sort=top&t=day&limit=50`)
+                .get(`https://www.reddit.com/r/${requestedSub}.json?sort=top&t=day&limit=20`)
                 .then(r => {giveSubPull = r.body.data.children});
             
             const sfw = giveSubPull.filter(post => !post.data.over_18);

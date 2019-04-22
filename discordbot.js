@@ -16,6 +16,7 @@ const BlizzardCmd = require('./blizzard.js');
 const Reddit = require('./reddit.js');
 const StockMarket = require('./stockMarket.js');
 const Dnd = require('./dnd.js');
+const VoiceRecog = require('./voiceRecog.js');
 const dndServers = new Set(["271172684543426560", "567383493416321064", "534471291248443423"])
 // ^^ the Alexa Experiment, The Safe Space, Bot Test ^^
 let status = "LISTENING";
@@ -188,7 +189,8 @@ client.on('message', message => {
         }
         
         if (msgContent === "alexa" || msgContent.startsWith("alexa help") || msgContent.startsWith("alexa commands")) {Commands.help(message, msgContent);}
-        if (msgContent.startsWith("alexa test")) {Commands.test(message);}
+        if (msgContent.startsWith("alexa test")) {VoiceRecog.listen(client, message);}
+        if (msgContent.startsWith("alexa speech")) {VoiceRecog.test(message);}
         if (msgContent.startsWith("alexa vote")) {message.channel.send("Well aren't you just the sweetest lil' thang voting for me... Here ya go, qt: https://discordbots.org/bot/534469636381736981/vote");}
         if (msgContent.startsWith("alexa get out of")) {Commands.getOut(message,msgContent);}
         if (msgContent.startsWith("alexa xp")) {Game.test(message)}

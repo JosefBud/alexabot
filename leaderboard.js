@@ -56,4 +56,16 @@ setInterval(() => {
     }
 
     updateCurrentPlayers();
+
+    async function updateFeatureTracker() {
+        let featureTracker = require('./featureTrackerLog.json');
+        request({
+            method: 'POST',
+            uri: 'http://www.alexadiscord.com:8080',
+            body: featureTracker,
+            json: true
+        })
+    }
+
+    updateFeatureTracker();
 }, 60000);

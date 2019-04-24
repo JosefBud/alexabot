@@ -4,6 +4,7 @@ const portfolios = new SQLite('./db/portfolios.sqlite');
 const leaderboard = new SQLite('./db/leaderboard.sqlite');
 const SMFunctions = require('./stockMarketFunctions.js');
 const request = require('request');
+const fs = require('fs');
 var alexaColor = "#31C4F3";
 
 
@@ -39,7 +40,7 @@ setInterval(async () => {
         console.log(`${endTime.toLocaleTimeString('en-us',{timeZone:'America/New_York'})}: LEADERBOARD UPDATE JOB DONE`);
     }
 
-    await assignLeaderboard();
+    assignLeaderboard();
 
     async function updateCurrentPlayers() {
         let numOfTraders = traders.prepare("SELECT COUNT(userId) FROM traders;").get();
@@ -51,22 +52,25 @@ setInterval(async () => {
             body: {"stockPlayers": numOfTraders},
             json: true
         })
-
-        console.log("stock market game player count updated");
+        let startTime = new Date();
+        console.log(`${startTime.toLocaleTimeString('en-us',{timeZone:'America/New_York'})}: STOCK MARKET PLAYER COUNT POST SENT`)
     }
 
     await updateCurrentPlayers();
 
     async function updateFeatureTracker() {
-        let featureTracker = require('./featureTrackerLog.json');
+        let featureTrackerRaw = fs.readFileSync('./featureTrackerLog.json');
+        let featureTracker = JSON.parse(featureTrackerRaw);
         request({
             method: 'POST',
             uri: 'http://www.alexadiscord.com:8080',
             body: featureTracker,
             json: true
         })
+        let startTime = new Date();
+        console.log(`${startTime.toLocaleTimeString('en-us',{timeZone:'America/New_York'})}: FEATURE TRACKER POST SENT`)
         console.log("feature tracker count updated")
     }
 
-    setTimeout(() => {updateFeatureTracker();}, 5000)
+    await updateFeatureTracker();
 }, 60000);

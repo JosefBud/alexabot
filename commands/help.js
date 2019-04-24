@@ -16,6 +16,8 @@ async function help(message, msgContent) {
                 **Alexa queue** will show the current queue of songs.
                 **Alexa clear queue** will clear out the current queue of songs.
                 **Alexa next** will play the next song in the queue.
+                **Alexa pause** will pause the song currently playing.
+                **Alexa resume** or **Alexa play** will unpause the song.
                 **Alexa STFU** will disconnect Alexa from the voice channel.
                 **Alexa volume** will bring up the volume commands and current volume.
                 **Alexa volume [0-100]%** will change the volume to the number you set.
@@ -39,6 +41,8 @@ async function help(message, msgContent) {
                 **Alexa queue** will show the current queue of songs.
                 **Alexa clear queue** will clear out the current queue of songs.
                 **Alexa next** will play the next song in the queue.
+                **Alexa pause** will pause the song currently playing.
+                **Alexa resume** or **Alexa play** will unpause the song.
                 **Alexa STFU** will disconnect Alexa from the voice channel.
                 **Alexa volume** will bring up the volume commands and current volume.
                 **Alexa volume [0-100]%** will change the volume to the number you set.

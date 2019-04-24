@@ -68,5 +68,5 @@ setInterval(async () => {
         console.log("feature tracker count updated")
     }
 
-    await updateFeatureTracker();
+    setTimeout(() => {updateFeatureTracker();}, 5000)
 }, 60000);

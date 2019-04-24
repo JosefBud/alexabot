@@ -7,7 +7,7 @@ const request = require('request');
 var alexaColor = "#31C4F3";
 
 
-setInterval(() => {
+setInterval(async () => {
     let startTime = new Date();
     console.log(`${startTime.toLocaleTimeString('en-us',{timeZone:'America/New_York'})}: LEADERBOARD UPDATE JOB STARTING`)
     async function assignLeaderboard() {

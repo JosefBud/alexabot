@@ -6,17 +6,34 @@ const config = require('./config.json');
 const user = new Discord.Message();
 const DBL = require('dblapi.js');
 const dbl = new DBL(config.dblToken,client);
+
 const SQLite = require("better-sqlite3");
-//const sql = new SQLite('./scores.sqlite');
 const bannedChannelsSql = new SQLite('./db/bannedChannels.sqlite');
 const traders = new SQLite('./db/traders.sqlite');
-const Commands = require('./commands.js');
+
 const Game = require('./game.js');
 const BlizzardCmd = require('./blizzard.js');
 const Reddit = require('./reddit.js');
 const StockMarket = require('./stockMarket.js');
 const Dnd = require('./dnd.js');
 const VoiceRecog = require('./voiceRecog.js');
+
+const help = require('./commands/help.js');
+const musicVolume = require('./commands/musicVolume.js');
+const musicPlay = require('./commands/musicPlay.js');
+const musicQueue = require('./commands/musicQueue.js');
+const musicNext = require('./commands/musicNext.js');
+const musicClearQueue = require('./commands/musicClearQueue.js');
+const musicStfu = require('./commands/musicStfu.js');
+const musicPause = require('./commands/musicPause.js');
+const musicResume = require('./commands/musicResume.js');
+const thatsSoSad = require('./commands/thatsSoSad.js');
+const buy = require('./commands/buy.js');
+const getOut = require('./commands/getOut.js');
+const comeBack = require('./commands/comeBack.js');
+const minesweeper = require('./commands/minesweeper.js');
+const whatIsWeather = require('./commands/whatIsWeather.js');
+
 const dndServers = new Set(["271172684543426560", "567383493416321064", "534471291248443423"])
 // ^^ the Alexa Experiment, The Safe Space, Bot Test ^^
 let status = "LISTENING";
@@ -115,6 +132,13 @@ client.on('ready', () => {
         console.log('Server count posted!');
       });
     
+    let currentlyPlaying = {
+        total: 0,
+        servers: []
+    }
+    fs.writeFile('./currentlyPlaying.json', JSON.stringify(currentlyPlaying), (err) => {
+        if (err) throw err;
+    })
 });
 
 client.on('error', console.error);
@@ -122,10 +146,10 @@ client.on('error', console.error);
 client.on('message', message => {
     let msgContent = message.content.toLowerCase().replace(/[,'.]/gi,"");
 
-    // IGNORING DIRECT MESSAGES
+    // DIRECT MESSAGES
     if (message.channel.type === 'dm') {
         if (!message.author.bot) {
-            Commands.help(message, msgContent);
+            help(message, msgContent);
             let consoleTimeStamp = new Date();
             let logIt = consoleTimeStamp.toLocaleDateString('en-us',{timeZone:'America/New_York'}) + " " + consoleTimeStamp.toLocaleTimeString('en-us',{timeZone:'America/New_York'}) + " " + message.author.username + ": " + message.content;
             fs.appendFile('alexaDMs.log', "\r\n" + logIt, (err) => {
@@ -140,7 +164,7 @@ client.on('message', message => {
     // CONVERTING THE MESSAGE TO LOWERCASE AND REPLACING CERTAIN PUNCTUATION
 
     if (msgContent.startsWith(`alexa come back to`)) {
-        Commands.comeBack(message,msgContent);
+        comeBack(message, msgContent);
     }
 
     let bannedChannels = bannedChannelsSql.prepare("SELECT * FROM bannedChannels WHERE channelId = ?").get(message.channel.id);
@@ -188,11 +212,12 @@ client.on('message', message => {
             })
         }
         
-        if (msgContent === "alexa" || msgContent.startsWith("alexa help") || msgContent.startsWith("alexa commands")) {Commands.help(message, msgContent);}
-        if (msgContent.startsWith("alexa test")) {VoiceRecog.listen(client, message);}
+        if (msgContent === "alexa" || msgContent.startsWith("alexa help") || msgContent.startsWith("alexa commands")) {help(message, msgContent);}
+        if (msgContent.startsWith("alexa test")) {console.log(client.voiceConnections.get(message.guild.id).player.dispatcher.pause());}
+        if (msgContent.startsWith("alexa poop")) {console.log(client.voiceConnections.get(message.guild.id).player.dispatcher.resume());}
         if (msgContent.startsWith("alexa speech")) {VoiceRecog.test(message);}
         if (msgContent.startsWith("alexa vote")) {message.channel.send("Well aren't you just the sweetest lil' thang voting for me... Here ya go, qt: https://discordbots.org/bot/534469636381736981/vote");}
-        if (msgContent.startsWith("alexa get out of")) {Commands.getOut(message,msgContent);}
+        if (msgContent.startsWith("alexa get out of")) {getOut(message,msgContent);}
         if (msgContent.startsWith("alexa xp")) {Game.test(message)}
         if (msgContent.startsWith("alexa stage")) {Game.stage(client,message);}
         if (msgContent.startsWith("alexa reset")) {Game.profileReset(message);}
@@ -201,14 +226,14 @@ client.on('message', message => {
         if (msgContent.startsWith("alexa flip")) {Game.flipCoin(message);}
         if (msgContent.startsWith("alexa steal")) {Game.stealCoins(client, message);}
         if (msgContent.startsWith("alexa profile")) {Game.getProfile(message);}
-        if (msgContent.startsWith("alexa volume")) {Commands.volume(message);}
-        if (msgContent.startsWith("alexa play")) {Commands.play(message,msgContent,message.content);}
-        if (msgContent.startsWith("alexa queue")) {Commands.queue(message);}
-        if (msgContent.startsWith("alexa next")) {Commands.next(message);}
-        if (msgContent.startsWith("alexa clear queue")) {Commands.clearQueue(message);}
-        if (msgContent.startsWith("alexa stfu") || msgContent.startsWith("alexa shut up") || msgContent.startsWith("alexa fuck off")) {Commands.stfu(message);}
-        if (msgContent.startsWith("alexa buy")) {Commands.buy(message,client);}
-        if (msgContent.replace(/[o]/gi,"").includes("thats s sad") || msgContent.replace(/[o]/gi,"").includes("that is s sad") || msgContent.replace(/[o]/gi,"").includes("that is just s sad")) {Commands.thatsSoSad(message);}
+        if (msgContent.startsWith("alexa volume")) {musicVolume(message);}
+        if (msgContent.startsWith("alexa play ")) {musicPlay.musicPlay(message, msgContent, message.content);}
+        if (msgContent.startsWith("alexa queue")) {musicQueue(message);}
+        if (msgContent.startsWith("alexa next")) {musicNext(message);}
+        if (msgContent.startsWith("alexa clear queue")) {musicClearQueue(message);}
+        if (msgContent.startsWith("alexa stfu") || msgContent.startsWith("alexa shut up") || msgContent.startsWith("alexa fuck off")) {musicStfu(message);}
+        if (msgContent.startsWith("alexa buy")) {buy(message,client);}
+        if (msgContent.replace(/[o]/gi,"").includes("thats s sad") || msgContent.replace(/[o]/gi,"").includes("that is s sad") || msgContent.replace(/[o]/gi,"").includes("that is just s sad")) {thatsSoSad(message);}
         if (msgContent.startsWith("alexa fuck ea")) {message.channel.send("EA bAd gErAlDo gOoD");}
         if (msgContent.startsWith("alexa wow profile")) {BlizzardCmd.test(message, msgContent, client);}
         if (msgContent.startsWith("alexa give me a meme")) {
@@ -218,7 +243,7 @@ client.on('message', message => {
             fs.writeFile('./memesProvided.json', JSON.stringify(memesProvided), (err) => {if (err) throw err;});
         }
         if (msgContent.startsWith("alexa give me /r/")) {Reddit.giveSub(message);}
-        if (msgContent.startsWith("alexa minesweeper")) {Commands.minesweeper(message);}
+        if (msgContent.startsWith("alexa minesweeper")) {minesweeper(message);}
         if (msgContent.startsWith("alexa stocks start")) {StockMarket.create(message);}
         if (msgContent.startsWith("alexa stocks portfolio") || msgContent.startsWith("alexa stocks profile") || msgContent.startsWith("alexa stocks wallet") || msgContent.startsWith("alexa stocks money")) {StockMarket.viewPortfolio(message);}  
         if (msgContent.startsWith("alexa stocks buy")) {StockMarket.buyShares(message);}
@@ -228,7 +253,7 @@ client.on('message', message => {
         if (msgContent.startsWith("alexa stocks search")) {StockMarket.search(message);}
         if (msgContent.startsWith("alexa stocks leaderboard")) {StockMarket.leaderboard(message);}
         if (msgContent.startsWith("alexa stocks help") || msgContent === "alexa stocks") {StockMarket.help(message);}
-        if (msgContent.startsWith("alexa what is the weather") || msgContent.startsWith("alexa how is the weather")) {Commands.whatIsWeather(message);}
+        if (msgContent.startsWith("alexa what is the weather") || msgContent.startsWith("alexa how is the weather")) {whatIsWeather(message);}
         if (msgContent.startsWith("!it") && dndServers.has(message.guild.id)) {Dnd.itemLookup(message);}
         if (msgContent.startsWith("!sp") && dndServers.has(message.guild.id)) {Dnd.spellLookup(message); console.log("test")}
         if (msgContent.startsWith("!f") && dndServers.has(message.guild.id)) {Dnd.featLookup(message);}

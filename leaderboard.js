@@ -39,7 +39,7 @@ setInterval(() => {
         console.log(`${endTime.toLocaleTimeString('en-us',{timeZone:'America/New_York'})}: LEADERBOARD UPDATE JOB DONE`);
     }
 
-    assignLeaderboard();
+    await assignLeaderboard();
 
     async function updateCurrentPlayers() {
         let numOfTraders = traders.prepare("SELECT COUNT(userId) FROM traders;").get();
@@ -55,7 +55,7 @@ setInterval(() => {
         console.log("stock market game player count updated");
     }
 
-    updateCurrentPlayers();
+    await updateCurrentPlayers();
 
     async function updateFeatureTracker() {
         let featureTracker = require('./featureTrackerLog.json');
@@ -65,7 +65,8 @@ setInterval(() => {
             body: featureTracker,
             json: true
         })
+        console.log("feature tracker count updated")
     }
 
-    updateFeatureTracker();
+    await updateFeatureTracker();
 }, 60000);

@@ -1,6 +1,8 @@
 const Discord = require('discord.js');
 const alexaColor = "#31C4F3";
 
+const StockMarket = require('../stockMarket.js');
+
 async function help(message, msgContent) {
     const helpEmbed = new Discord.RichEmbed();
     helpEmbed.setColor(alexaColor);
@@ -113,7 +115,7 @@ async function help(message, msgContent) {
         StockMarket.help(message);
     } else {
         if (message.channel.type === "dm") {
-            message.reply("I can only give you the help menu. Try `Alexa help` or go through the help pages by using `Alexa help [1-4]` (e.g. `Alexa help 3`)")
+            message.reply("I can only give you the help menu in DMs. If you're trying to use one of my commands, you need to do it in a server, not a DM. Try `Alexa help` or go through the help pages by using `Alexa help [1-4]` (e.g. `Alexa help 3`)")
             return;
         } else {
             message.channel.send("You may have typed something wrong or attempted to access a page that doesn't exist. Try again using `Alexa help [1-4]` (e.g. `Alexa help 3`).");

@@ -213,7 +213,7 @@ client.on('message', message => {
         }
         
         if (msgContent === "alexa" || msgContent.startsWith("alexa help") || msgContent.startsWith("alexa commands")) {help(message, msgContent);}
-        if (msgContent.startsWith("alexa test")) {console.log(client.voiceConnections.get(message.guild.id).player.dispatcher.pause());}
+        if (msgContent.startsWith("alexa test")) {console.log();}
         if (msgContent.startsWith("alexa poop")) {console.log(client.voiceConnections.get(message.guild.id).player.dispatcher.resume());}
         if (msgContent.startsWith("alexa speech")) {VoiceRecog.test(message);}
         if (msgContent.startsWith("alexa vote")) {message.channel.send("Well aren't you just the sweetest lil' thang voting for me... Here ya go, qt: https://discordbots.org/bot/534469636381736981/vote");}
@@ -228,6 +228,8 @@ client.on('message', message => {
         if (msgContent.startsWith("alexa profile")) {Game.getProfile(message);}
         if (msgContent.startsWith("alexa volume")) {musicVolume(message);}
         if (msgContent.startsWith("alexa play ")) {musicPlay.musicPlay(message, msgContent, message.content);}
+        if (msgContent.startsWith("alexa pause")) {musicPause(message, client);}
+        if (msgContent.startsWith("alexa resume") || msgContent.startsWith("alexa unpause") || msgContent === "alexa play") {musicResume(message, client);}
         if (msgContent.startsWith("alexa queue")) {musicQueue(message);}
         if (msgContent.startsWith("alexa next")) {musicNext(message);}
         if (msgContent.startsWith("alexa clear queue")) {musicClearQueue(message);}

@@ -6,6 +6,8 @@ async function musicPause(message, client) {
             client.voiceConnections.get(message.guild.id).player.dispatcher.pause()
             message.channel.send("Music paused! Use \`Alexa resume\` or \`Alexa play\` to resume.")
         }
+    } else {
+        message.channel.send("There's no music for me to pause, silly goose!")
     }
 }
 

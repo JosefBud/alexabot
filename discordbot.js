@@ -34,6 +34,7 @@ const comeBack = require('./commands/comeBack.js');
 const minesweeper = require('./commands/minesweeper.js');
 const whatIsWeather = require('./commands/whatIsWeather.js');
 
+const featureTracker = require('./featureTracker.js');
 const dndServers = new Set(["271172684543426560", "567383493416321064", "534471291248443423"])
 // ^^ the Alexa Experiment, The Safe Space, Bot Test ^^
 let status = "LISTENING";
@@ -165,6 +166,7 @@ client.on('message', message => {
 
     if (msgContent.startsWith(`alexa come back to`)) {
         comeBack(message, msgContent);
+        featureTracker("comeBack");
     }
 
     let bannedChannels = bannedChannelsSql.prepare("SELECT * FROM bannedChannels WHERE channelId = ?").get(message.channel.id);
@@ -212,50 +214,44 @@ client.on('message', message => {
             })
         }
         
-        if (msgContent === "alexa" || msgContent.startsWith("alexa help") || msgContent.startsWith("alexa commands")) {help(message, msgContent);}
+        if (msgContent === "alexa" || msgContent.startsWith("alexa help") || msgContent.startsWith("alexa commands")) {help(message, msgContent); featureTracker("help");}
         if (msgContent.startsWith("alexa test")) {console.log();}
-        if (msgContent.startsWith("alexa poop")) {console.log(client.voiceConnections.get(message.guild.id).player.dispatcher.resume());}
-        if (msgContent.startsWith("alexa speech")) {VoiceRecog.test(message);}
-        if (msgContent.startsWith("alexa vote")) {message.channel.send("Well aren't you just the sweetest lil' thang voting for me... Here ya go, qt: https://discordbots.org/bot/534469636381736981/vote");}
-        if (msgContent.startsWith("alexa get out of")) {getOut(message,msgContent);}
+        //if (msgContent.startsWith("alexa speech")) {VoiceRecog.test(message);}
+        if (msgContent.startsWith("alexa vote")) {message.channel.send("Well aren't you just the sweetest lil' thang voting for me... Here ya go, qt: https://discordbots.org/bot/534469636381736981/vote"); featureTracker("vote");}
+        if (msgContent.startsWith("alexa get out of")) {getOut(message,msgContent); featureTracker("getOut");}
         if (msgContent.startsWith("alexa xp")) {Game.test(message)}
         if (msgContent.startsWith("alexa stage")) {Game.stage(client,message);}
         if (msgContent.startsWith("alexa reset")) {Game.profileReset(message);}
         if (msgContent.startsWith("alexa spend")) {Game.spendSkillPoints(message);}
         if (msgContent.startsWith("alexa create")) {Game.createCharacter(message);}
-        if (msgContent.startsWith("alexa flip")) {Game.flipCoin(message);}
-        if (msgContent.startsWith("alexa steal")) {Game.stealCoins(client, message);}
-        if (msgContent.startsWith("alexa profile")) {Game.getProfile(message);}
-        if (msgContent.startsWith("alexa volume")) {musicVolume(message);}
-        if (msgContent.startsWith("alexa play ")) {musicPlay.musicPlay(message, msgContent, message.content);}
-        if (msgContent.startsWith("alexa pause")) {musicPause(message, client);}
-        if (msgContent.startsWith("alexa resume") || msgContent.startsWith("alexa unpause") || msgContent === "alexa play") {musicResume(message, client);}
-        if (msgContent.startsWith("alexa queue")) {musicQueue(message);}
-        if (msgContent.startsWith("alexa next")) {musicNext(message);}
-        if (msgContent.startsWith("alexa clear queue")) {musicClearQueue(message);}
-        if (msgContent.startsWith("alexa stfu") || msgContent.startsWith("alexa shut up") || msgContent.startsWith("alexa fuck off")) {musicStfu(message);}
-        if (msgContent.startsWith("alexa buy")) {buy(message,client);}
-        if (msgContent.replace(/[o]/gi,"").includes("thats s sad") || msgContent.replace(/[o]/gi,"").includes("that is s sad") || msgContent.replace(/[o]/gi,"").includes("that is just s sad")) {thatsSoSad(message);}
+        if (msgContent.startsWith("alexa flip")) {Game.flipCoin(message); featureTracker("flip");}
+        if (msgContent.startsWith("alexa steal")) {Game.stealCoins(client, message); featureTracker("steal");}
+        if (msgContent.startsWith("alexa profile")) {Game.getProfile(message); featureTracker("profile");}
+        if (msgContent.startsWith("alexa volume")) {musicVolume(message); featureTracker("volume");}
+        if (msgContent.startsWith("alexa play ")) {musicPlay.musicPlay(message, msgContent, message.content); featureTracker("play");}
+        if (msgContent.startsWith("alexa pause")) {musicPause(message, client); featureTracker("pause");}
+        if (msgContent.startsWith("alexa resume") || msgContent.startsWith("alexa unpause") || msgContent === "alexa play") {musicResume(message, client); featureTracker("resume");}
+        if (msgContent.startsWith("alexa queue")) {musicQueue(message); featureTracker("queue");}
+        if (msgContent.startsWith("alexa next")) {musicNext(message); featureTracker("next");}
+        if (msgContent.startsWith("alexa clear queue")) {musicClearQueue(message); featureTracker("clearQueue");}
+        if (msgContent.startsWith("alexa stfu") || msgContent.startsWith("alexa shut up") || msgContent.startsWith("alexa fuck off")) {musicStfu(message); featureTracker("stfu");}
+        if (msgContent.startsWith("alexa buy")) {buy(message,client); featureTracker("buy");}
+        if (msgContent.replace(/[o]/gi,"").includes("thats s sad") || msgContent.replace(/[o]/gi,"").includes("that is s sad") || msgContent.replace(/[o]/gi,"").includes("that is just s sad")) {thatsSoSad(message); featureTracker("thatsSoSad");}
         if (msgContent.startsWith("alexa fuck ea")) {message.channel.send("EA bAd gErAlDo gOoD");}
-        if (msgContent.startsWith("alexa wow profile")) {BlizzardCmd.test(message, msgContent, client);}
-        if (msgContent.startsWith("alexa give me a meme")) {
-            Reddit.randomMeme(message);
-            let memesProvided = require('./memesProvided.json');
-            memesProvided.memesProvided++;
-            fs.writeFile('./memesProvided.json', JSON.stringify(memesProvided), (err) => {if (err) throw err;});
-        }
-        if (msgContent.startsWith("alexa give me /r/")) {Reddit.giveSub(message);}
-        if (msgContent.startsWith("alexa minesweeper")) {minesweeper(message);}
-        if (msgContent.startsWith("alexa stocks start")) {StockMarket.create(message);}
-        if (msgContent.startsWith("alexa stocks portfolio") || msgContent.startsWith("alexa stocks profile") || msgContent.startsWith("alexa stocks wallet") || msgContent.startsWith("alexa stocks money")) {StockMarket.viewPortfolio(message);}  
-        if (msgContent.startsWith("alexa stocks buy")) {StockMarket.buyShares(message);}
-        if (msgContent.startsWith("alexa stocks sell")) {StockMarket.sellShares(message);}
-        if (msgContent.startsWith("alexa stocks price")) {StockMarket.getPrice(message);}
-        if (msgContent.startsWith("alexa stocks history")) {StockMarket.getHistory(message);}
-        if (msgContent.startsWith("alexa stocks search")) {StockMarket.search(message);}
-        if (msgContent.startsWith("alexa stocks leaderboard")) {StockMarket.leaderboard(message);}
-        if (msgContent.startsWith("alexa stocks help") || msgContent === "alexa stocks") {StockMarket.help(message);}
-        if (msgContent.startsWith("alexa what is the weather") || msgContent.startsWith("alexa how is the weather")) {whatIsWeather(message);}
+        if (msgContent.startsWith("alexa wow profile")) {BlizzardCmd.test(message, msgContent, client); featureTracker("wowProfile");}
+        if (msgContent.startsWith("alexa give me a meme")) {Reddit.randomMeme(message); featureTracker("meme");}
+        if (msgContent.startsWith("alexa give me /r/")) {Reddit.giveSub(message); featureTracker("subreddit");}
+        if (msgContent.startsWith("alexa minesweeper")) {minesweeper(message); featureTracker("minesweeper");}
+        if (msgContent.startsWith("alexa stocks start")) {StockMarket.create(message); featureTracker("stocksStart");}
+        if (msgContent.startsWith("alexa stocks portfolio") || msgContent.startsWith("alexa stocks profile") || msgContent.startsWith("alexa stocks wallet") || msgContent.startsWith("alexa stocks money")) {StockMarket.viewPortfolio(message); featureTracker("stocksProfile");}
+        if (msgContent.startsWith("alexa stocks buy")) {StockMarket.buyShares(message); featureTracker("stocksBuy");}
+        if (msgContent.startsWith("alexa stocks sell")) {StockMarket.sellShares(message); featureTracker("stocksSell");}
+        if (msgContent.startsWith("alexa stocks price")) {StockMarket.getPrice(message); featureTracker("stocksPrice");}
+        if (msgContent.startsWith("alexa stocks history")) {StockMarket.getHistory(message); featureTracker("stocksHistory");}
+        if (msgContent.startsWith("alexa stocks search")) {StockMarket.search(message); featureTracker("stocksSearch");}
+        if (msgContent.startsWith("alexa stocks leaderboard")) {StockMarket.leaderboard(message); featureTracker("stocksLeaderboard");}
+        if (msgContent.startsWith("alexa stocks help") || msgContent === "alexa stocks") {StockMarket.help(message); featureTracker("stocksHelp");}
+        if (msgContent.startsWith("alexa what is the weather") || msgContent.startsWith("alexa how is the weather")) {whatIsWeather(message); featureTracker("weather");}
         if (msgContent.startsWith("!it") && dndServers.has(message.guild.id)) {Dnd.itemLookup(message);}
         if (msgContent.startsWith("!sp") && dndServers.has(message.guild.id)) {Dnd.spellLookup(message); console.log("test")}
         if (msgContent.startsWith("!f") && dndServers.has(message.guild.id)) {Dnd.featLookup(message);}

@@ -69,7 +69,6 @@ setInterval(async () => {
         })
         let startTime = new Date();
         console.log(`${startTime.toLocaleTimeString('en-us',{timeZone:'America/New_York'})}: FEATURE TRACKER POST SENT`)
-        console.log("feature tracker count updated")
     }
 
     await updateFeatureTracker();

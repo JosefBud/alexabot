@@ -2,7 +2,34 @@ const Discord = require('discord.js');
 const fs = require('fs');
 const speech = require('@google-cloud/speech');
 const ffmpeg = require('fluent-ffmpeg');
+const ytdl = require('ytdl-core');
+const ytSearch = require( 'yt-search' );
 
+async function searchYoutube(searchQuery) {
+    await ytSearch(searchQuery, function (err, result) {
+        if (err) {
+            console.log(err)
+            message.channel.send(`Something went wrong! Alexa is sorry, bb. Try again or try a different search term.`)
+            return;
+        }
+
+        const videos = result.videos
+        const firstResult = videos[0]
+        console.log(firstResult)
+        videoObj = {
+            videoId: firstResult.videoId,
+            name: firstResult.title,
+            seconds: firstResult.seconds
+        }
+
+        if (firstResult.videoId.length !== 11) {
+            message.channel.send("That video doesn't seem to have a valid video ID. If you think this message is an error, please let me know on the Alexa Discord server: https://discord.gg/PysGrtD")
+            return;
+        }
+
+        return;
+    })
+}
 const VoiceRecog = {
     listen: async function(client, message) {
         let fileName;
@@ -22,7 +49,7 @@ const VoiceRecog = {
                 // create our voice receiver
                 const receiver = conn.createReceiver();
         
-                conn.on('speaking', (user, speaking) => {
+                conn.on('speaking', async (user, speaking) => {
                     if (speaking) {
                         //message.channel.send(`I'm listening to ${user}`);
                         // this creates a 16-bit signed PCM, stereo 48KHz PCM stream.
@@ -31,20 +58,25 @@ const VoiceRecog = {
                         // create an output stream so we can dump our data in a file
                         const outputStream = generateOutputFile(channel, user);
                         
-                        client.channels.get(channel.guild.systemChannelID).send("Success!")
+                        // client.channels.get(channel.guild.systemChannelID).send("Success!")
 
                         // pipe our audio data into the file stream
                         audioStream.pipe(outputStream);
+                        
+                        /*
                         outputStream.on("data", (chunk) => {
                             console.log(`Received ${chunk.length} bytes of data.`)
                         });
+                        */
+
                         // when the stream ends (the user stopped talking) tell the user
                         audioStream.on('end', async () => {
+                            console.log("Pushing voice file");
                             //message.channel.send(`I'm no longer listening to ${user}`);
                             
                             if (fs.existsSync(`${fileName}.pcm`)) {
                                     ffmpeg()
-                                        .on('end', () => {
+                                        .on('end', async () => {
                                             // DELETES UNCOMPRESSED PCM FILE
                                             fs.unlink(`${fileName}.pcm`, (err) => {if (err) throw err;})
 
@@ -75,17 +107,63 @@ const VoiceRecog = {
                                                     audio: audio,
                                                     config: config,
                                                     };
-                                                    
+
                                                     // Detects speech in the audio file
                                                     speechClient
                                                         .recognize(request)
                                                         .then(data => {
                                                             const response = data[0];
-                                                            const transcription = response.results
-                                                            .map(result => result.alternatives[0].transcript)
-                                                            .join('\n');
+                                                            let transcription = response.results
+                                                                .map(result => result.alternatives[0].transcript)
+                                                                .join('\n');
+
+                                                            transcription = transcription.toLowerCase();
+                                                            console.log(`Transcription: ${transcription}`);
+
+                                                            if (transcription.startsWith("alexa")) {
+                                                                client.channels.get(channel.guild.systemChannelID).send(`${user.username} said: ${transcription}`)
+                                                            }
+                                                            if (transcription.includes("alexa play")) {
+                                                                let searchQuery = transcription.split("alexa play ")[1];
+                                                                let streamOptions = {volume: 0.5};
+                                                                //let videoObj = await searchYoutube(searchQuery);
+                                                                ytSearch(searchQuery, function (err, result) {
+                                                                    if (err) {
+                                                                        console.log(err)
+                                                                        message.channel.send(`Something went wrong! Alexa is sorry, bb. Try again or try a different search term.`)
+                                                                        return;
+                                                                    }
                                                             
-                                                            message.channel.send(`Transcription: ${transcription}`);
+                                                                    const videos = result.videos
+                                                                    const firstResult = videos[0]
+                                                                    let videoObj = {
+                                                                        videoId: firstResult.videoId,
+                                                                        name: firstResult.title,
+                                                                        seconds: firstResult.seconds
+                                                                    }
+                                                            
+                                                                    if (firstResult.videoId.length !== 11) {
+                                                                        message.channel.send("That video doesn't seem to have a valid video ID. If you think this message is an error, please let me know on the Alexa Discord server: https://discord.gg/PysGrtD")
+                                                                        return;
+                                                                    }
+                                                            
+                                                                    console.log(videoObj);
+                                                                    const stream = ytdl(`https://www.youtube.com/watch?v=${videoObj.videoId}`, {quality: 'highestaudio'});
+                                                                    const dispatcher = conn.playStream(stream, streamOptions);
+                                                                })
+                                                            }
+
+                                                            if (transcription.includes("alexa pause")) {
+                                                                client.voiceConnections.get(conn.channel.guild.id).player.dispatcher.pause();
+                                                            }
+
+                                                            if (transcription.includes("alexa resume")) {
+                                                                client.voiceConnections.get(conn.channel.guild.id).player.dispatcher.resume();
+                                                            }
+
+                                                            if (transcription.includes("alexa shut the fuck up")) {
+                                                                client.voiceConnections.get(conn.channel.guild.id).disconnect();
+                                                            }
                                                         })
                                                         .catch(err => {
                                                             console.error('ERROR:', err);

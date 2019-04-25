@@ -216,7 +216,7 @@ client.on('message', message => {
         
         if (msgContent === "alexa" || msgContent.startsWith("alexa help") || msgContent.startsWith("alexa commands")) {help(message, msgContent); featureTracker("help");}
         if (msgContent.startsWith("alexa test")) {console.log();}
-        //if (msgContent.startsWith("alexa speech")) {VoiceRecog.test(message);}
+        //if (msgContent.startsWith("alexa listen")) {VoiceRecog.listen(client, message);}
         if (msgContent.startsWith("alexa vote")) {message.channel.send("Well aren't you just the sweetest lil' thang voting for me... Here ya go, qt: https://discordbots.org/bot/534469636381736981/vote"); featureTracker("vote");}
         if (msgContent.startsWith("alexa get out of")) {getOut(message,msgContent); featureTracker("getOut");}
         if (msgContent.startsWith("alexa xp")) {Game.test(message)}

@@ -318,13 +318,14 @@ const StockMarket = {
         let searchEmbed = new Discord.RichEmbed();
         await SMFunctions.getSearch(searchQuery, message);
         await SMFunctions.getLogo(SMFunctions.companySearch.symbol);
+        await SMFunctions.getPrice(SMFunctions.companySearch.symbol);
         searchEmbed
             .setAuthor(message.author.username, message.author.avatarURL)
             .setColor(alexaColor)
             .setTitle(SMFunctions.companySearch.name)
             .setThumbnail(SMFunctions.companyLogo)
             .setURL(`https://finance.yahoo.com/quote/${SMFunctions.companySearch.symbol}`)
-            .setDescription(`Symbol: **${SMFunctions.companySearch.symbol}**`)
+            .setDescription(`Symbol: **${SMFunctions.companySearch.symbol}**\n Current Price: **\$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}**`)
             .setFooter(`Exchange: ${SMFunctions.companySearch.exchDisp}`)
 
         message.channel.send(searchEmbed)

@@ -215,7 +215,15 @@ client.on('message', message => {
         }
         
         if (msgContent === "alexa" || msgContent.startsWith("alexa help") || msgContent.startsWith("alexa commands")) {help(message, msgContent); featureTracker("help");}
-        if (msgContent.startsWith("alexa test")) {console.log();}
+        /*
+        if (msgContent.startsWith("alexa test")) {
+            //console.log(message.mentions.members.first().user.id);
+            client.fetchUser(message.mentions.members.first().user.id).then((user) => {
+                message.channel.send(`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`)
+            });
+            //message.channel.send(`https://cdn.discordapp.com/avatars/${client.fetchUser(message.mentions.members.first().user.id).id}/${client.fetchUser(message.mentions.members.first().user.id).avatar}.png`)
+        }
+        */
         //if (msgContent.startsWith("alexa listen")) {VoiceRecog.listen(client, message);}
         if (msgContent.startsWith("alexa vote")) {message.channel.send("Well aren't you just the sweetest lil' thang voting for me... Here ya go, qt: https://discordbots.org/bot/534469636381736981/vote"); featureTracker("vote");}
         if (msgContent.startsWith("alexa get out of")) {getOut(message,msgContent); featureTracker("getOut");}

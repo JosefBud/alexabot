@@ -1,13 +1,16 @@
-async function musicPause(message, client) {
+const Discord = require('discord.js');
+
+async function musicPause(message, client, pauser) {
     if (client.voiceConnections.get(message.guild.id)) {
         if (client.voiceConnections.get(message.guild.id).player.dispatcher.paused) {
-            message.channel.send("The music is already paused! If you're trying to unpause it, try \`Alexa resume\` or \`Alexa play\`")
+            message.channel.send(`${pauser} has asked me to pause, but the music is already paused! \nIf you're trying to unpause it, use the ▶ reaction emoji or try \`Alexa resume\` or \`Alexa play\``)
         } else {
             client.voiceConnections.get(message.guild.id).player.dispatcher.pause()
-            message.channel.send("Music paused! Use \`Alexa resume\` or \`Alexa play\` to resume.")
+            message.channel.send(`Music has been paused by ${pauser}! \nUse the ▶ reaction emoji to resume, or just type \`Alexa resume\` or \`Alexa play\`.`)
+
         }
     } else {
-        message.channel.send("There's no music for me to pause, silly goose!")
+        message.channel.send(`There's no music for me to pause, ${pauser}!`)
     }
 }
 

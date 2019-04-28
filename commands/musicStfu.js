@@ -2,10 +2,14 @@ const fs = require('fs');
 
 const musicPlay = require('./musicPlay.js')
 
-async function musicStfu(message) {
+async function musicStfu(message, requester) {
     if (message.guild.voiceConnection) {
         musicPlay.setEndReason("stfu");
-        message.channel.send(`Well fine, fuck you too`);
+        if (requester) {
+            message.channel.send(`${requester} has requested me to shut up.`);
+        } else {
+            message.channel.send(`Color me shutted up!`);
+        }
         message.guild.voiceConnection.disconnect();
         let arrayNum = 0;
         let currentlyPlaying = require('../currentlyPlaying.json');
@@ -21,7 +25,10 @@ async function musicStfu(message) {
             if (err) throw err;
         });
     } else {
-        message.channel.send(`I'm not even doing anything, asshole`)
+        if (requester) {
+            message.channel.send(`I'm not even doing anything, ${requester}. Why are you pressing the stop button?`)
+        }
+        message.channel.send(`I'm not even doing anything, my guy.`)
     }
 }
 

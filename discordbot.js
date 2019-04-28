@@ -236,15 +236,15 @@ client.on('message', message => {
         if (msgContent.startsWith("alexa steal")) {Game.stealCoins(client, message); featureTracker("steal");}
         if (msgContent.startsWith("alexa profile")) {Game.getProfile(message); featureTracker("profile");}
         if (msgContent.startsWith("alexa volume")) {musicVolume(message); featureTracker("volume");}
-        if (msgContent.startsWith("alexa play ")) {musicPlay.musicPlay(message, msgContent, message.content); featureTracker("play");}
-        if (msgContent.startsWith("alexa pause")) {musicPause(message, client); featureTracker("pause");}
-        if (msgContent.startsWith("alexa resume") || msgContent.startsWith("alexa unpause") || msgContent === "alexa play") {musicResume(message, client); featureTracker("resume");}
+        if (msgContent.startsWith("alexa play ")) {musicPlay.musicPlay(message, msgContent, message.content, client); featureTracker("play");}
+        if (msgContent.startsWith("alexa pause")) {musicPause(message, client, message.author.username); featureTracker("pause");}
+        if (msgContent.startsWith("alexa resume") || msgContent.startsWith("alexa unpause") || msgContent === "alexa play") {musicResume(message, client, message.author.username); featureTracker("resume");}
         if (msgContent.startsWith("alexa queue")) {musicQueue(message); featureTracker("queue");}
-        if (msgContent.startsWith("alexa next")) {musicNext(message); featureTracker("next");}
+        if (msgContent.startsWith("alexa next")) {musicNext(message, client); featureTracker("next");}
         if (msgContent.startsWith("alexa clear queue")) {musicClearQueue(message); featureTracker("clearQueue");}
         if (msgContent.startsWith("alexa stfu") || msgContent.startsWith("alexa shut up") || msgContent.startsWith("alexa fuck off")) {musicStfu(message); featureTracker("stfu");}
         if (msgContent.startsWith("alexa buy")) {buy(message,client); featureTracker("buy");}
-        if (msgContent.replace(/[o]/gi,"").includes("thats s sad") || msgContent.replace(/[o]/gi,"").includes("that is s sad") || msgContent.replace(/[o]/gi,"").includes("that is just s sad")) {thatsSoSad(message); featureTracker("thatsSoSad");}
+        if (msgContent.replace(/[o]/gi,"").includes("thats s sad") || msgContent.replace(/[o]/gi,"").includes("that is s sad") || msgContent.replace(/[o]/gi,"").includes("that is just s sad")) {thatsSoSad(message, client); featureTracker("thatsSoSad");}
         if (msgContent.startsWith("alexa fuck ea")) {message.channel.send("EA bAd gErAlDo gOoD");}
         if (msgContent.startsWith("alexa wow profile")) {BlizzardCmd.test(message, msgContent, client); featureTracker("wowProfile");}
         if (msgContent.startsWith("alexa give me a meme")) {Reddit.randomMeme(message); featureTracker("meme");}

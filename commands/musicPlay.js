@@ -9,10 +9,22 @@ const alexaColor = "#31C4F3";
 let endReason = "none";
 
 const musicQueue = require('./musicQueue.js');
-//const musicNext = require('./musicNext.js');
+const musicPause = require('./musicPause.js');
+const musicResume = require('./musicResume.js');
 
+async function getEndReason() {
+    return endReason;
+}
 
-async function musicPlay(message, msgContent, caseSensitiveContent) {
+async function setEndReason(newEndReason) {
+    endReason = newEndReason;
+}
+
+async function musicPlay(message, msgContent, caseSensitiveContent, client) {
+    // avoiding circular dependency, the lazy way... may have to combine these functions into one file again
+    const musicNext = require('./musicNext.js');
+    const musicStfu = require('./musicStfu.js');
+
     async function playThis(message, video) {
         //endReason = "none";
         if (video.videoId.length !== 11) {
@@ -28,8 +40,39 @@ async function musicPlay(message, msgContent, caseSensitiveContent) {
             .setImage(`https://i.ytimg.com/vi/${video.videoId}/mqdefault.jpg`)
             .addField(`${video.name}`,`https://www.youtube.com/watch?v=${video.videoId}`)
             .setFooter(`If Alexa connected to the voice channel but isn't outputting any sound, just tell her to STFU and then try again. This is a known bug.`)
-        message.channel.send(embed);
+        
+            message.channel.send(embed)
+            .then(newMessage => {
+                newMessage.react('▶')
+                    .then(() => {newMessage.react('⏸')
+                        .then(() => {newMessage.react('⏭')
+                            .then(() => {newMessage.react('⏹')})
+                        })
+                    });
+                const filter = (reaction, user) => {
+                    return reaction.emoji.name === '▶' && user.id !== client.user.id || 
+                    reaction.emoji.name === '⏸' && user.id !== client.user.id || 
+                    reaction.emoji.name === '⏭' && user.id !== client.user.id || 
+                    reaction.emoji.name === '⏹' && user.id !== client.user.id;
+                }
+                let emojiPause = new Discord.ReactionCollector(newMessage, filter, {time: 600000})
 
+                emojiPause.on('collect', (reaction, reactionCollector) => {
+                    if (reaction.emoji.name === '⏸') {
+                        let reactorUsername = reaction.users.filter(user => user.id !== client.user.id).array()[0].username;
+                        musicPause(message, client, reactorUsername);
+                    } else if (reaction.emoji.name === '▶') {
+                        let reactorUsername = reaction.users.filter(user => user.id !== client.user.id).array()[0].username;
+                        musicResume(message, client, reactorUsername);
+                    } else if (reaction.emoji.name === '⏭') {
+                        let reactorUsername = reaction.users.filter(user => user.id !== client.user.id).array()[0].username;
+                        musicNext(message, client, reactorUsername);
+                    } else if (reaction.emoji.name === '⏹') {
+                        let reactorUsername = reaction.users.filter(user => user.id !== client.user.id).array()[0].username;
+                        musicStfu(message, reactorUsername);
+                    }
+                })
+            })
         console.log("playing:");
         console.log(video);
         const channel = message.member.voiceChannel;
@@ -67,6 +110,7 @@ async function musicPlay(message, msgContent, caseSensitiveContent) {
 
                 dispatcher.on("end", () => {
                     console.log("dispatcher ended")
+
                     if (endReason === "stfu") {
                         endReason = "none";
                         console.log("stfu is the reason")
@@ -90,7 +134,7 @@ async function musicPlay(message, msgContent, caseSensitiveContent) {
                     console.log(getServerQueue);
                     if (getServerQueue) {
                         console.log("should be playing the next song")
-                        musicPlay(message,`alexa play fromalexaqueue https://youtube.com/watch?v=${getServerQueue.videoId}`, `alexa play fromalexaqueue https://youtube.com/watch?v=${getServerQueue.videoId}`);
+                        musicPlay(message,`alexa play fromalexaqueue https://youtube.com/watch?v=${getServerQueue.videoId}`, `alexa play fromalexaqueue https://youtube.com/watch?v=${getServerQueue.videoId}`, client);
                         songQueue.prepare("DELETE FROM songQueue WHERE guildId = ? AND videoId = ?").run(message.guild.id, getServerQueue.videoId);
                         endReason = "none";
                         return;
@@ -147,7 +191,7 @@ async function musicPlay(message, msgContent, caseSensitiveContent) {
             musicQueue(message);
 
             if (msgContent.includes("?v=")) {
-                musicPlay(message, caseSensitiveContent.split("&list=")[0], caseSensitiveContent.split("&list=")[0]);
+                musicPlay(message, caseSensitiveContent.split("&list=")[0], caseSensitiveContent.split("&list=")[0], client);
 
                 setTimeout(() => {
                     songQueue.prepare("DELETE FROM songQueue WHERE guildId = ? AND videoId = ?").run(message.guild.id, caseSensitiveContent.split("&list=")[0].split("?v=")[1])
@@ -188,7 +232,7 @@ async function musicPlay(message, msgContent, caseSensitiveContent) {
                 if (err) {
                     console.log(err);
                     message.channel.send("YouTube made an oopsie! For some reason the video you requested (either directly or in the queue) doesn't want to play. It might be deleted or region-locked to outside of the US.\nIf you're getting this message from a video in the queue, it should have continued on anyway.\nIf you're trying to play this video directly, sorry, dude. Pick another one.");
-                    musicNext(message);
+                    musicNext(message, client);
                     return;
                 }
                 let videoObj = {
@@ -221,10 +265,16 @@ async function musicPlay(message, msgContent, caseSensitiveContent) {
             
             const videos = result.videos
             var firstResult = videos[0]
-            let videoObj = {
-                videoId: firstResult.videoId,
-                name: firstResult.title,
-                seconds: firstResult.seconds
+            let videoObj;
+            if (firstResult) {
+                videoObj = {
+                    videoId: firstResult.videoId,
+                    name: firstResult.title,
+                    seconds: firstResult.seconds
+                }
+            } else {
+                message.channel.send("Seems like there's no videos by that name. Try again with a different search term.");
+                return;
             }
 
             if (firstResult.videoId.length !== 11) {
@@ -247,8 +297,4 @@ async function musicPlay(message, msgContent, caseSensitiveContent) {
     }
 }
 
-module.exports = {
-    musicPlay: musicPlay,
-    getEndReason: async function () {return endReason},
-    setEndReason: async function (newEndReason) {endReason = newEndReason}
-};
+module.exports = { getEndReason, setEndReason, musicPlay };

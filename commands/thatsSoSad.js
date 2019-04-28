@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 
 const musicPlay = require('./musicPlay.js')
 
-async function thatsSoSad(message) {
+async function thatsSoSad(message, client) {
     message.reply(`sorry you're sad. Would you like me to play Despacito?`);
 
     const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 5000 });
@@ -11,7 +11,7 @@ async function thatsSoSad(message) {
             collector.stop();
             if (typeof message.member.voiceChannel !== 'undefined') {
                 collector.stop();
-                musicPlay(message, "alexa play despacito", "alexa play despacito");
+                musicPlay.musicPlay(message, "alexa play despacito", "alexa play despacito", client);
             }
             else {
                 collector.stop();

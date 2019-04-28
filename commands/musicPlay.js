@@ -8,6 +8,7 @@ const songQueue = new SQLite('./db/songQueue.sqlite');
 const alexaColor = "#31C4F3";
 let endReason = "none";
 
+const featureTracker = require('../featureTracker.js');
 const musicQueue = require('./musicQueue.js');
 const musicPause = require('./musicPause.js');
 const musicResume = require('./musicResume.js');
@@ -61,15 +62,19 @@ async function musicPlay(message, msgContent, caseSensitiveContent, client) {
                     if (reaction.emoji.name === '⏸') {
                         let reactorUsername = reaction.users.filter(user => user.id !== client.user.id).array()[0].username;
                         musicPause(message, client, reactorUsername);
+                        featureTracker("emojiPause");
                     } else if (reaction.emoji.name === '▶') {
                         let reactorUsername = reaction.users.filter(user => user.id !== client.user.id).array()[0].username;
                         musicResume(message, client, reactorUsername);
+                        featureTracker("emojiPlay");
                     } else if (reaction.emoji.name === '⏭') {
                         let reactorUsername = reaction.users.filter(user => user.id !== client.user.id).array()[0].username;
                         musicNext(message, client, reactorUsername);
+                        featureTracker("emojiNext");
                     } else if (reaction.emoji.name === '⏹') {
                         let reactorUsername = reaction.users.filter(user => user.id !== client.user.id).array()[0].username;
                         musicStfu(message, reactorUsername);
+                        featureTracker("emojiStop");
                     }
                 })
             })

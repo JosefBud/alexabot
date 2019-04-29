@@ -72,6 +72,9 @@ const StockMarket = {
         let money = traders.prepare("SELECT money FROM traders WHERE userId = ?").get(message.author.id);
         let portfolioDescription = "";
         let addedPortfolioDescription = "";
+        let extraAddedPortfolioDescription = "";
+        let extraExtraAddedPortfolioDescription = "";
+        let extraExtraExtraAddedPortfolioDescription = "";
         let portfolioValue = 0;
         let portfolioEmbed = new Discord.RichEmbed();
         //console.log(money)
@@ -94,10 +97,34 @@ const StockMarket = {
                                 portfolioDescription = portfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total profit (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
                             }
                         } else {
-                            if (profitTotal < 0) {
-                                addedPortfolioDescription = addedPortfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total loss (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
+                            if (addedPortfolioDescription.length < 800) {
+                                if (profitTotal < 0) {
+                                    addedPortfolioDescription = addedPortfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total loss (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
+                                } else {
+                                    addedPortfolioDescription = addedPortfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total profit (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
+                                }
                             } else {
-                                addedPortfolioDescription = addedPortfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total profit (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
+                                if (extraAddedPortfolioDescription.length < 800) {
+                                    if (profitTotal < 0) {
+                                        extraAddedPortfolioDescription = extraAddedPortfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total loss (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
+                                    } else {
+                                        extraAddedPortfolioDescription = extraAddedPortfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total profit (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
+                                    }
+                                } else {
+                                    if (extraExtraAddedPortfolioDescription.length < 800) {
+                                        if (profitTotal < 0) {
+                                            extraExtraAddedPortfolioDescription = extraExtraAddedPortfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total loss (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
+                                        } else {
+                                            extraExtraAddedPortfolioDescription = extraExtraAddedPortfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total profit (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
+                                        }
+                                    } else {
+                                        if (profitTotal < 0) {
+                                            extraExtraExtraAddedPortfolioDescription = extraExtraExtraAddedPortfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total loss (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
+                                        } else {
+                                            extraExtraExtraAddedPortfolioDescription = extraExtraExtraAddedPortfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total profit (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
+                                        }
+                                    }
+                                }
                             }
                         }
                         
@@ -121,6 +148,21 @@ const StockMarket = {
                             .addField("Portfolio (continued)", addedPortfolioDescription)
 
                             console.log(addedPortfolioDescription)
+                    }
+
+                    if (extraAddedPortfolioDescription) {
+                        portfolioEmbed
+                            .addField("Portfolio (continued)", extraAddedPortfolioDescription)
+                    }
+
+                    if (extraExtraAddedPortfolioDescription) {
+                        portfolioEmbed
+                            .addField("Portfolio (continued)", extraExtraAddedPortfolioDescription)
+                    }
+
+                    if (extraExtraExtraAddedPortfolioDescription) {
+                        portfolioEmbed
+                            .addField("Portfolio (continued)", extraExtraExtraAddedPortfolioDescription)
                     }
 
                     message.channel.send(portfolioEmbed)

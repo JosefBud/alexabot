@@ -41,7 +41,9 @@ setInterval(async () => {
     }
 
     assignLeaderboard();
+}, 120000);
 
+setInterval(async () => {
     async function updateCurrentPlayers() {
         let numOfTraders = traders.prepare("SELECT COUNT(userId) FROM traders;").get();
         numOfTraders = numOfTraders["COUNT(userId)"];
@@ -72,4 +74,4 @@ setInterval(async () => {
     }
 
     await updateFeatureTracker();
-}, 60000);
+}, 30000);

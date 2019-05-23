@@ -156,7 +156,7 @@ const Game = {
                     message.channel.send(`It's ${coin}. You win $10!`);
                     collector.stop();
                 } else {
-                    message.channel.send(`It's ${coin}. You win fuck all, nothing!`);
+                    message.channel.send(`It's ${coin}. You win nada, nothing!`);
                     collector.stop();
                 }
                 collector.stop();
@@ -254,7 +254,7 @@ const Game = {
         } else {
             let stealCoinsCooldownCurrent = new Date();
             let cooldownRemaining = Math.round(((Math.abs(stealCoinsCooldownCurrent - profile.stealCoinsCooldown) / 1000) - 60) * -1);
-            message.channel.send(`You've gotta wait a little longer, bro. You've got ${cooldownRemaining} long ass seconds left.`)}
+            message.channel.send(`You've gotta wait a little longer, bro. You've got ${cooldownRemaining} long seconds left.`)}
     },
 /*
     createCharacter: function(message) {

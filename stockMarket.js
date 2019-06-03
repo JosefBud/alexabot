@@ -204,12 +204,12 @@ const StockMarket = {
                 let cost = qtyWanted * SMFunctions.stockPrice.price.last;
                 if (profile.money >= cost) {
                     await SMFunctions.getCompanyName(symbolWanted, message)
-                    await SMFunctions.getLogo(symbolWanted, message)
+                    //await SMFunctions.getLogo(symbolWanted, message)
                     let confirmPurchase = new Discord.RichEmbed();
                     confirmPurchase
                         .setAuthor(message.author.username, message.author.avatarURL)
                         .setColor(alexaColor)
-                        .setThumbnail(SMFunctions.companyLogo)
+                        .setThumbnail(`http://storage.googleapis.com/iex/api/logos/${symbolWanted}.png`)
                         .setTitle("Please confirm your purchase")
                         .setDescription(`**${qtyWanted} shares** of **${symbolWanted}** (${SMFunctions.companyName}) at **\$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** each \n This would cost a total of **\$${cost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** and you currently have **\$${profile.money.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** in your wallet`)
                         .setFooter("Please type \"yes\" or \"no\" to confirm or cancel")
@@ -289,7 +289,7 @@ const StockMarket = {
                                 return;
                             });
                         await SMFunctions.getCompanyName(symbolWanted, message)
-                        await SMFunctions.getLogo(symbolWanted, message)
+                        //await SMFunctions.getLogo(symbolWanted, message)
                         
                         let totalAmount = SMFunctions.stockPrice.price.last * qtyWanted
                         let totalProfit = totalAmount - (portfolioCheck.purchasePrice * qtyWanted)
@@ -297,7 +297,7 @@ const StockMarket = {
                         confirmSale
                             .setAuthor(message.author.username, message.author.avatarURL)
                             .setColor(alexaColor)
-                            .setThumbnail(SMFunctions.companyLogo)
+                            .setThumbnail(`http://storage.googleapis.com/iex/api/logos/${symbolWanted}.png`)
                             .setTitle("Please confirm your sale")
                             .setDescription(`**${qtyWanted} shares** of **${symbolWanted}** (${SMFunctions.companyName}) at **\$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** each \n This would return a total of **\$${totalAmount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** to your wallet at a **\$${totalProfit.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** profit`)
                             .setFooter("Please type \"yes\" or \"no\" to confirm or cancel")
@@ -359,13 +359,14 @@ const StockMarket = {
         let searchQuery = message.content.slice(20);
         let searchEmbed = new Discord.RichEmbed();
         await SMFunctions.getSearch(searchQuery, message);
-        await SMFunctions.getLogo(SMFunctions.companySearch.symbol);
-        await SMFunctions.getPrice(SMFunctions.companySearch.symbol);
+        //await SMFunctions.getLogo(SMFunctions.companySearch.symbol, message);
+        await SMFunctions.getPrice(SMFunctions.companySearch.symbol, message);
+        
         searchEmbed
             .setAuthor(message.author.username, message.author.avatarURL)
             .setColor(alexaColor)
             .setTitle(SMFunctions.companySearch.name)
-            .setThumbnail(SMFunctions.companyLogo)
+            .setThumbnail(`http://storage.googleapis.com/iex/api/logos/${SMFunctions.companySearch.symbol}.png`)
             .setURL(`https://finance.yahoo.com/quote/${SMFunctions.companySearch.symbol}`)
             .setDescription(`Symbol: **${SMFunctions.companySearch.symbol}**\n Current Price: **\$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}**`)
             .setFooter(`Exchange: ${SMFunctions.companySearch.exchDisp}`)
@@ -376,13 +377,13 @@ const StockMarket = {
     getHistory: async function(message) {
         let symbol = message.content.slice(21).toUpperCase();
         let historyEmbed = new Discord.RichEmbed();
-        await SMFunctions.getLogo(symbol, message);
+        //await SMFunctions.getLogo(symbol, message);
         await SMFunctions.getHistory(symbol, message);
         historyEmbed
             .setAuthor(message.author.username, message.author.avatarURL)
             .setColor(alexaColor)
             .setTitle(`${SMFunctions.stockHistory.companyName} (${SMFunctions.stockHistory.symbol})`)
-            .setThumbnail(SMFunctions.companyLogo)
+            .setThumbnail(`http://storage.googleapis.com/iex/api/logos/${SMFunctions.stockHistory.symbol}.png`)
             .setURL(`https://finance.yahoo.com/quote/${symbol}`)
             .setDescription(`
                 52 week high: **\$${SMFunctions.stockHistory.week52high.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}**
@@ -403,14 +404,14 @@ const StockMarket = {
     getPrice: async function(message) {
         let symbol = message.content.slice(19).toUpperCase();
         let getPriceEmbed = new Discord.RichEmbed();
-        await SMFunctions.getLogo(symbol, message);
+        //await SMFunctions.getLogo(symbol, message);
         await SMFunctions.getCompanyName(symbol, message);
         await SMFunctions.getPrice(symbol, message);
         getPriceEmbed
             .setAuthor(message.author.username, message.author.avatarURL, "")
             .setColor(alexaColor)
             .setTitle(`${SMFunctions.companyName} (${symbol})`)
-            .setThumbnail(`${SMFunctions.companyLogo}`)
+            .setThumbnail(`http://storage.googleapis.com/iex/api/logos/${symbol}.png`)
             .setURL(`https://finance.yahoo.com/quote/${symbol}`)
             .setDescription(`**\$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}**`)
             .setFooter(`as of ${SMFunctions.stockPrice.date.toLocaleString('en-us',{timeZone:'America/New_York'})} EST`)

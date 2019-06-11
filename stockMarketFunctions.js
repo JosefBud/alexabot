@@ -11,6 +11,7 @@ const SMFunctions = {
     companySearch: {},
     stockPrice: 0,
     stockHistory: {},
+    topGainersArray: [],
     oopsie: "Someone made an oopsie. Either that stock symbol doesn't exist, or my owner's coding sucks. Most likely the latter but check your message/symbol and try again!",
 
     getLogo: async function (symbol, message) {
@@ -71,6 +72,13 @@ const SMFunctions = {
                 console.log(error)
                 SMFunctions.stockHistory = {};
                 message.channel.send(SMFunctions.oopsie);
+            })
+    },
+
+    getTopGainers: async function(message) {
+        await Query.getTopGainers(5)
+            .then(results => {
+                SMFunctions.topGainersArray = results;
             })
     }
 

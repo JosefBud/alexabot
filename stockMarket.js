@@ -445,82 +445,23 @@ const StockMarket = {
             .setFooter("Vote for Alexa to put an extra $500 ($1,000 on weekends) in your wallet every day! Try \"Alexa vote\"")
 
         message.channel.send(leaderboardEmbed)
-    } 
-    /*
-    leaderboard: async function(message) {
-        let portfolio = portfolios.prepare("SELECT * FROM portfolios WHERE userId = ?").all(message.author.id)
-        let profile = traders.prepare("SELECT money FROM traders WHERE userId = ?").get(message.author.id)
-        let test = portfolios.prepare("SELECT * FROM portfolios GROUP BY userId").all()
-        console.log(test)
-        let leaderboardEmbed = new Discord.RichEmbed();
-        let newPortfolioValue = 0;
+    },
+
+    topGainers: async function (message) {
+        await SMFunctions.getTopGainers(message);
+        let gainerEmbed = new Discord.RichEmbed();
         let description = "";
-        let place = 1;
+        SMFunctions.topGainersArray.forEach(gainer => {
+            description += `${gainer.longName} **(${gainer.symbol})**: $${gainer.regularMarketPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}\nToday's change: **${gainer.regularMarketChangePercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%**\n52-week low: **$${gainer.fiftyTwoWeekLow.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}**\n52-week high: **$${gainer.fiftyTwoWeekHigh.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}**\n\n`
+        })
+        
+        gainerEmbed
+            .setAuthor("Today's top 5 gainers")
+            .setColor(alexaColor)
+            .setDescription(description)
+            .setFooter("Vote for Alexa to put an extra $500 ($1,000 on weekends) in your wallet every day! Try \"Alexa vote\"")
 
-        if (profile) {
-            async function forEach(array) {
-                for (let i = 0; i < array.length; i++) {
-                    await SMFunctions.getPrice(portfolio[i].symbol, message);
-                    newPortfolioValue = newPortfolioValue + (SMFunctions.stockPrice.price.last * portfolio[i].qty);
-                }
-            }
-            
-            async function embed() {
-                await forEach(portfolio);
-                newPortfolioValue = newPortfolioValue + profile.money;
-                leaderboard.prepare("INSERT OR REPLACE INTO leaderboard (userId, username, portfolioValue) VALUES (@userId, @username, @portfolioValue)").run({userId: message.author.id, username: message.author.username, portfolioValue: newPortfolioValue})
-                let getLeaderboard = leaderboard.prepare("SELECT * FROM leaderboard ORDER BY portfolioValue DESC LIMIT 5").all();
-                getLeaderboard.forEach(user => {
-                    let placement = "";
-                    let ending = " ";
-                    switch (place) {
-                        case 1: placement = "🥇🥇"; ending = "🥇🥇"; break;
-                        case 2: placement = "🥈🥈"; ending = "🥈🥈"; break;
-                        case 3: placement = "🥉🥉"; ending = "🥉🥉\n \n **Honorable Mentions:**"; break;
-                        case 4: placement = "4th place: "; break;
-                        case 5: placement = "5th place: "; break;
-                    }
-                    description = description + `${placement} **${user.username}** (\$${user.portfolioValue.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}) ${ending}\n`
-                    place++;
-                })
-                console.log(getLeaderboard)
-                leaderboardEmbed
-                    .setAuthor("Alexa Stock Market Game - Leaderboards")
-                    .setColor(alexaColor)
-                    .setTitle("Current leaderboard for profile values")
-                    .setDescription(description)
-                    .setFooter("Vote for Alexa to put an extra $500 ($1,000 on weekends) in your wallet every day! Try \"Alexa vote\"")
-
-                message.channel.send(leaderboardEmbed)
-            }
-
-            embed();
-        } else {
-            let getLeaderboard = leaderboard.prepare("SELECT * FROM leaderboard ORDER BY portfolioValue DESC LIMIT 5").all();
-            getLeaderboard.forEach(user => {
-                let placement = "";
-                let ending = " ";
-                switch (place) {
-                    case 1: placement = "🥇🥇"; ending = "🥇🥇"; break;
-                    case 2: placement = "🥈🥈"; ending = "🥈🥈"; break;
-                    case 3: placement = "🥉🥉"; ending = "🥉🥉\n \n **Honorable Mentions:**"; break;
-                    case 4: placement = "4th place: "; break;
-                    case 5: placement = "5th place: "; break;
-                }
-                description = description + `${placement} **${user.username}** (\$${user.portfolioValue.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}) ${ending}\n`
-                place++;
-            })
-            console.log(getLeaderboard)
-            leaderboardEmbed
-                .setAuthor("Alexa Stock Market Game - Leaderboards")
-                .setColor(alexaColor)
-                .setTitle("Current leaderboard for profile values")
-                .setDescription(description)
-                .setFooter("Vote for Alexa to put an extra $500 ($1,000 on weekends) in your wallet every day! Try \"Alexa vote\"")
-
-            message.channel.send(leaderboardEmbed)
-        }
+        message.channel.send(gainerEmbed);
     }
-    */
 }
 module.exports = StockMarket;

@@ -257,6 +257,7 @@ client.on('message', message => {
         if (msgContent.startsWith("alexa stocks price")) {StockMarket.getPrice(message); featureTracker("stocksPrice");}
         if (msgContent.startsWith("alexa stocks history")) {StockMarket.getHistory(message); featureTracker("stocksHistory");}
         if (msgContent.startsWith("alexa stocks search")) {StockMarket.search(message); featureTracker("stocksSearch");}
+        if (msgContent.startsWith("alexa stocks top gainers")) {StockMarket.topGainers(message); featureTracker("stocksGainers")}
         if (msgContent.startsWith("alexa stocks leaderboard")) {StockMarket.leaderboard(message); featureTracker("stocksLeaderboard");}
         if (msgContent.startsWith("alexa stocks help") || msgContent === "alexa stocks") {StockMarket.help(message); featureTracker("stocksHelp");}
         if (msgContent.startsWith("alexa what is the weather") || msgContent.startsWith("alexa how is the weather")) {whatIsWeather(message); featureTracker("weather");}

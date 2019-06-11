@@ -26,6 +26,7 @@ const StockMarket = {
                 **Alexa stocks profile** or **Alexa stocks portfolio** will show you your current holdings, both in your wallet and your shares.
                 **Alexa stocks price [symbol]** will show you the current price for shares of that company.
                 **Alexa stocks history [symbol]** will show you a detailed history for that company's stock.
+                **Alexa stocks top gainers** will show you the top 5 \"gainers\" for the day.
                 **Alexa stocks leaderboard** will show you the current leaderboard for portfolio value.
             `)
             .setFooter("This game is still in sort of a beta stage. If you run into any issues/bugs or have suggestions, reach out to me on the Alexa Discord server: https://discord.gg/PysGrtD")

@@ -12,7 +12,7 @@ const bannedChannelsSql = new SQLite('./db/bannedChannels.sqlite');
 const traders = new SQLite('./db/traders.sqlite');
 
 const Game = require('./game.js');
-const BlizzardCmd = require('./blizzard.js');
+//const BlizzardCmd = require('./blizzard.js');
 const Reddit = require('./reddit.js');
 const StockMarket = require('./stockMarket.js');
 const Dnd = require('./dnd.js');
@@ -246,7 +246,7 @@ client.on('message', message => {
         if (msgContent.startsWith("alexa buy")) {buy(message,client); featureTracker("buy");}
         if (msgContent.replace(/[o]/gi,"").includes("thats s sad") || msgContent.replace(/[o]/gi,"").includes("that is s sad") || msgContent.replace(/[o]/gi,"").includes("that is just s sad")) {thatsSoSad(message, client); featureTracker("thatsSoSad");}
         if (msgContent.startsWith("alexa fuck ea")) {message.channel.send("EA bAd gErAlDo gOoD");}
-        if (msgContent.startsWith("alexa wow profile")) {BlizzardCmd.test(message, msgContent, client); featureTracker("wowProfile");}
+        //if (msgContent.startsWith("alexa wow profile")) {BlizzardCmd.test(message, msgContent, client); featureTracker("wowProfile");}
         if (msgContent.startsWith("alexa give me a meme")) {Reddit.randomMeme(message); featureTracker("meme");}
         if (msgContent.startsWith("alexa give me /r/")) {Reddit.giveSub(message); featureTracker("subreddit");}
         if (msgContent.startsWith("alexa minesweeper")) {minesweeper(message); featureTracker("minesweeper");}

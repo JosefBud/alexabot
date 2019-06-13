@@ -35,7 +35,8 @@ const minesweeper = require('./commands/minesweeper.js');
 const whatIsWeather = require('./commands/whatIsWeather.js');
 
 const featureTracker = require('./featureTracker.js');
-const dndServers = new Set(["271172684543426560", "567383493416321064", "534471291248443423"])
+const dndServers = new Set(["271172684543426560", "567383493416321064", "534471291248443423"]);
+const alexaMods = new Set(["207297782195683329","183386090143612928","188055552469762049"]);
 // ^^ the Alexa Experiment, The Safe Space, Bot Test ^^
 let status = "LISTENING";
 
@@ -279,6 +280,57 @@ client.on('message', message => {
         if (msgContent.startsWith("!sorcerer") && dndServers.has(message.guild.id)) {let query = message.content.toLowerCase().slice(10); Dnd.classFeatLookup(message, "Sorcerer", query);}
         if (msgContent.startsWith("!warlock") && dndServers.has(message.guild.id)) {let query = message.content.toLowerCase().slice(9); Dnd.classFeatLookup(message, "Warlock", query);}
         if (msgContent.startsWith("!wizard") && dndServers.has(message.guild.id)) {let query = message.content.toLowerCase().slice(8); Dnd.classFeatLookup(message, "Wizard", query);}
+        if (msgContent.startsWith("alexa give money") && alexaMods.has(message.member.id)) {
+            if (message.mentions.users.array()[0]) {
+                let luckyWinner = message.mentions.users.array()[0].username;
+                let amount;
+                if (message.content.split(" ")[4]) {
+                    if (parseInt(message.content.split(" ")[4])) {
+                        amount = message.content.split(" ")[4];
+                    } else {
+                        return;
+                    }
+                } else {
+                    return;
+                }
+
+                message.channel.send(`$${amount} sent to ${luckyWinner}'s profile!`)
+            } else {
+                let amount;
+                if (message.content.split(" ")[3]) {
+                    if (parseInt(message.content.split(" ")[3])) {
+                        amount = message.content.split(" ")[3];
+                    } else {
+                        return;
+                    }
+                    
+                } else {
+                    return;
+                }
+
+                message.channel.send(`$${amount} added to your profile!`)
+            }
+        }
+
+        if (msgContent.startsWith("alexa take money") && alexaMods.has(message.member.id)) {
+            if (message.mentions.users.array()[0]) {
+                let luckyWinner = message.mentions.users.array()[0].username;
+                let amount;
+                if (message.content.split(" ")[4]) {
+                    if (parseInt(message.content.split(" ")[4])) {
+                        amount = message.content.split(" ")[4];
+                    } else {
+                        return;
+                    }
+                } else {
+                    return;
+                }
+
+                message.channel.send(`$${amount} taken from ${luckyWinner}'s profile and added to yours!`)
+            } else {
+                return;
+            }
+        }
     }
 });
 

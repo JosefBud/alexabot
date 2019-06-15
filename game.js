@@ -14,8 +14,7 @@ const traders = new SQLite('./db/traders.sqlite');
 const portfolios = new SQLite('./db/portfolios.sqlite');
 const leaderboard = new SQLite('./db/leaderboard.sqlite');
 const songQueue = new SQLite('./db/songQueue.sqlite');
-const userStealCoinsCooldowns = new Set();
-const userFlipCoinCooldowns = new Set();
+let userCooldowns = {};
 
 const Game = {
     prep: function(client) {
@@ -131,130 +130,139 @@ const Game = {
     },
 
     flipCoin: function(message) {
-        if (!userFlipCoinCooldowns.has(message.author.id)) {
-            getCooldown = sql.prepare("SELECT flipCoinCooldown FROM game WHERE userId = ?;")
-            setCooldown = sql.prepare("UPDATE game SET flipCoinCooldown = ? WHERE userId = ?;");
-            setInitialCooldown = sql.prepare("UPDATE game SET flipCoinCooldown = 30 WHERE userId = ?;");
-            setTimeout(() => {setInitialCooldown.run(message.author.id)}, 500);
+        function flipTheCoin() {
+            let currentTime = new Date();
+            let difference = currentTime - userCooldowns[message.member.id].flipCoin;
 
-            let random = Math.random();
-            let coin;
-            if (random >= 0.5) {
-                coin = "heads"
-            } else {coin = "tails"}
-            console.log(random);
-            console.log(coin);
-            message.channel.send(`Heads or tails?`);
-            const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 5000 });
-            collector.on("collect", message => {
-                if (!message.content.toLowerCase().startsWith("heads") && !message.content.toLowerCase().startsWith("tails")) {
-                    message.channel.send(`You must've typed the wrong thing. Try again!`)
+            if (difference > 60000) {
+                let random = Math.random();
+                let coin;
+                if (random >= 0.5) {
+                    coin = "heads"
+                } else {coin = "tails"}
+                console.log(random);
+                console.log(coin);
+                message.channel.send(`Heads or tails?`);
+                const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 5000 });
+                collector.on("collect", message => {
+                    if (!message.content.toLowerCase().startsWith("heads") && !message.content.toLowerCase().startsWith("tails")) {
+                        message.channel.send(`You must've typed the wrong thing. Try again!`)
+                        collector.stop();
+                        return;
+                    } else if (message.content.toLowerCase() === coin) {
+                        profile.currency = profile.currency + 10;
+                        message.channel.send(`It's ${coin}. You win $10!`);
+                        collector.stop();
+                    } else {
+                        message.channel.send(`It's ${coin}. You win nada, nothing!`);
+                        collector.stop();
+                    }
                     collector.stop();
-                    return;
-                } else if (message.content.toLowerCase() === coin) {
-                    profile.currency = profile.currency + 10;
-                    message.channel.send(`It's ${coin}. You win $10!`);
-                    collector.stop();
-                } else {
-                    message.channel.send(`It's ${coin}. You win nada, nothing!`);
-                    collector.stop();
-                }
-                collector.stop();
 
-                function flipCoinCooldown() {
-                    flipCoinCooldownUser = getCooldown.get(message.author.id);
-                    flipCoinCooldownUser.flipCoinCooldown = flipCoinCooldownUser.flipCoinCooldown - 1;
-                    setCooldown.run(flipCoinCooldownUser.flipCoinCooldown, message.author.id);
-                }
+                    userCooldowns[message.member.id].flipCoin = new Date();
+                })
+                collector.on("end", (collected,reason) => {
+                    if (reason === 'time') {
+                        message.channel.send(`You took too much time!`)
+                    } else {return;}
+                })
+            } else {
+                message.channel.send(`Cool those heels, slim thicc queen. There's a 60-second cooldown and you fondled my coin ${(difference / 1000).toFixed(0)} seconds ago.`)
+            }
+        }
 
-                var flipCoinCooldownInterval = setInterval(flipCoinCooldown, 1000)
-
-                function clearFlipCoinCooldown() {
-                    clearInterval(flipCoinCooldownInterval);
-                }
-
-                userFlipCoinCooldowns.add(message.author.id)
-                setTimeout(function() {
-                    userFlipCoinCooldowns.delete(message.author.id);
-                    clearFlipCoinCooldown();
-                }, 30000)
-            })
-            collector.on("end", (collected,reason) => {
-                if (reason === 'time') {
-                    message.channel.send(`You took too much time!`)
-                } else {return;}
-            })
+        if (userCooldowns[message.member.id] && userCooldowns[message.member.id].flipCoin) {
+            flipTheCoin();
         } else {
-            flipCoinCooldownDb = getCooldown.get(message.author.id);
-            message.channel.send(`Cool those heels, slim thicc queen. You've got ${flipCoinCooldownDb.flipCoinCooldown} seconds left before you can fondle my coin again.`)
+            let currentTime = new Date();
+            let subtract61 = currentTime - 61000;
+            if (!userCooldowns[message.member.id]) {
+                userCooldowns[message.member.id] = {};
+            }
+            userCooldowns[message.member.id].flipCoin = subtract61;
+            flipTheCoin();
         }
     },
 
     stealCoins: function(client, message) {
-        if (!userStealCoinsCooldowns.has(message.author.id)) {
-            var instigatorId = message.author.id;
-            if (message.content.slice(12,-1).startsWith("<@")) {
-                if (message.content.slice(12,-1).startsWith("<@!")) {
-                    var victimId = message.content.slice(15,-1);
-                } else {var victimId = message.content.slice(14,-1);}
-            }
-            if (instigatorId === victimId) {
-                message.channel.send("You can't steal from yourself, dumbass");
-                return;
-            } else {
-                if (!message.content.slice(12).startsWith("<@")) {
-                    message.channel.send("You need to tag somebody");
-                } else {
-                    getVictim = sql.prepare("SELECT currency FROM game WHERE userId = ?")
-                    victim = getVictim.get(victimId);
-                    console.log(victim)
-                    if (!victim) {
-                        message.channel.send(`They haven't even set up a profile yet. Or, more likely, they haven't spoken in Discord since I last reset the database.`)
-                    } else if (victim.currency < 50) {
-                        message.channel.send(`Take it easy. They have to be holding at least $50 before you can steal from them.`)
-                    } else {
-                        stealCoinsCooldownStart = new Date();
-                        profile.stealCoinsCooldown = Math.abs(stealCoinsCooldownStart);
-                        userStealCoinsCooldowns.add(message.author.id)
-                        setTimeout(function() {userStealCoinsCooldowns.delete(message.author.id);}, 60000)
-                        giveCoins = sql.prepare("UPDATE game SET currency = currency + ? WHERE userId = ?");
-                        takeCoins = sql.prepare("UPDATE game SET currency = currency - ? WHERE userId = ?");
+        function stealTheCoins() {
+            let currentTime = new Date();
+            let difference = currentTime - userCooldowns[message.member.id].stealCoins;
 
-                        let randomNumber = Math.random();
-                        if (randomNumber < 0.05) {
-                            console.log("Random number: " + randomNumber)
-                            console.log("instigator: ", instigatorId, typeof instigatorId);
-                            console.log("victim: ", victimId, typeof victimId);
-                            profile.currency = profile.currency + 50;
-                            takeCoins.run(50,victimId);
-                            message.channel.send(`Damn! You got super lucky. You managed to get $50 off of them! They're gonna be pissed.`);
-                        }
-                        if (randomNumber < 0.65) {
-                            console.log("Random number: " + randomNumber)
-                            console.log("instigator: ", instigatorId, typeof instigatorId);
-                            console.log("victim: ", victimId, typeof victimId);
-                            profile.currency = profile.currency - 10;
-                            //takeCoins.run(instigatorId);
-                            giveCoins.run(10,victimId);
-                            message.channel.send(`Oof. Ya got caught and had to pay them off with $10.`)
-                        } else {
-                            console.log("Random number: " + randomNumber)
-                            console.log("instigator: ", instigatorId);
-                            console.log("victim: ", victimId);
-                            profile.currency = profile.currency + 10;
-                            //giveCoins.run(instigatorId);
-                            takeCoins.run(10,victimId);
-                            message.channel.send(`Look at you, you sneaky boi. You managed to get $10 off of them.`)
-                        }
-                        //client.instigatorCoins.run(instigator);
-                        //client.victimCoins.run(victim);
-                    }
+            if (difference > 60000) {
+                let instigatorId = message.author.id;
+                let victimId;
+                console.log(message.mentions.users.array())
+                if (message.mentions.users.array()[0]) {
+                    if (message.mentions.users.array()[0].bot) {
+                        message.channel.send("You can't steal from a bot. C'mon. They're defenseless. What's wrong with you?")
+                        return;
+                    } else if (message.mentions.users.array()[0].id === instigatorId) {
+                        message.channel.send("You can't steal from yourself, smarty pants");
+                        return;
+                    } else {victimId = message.mentions.users.array()[0].id}
+                } else {
+                    message.channel.send("You need to tag somebody");
+                    return;
                 }
+
+                getVictim = sql.prepare("SELECT currency FROM game WHERE userId = ?")
+                victim = getVictim.get(victimId);
+                console.log(victim)
+                if (!victim) {
+                    message.channel.send(`They don't have a profile!`)
+                } else if (victim.currency < 50) {
+                    message.channel.send(`Take it easy. They have to be holding at least $50 before you can steal from them.`)
+                } else {
+                    userCooldowns[message.member.id].stealCoins = new Date();
+                    giveCoins = sql.prepare("UPDATE game SET currency = currency + ? WHERE userId = ?");
+                    takeCoins = sql.prepare("UPDATE game SET currency = currency - ? WHERE userId = ?");
+
+                    let randomNumber = Math.random();
+                    if (randomNumber < 0.05) {
+                        console.log("Random number: " + randomNumber)
+                        console.log("instigator: ", instigatorId, typeof instigatorId);
+                        console.log("victim: ", victimId, typeof victimId);
+                        profile.currency = profile.currency + 50;
+                        takeCoins.run(50,victimId);
+                        message.channel.send(`Damn! You got super lucky. You managed to get $50 off of them! They're gonna be pissed.`);
+                    }
+                    if (randomNumber < 0.65) {
+                        console.log("Random number: " + randomNumber)
+                        console.log("instigator: ", instigatorId, typeof instigatorId);
+                        console.log("victim: ", victimId, typeof victimId);
+                        profile.currency = profile.currency - 10;
+                        //takeCoins.run(instigatorId);
+                        giveCoins.run(10,victimId);
+                        message.channel.send(`Oof. Ya got caught and had to pay them off with $10.`)
+                    } else {
+                        console.log("Random number: " + randomNumber)
+                        console.log("instigator: ", instigatorId);
+                        console.log("victim: ", victimId);
+                        profile.currency = profile.currency + 10;
+                        //giveCoins.run(instigatorId);
+                        takeCoins.run(10,victimId);
+                        message.channel.send(`Look at you, you sneaky boi. You managed to get $10 off of them.`)
+                    }
+                    //client.instigatorCoins.run(instigator);
+                    //client.victimCoins.run(victim);
+                }
+            } else {
+                message.channel.send(`You've gotta wait a little longer, bro. There's a 60-second cooldown and you were *just* thieving ${(difference / 1000).toFixed(0)} seconds ago.`)
             }
+        }
+
+        if (userCooldowns[message.member.id] && userCooldowns[message.member.id].stealCoins) {
+            stealTheCoins();
         } else {
-            let stealCoinsCooldownCurrent = new Date();
-            let cooldownRemaining = Math.round(((Math.abs(stealCoinsCooldownCurrent - profile.stealCoinsCooldown) / 1000) - 60) * -1);
-            message.channel.send(`You've gotta wait a little longer, bro. You've got ${cooldownRemaining} long seconds left.`)}
+            let currentTime = new Date();
+            let subtract61 = currentTime - 61000;
+            if (!userCooldowns[message.member.id]) {
+                userCooldowns[message.member.id] = {};
+            }
+            userCooldowns[message.member.id].stealCoins = subtract61;
+            stealTheCoins();
+        }
     },
 /*
     createCharacter: function(message) {

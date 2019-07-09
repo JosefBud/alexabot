@@ -3,7 +3,6 @@ const fs = require('fs');
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const config = require('./config.json');
-const user = new Discord.Message();
 const DBL = require('dblapi.js');
 const dbl = new DBL(config.dblToken, client);
 

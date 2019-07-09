@@ -19,6 +19,14 @@ const PortfolioEditor = {
         const money = messageArray[4];
         traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(money, userId);
         message.channel.send(`Updated the portfolio of ${userId} to have $${money}`);
+    },
+
+    removeStock: async function (message) {
+        const messageArray = message.content.split(" ");
+        const userId = messageArray[3];
+        const stock = messageArray[4];
+        portfolios.prepare("DELETE FROM portfolios WHERE userId = ? AND symbol = ?").run(userId, stock);
+        message.channel.send(`Removed ${stock} from the portfolio of ${userId}`);
     }
 }
 

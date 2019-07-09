@@ -235,6 +235,8 @@ client.on('message', message => {
                 PortfolioEditor.changeQty(message);
             } else if (request[2] === "money") {
                 PortfolioEditor.changeMoney(message);
+            } else if (request[2] === "remove") {
+                PortfolioEditor.removeStock(message);
             }
         }
 

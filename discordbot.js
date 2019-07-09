@@ -17,6 +17,7 @@ const Reddit = require('./reddit.js');
 const StockMarket = require('./stockMarket.js');
 const Dnd = require('./dnd.js');
 const VoiceRecog = require('./voiceRecog.js');
+const PortfolioEditor = require('./portfolioEditor.js');
 
 const help = require('./commands/help.js');
 const musicVolume = require('./commands/musicVolume.js');
@@ -35,6 +36,7 @@ const minesweeper = require('./commands/minesweeper.js');
 const whatIsWeather = require('./commands/whatIsWeather.js');
 
 const featureTracker = require('./featureTracker.js');
+const josef = "188055552469762049";
 const dndServers = new Set(["271172684543426560", "567383493416321064", "534471291248443423"]);
 const alexaMods = new Set(["207297782195683329","183386090143612928","188055552469762049"]);
 // ^^ the Alexa Experiment, The Safe Space, Bot Test ^^
@@ -203,8 +205,15 @@ client.on('message', message => {
             }
         }
 
-        if (msgContent === "alexa give me the deets") {
-            console.log(client.guilds.map(u => u.name))
+        if (msgContent.startsWith("alexa portfolioeditor") && message.author.id === josef) {
+            const request = msgContent.split(" ")
+            if (request[2] === "qty") {
+                PortfolioEditor.changeQty(message);
+            }
+        }
+
+        if (msgContent === "alexa give me the deets" && message.author.id === josef) {
+            message.channel.send("`alexa portfolioeditor qty [userId] [stockSymbol] [newQty]`")
         }
 
         if (msgContent.includes("alexa")) {

@@ -4,6 +4,7 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const config = require('./config.json');
 const DBL = require('dblapi.js');
+const winston = require('winston');
 const dbl = new DBL(config.dblToken, client);
 
 const SQLite = require("better-sqlite3");
@@ -61,14 +62,31 @@ const server = http.createServer(function (request, response) {
             request.on('data', function (data) {
                 let post = JSON.parse(data);
 
-                console.log("Somebody has voted!")
-                console.log(post);
+                const voteLog = winston.createLogger({
+                    level: 'info',
+                    format: winston.format.combine(
+                        winston.format.timestamp({
+                            format: 'YYYY-MM-DD HH:mm:ss'
+                        }),
+                        winston.format.json()
+                    ),
+                    transports: [
+                        new winston.transports.File({
+                            filename: './logs/alexaVotes.log'
+                        })
+                    ]
+                })
+
+                voteLog.log({
+                    level: 'info',
+                    user: post.user,
+                    content: post
+                })
 
                 let voterProfile = traders.prepare("SELECT money FROM traders WHERE userId = ?").get(post.user);
                 if (voterProfile) {
                     let currentDate = new Date();
                     let dayOfWeek = currentDate.getDay();
-                    console.log(dayOfWeek);
                     if (dayOfWeek === 5 || dayOfWeek === 6 || dayOfWeek === 0) {
                         let voterMoney = voterProfile.money + 1000;
                         traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(voterMoney, post.user)
@@ -87,8 +105,7 @@ const server = http.createServer(function (request, response) {
             request.on('end', function () {
                 try {
                     let post = JSON.parse(body);
-                    // deal_with_post_data(request,post);
-                    console.log(post); // <--- here I just output the parsed JSON
+                    console.log(post);
                     response.writeHead(200, {
                         "Content-Type": "text/plain"
                     });
@@ -171,15 +188,26 @@ client.on('message', message => {
     if (message.channel.type === 'dm') {
         if (!message.author.bot) {
             help(message, msgContent);
-            let consoleTimeStamp = new Date();
-            let logIt = consoleTimeStamp.toLocaleDateString('en-us', {
-                timeZone: 'America/New_York'
-            }) + " " + consoleTimeStamp.toLocaleTimeString('en-us', {
-                timeZone: 'America/New_York'
-            }) + " " + message.author.username + ": " + message.content;
-            fs.appendFile('alexaDMs.log', "\r\n" + logIt, (err) => {
-                if (err) throw err;
-                console.log('Alexa has received a DM.');
+
+            const dmLog = winston.createLogger({
+                level: 'info',
+                format: winston.format.combine(
+                    winston.format.timestamp({
+                        format: 'YYYY-MM-DD HH:mm:ss'
+                    }),
+                    winston.format.json()
+                ),
+                transports: [
+                    new winston.transports.File({
+                        filename: './logs/alexaDMs.log'
+                    })
+                ]
+            })
+
+            dmLog.log({
+                level: 'info',
+                username: message.author.username,
+                message: message.content
             })
         }
 
@@ -201,9 +229,27 @@ client.on('message', message => {
     }
     let consoleTimeStamp = new Date();
     if (message.guild.name !== "Discord Bot List") {
-        console.log(consoleTimeStamp.toLocaleDateString('en-us', {
-            timeZone: 'America/New_York'
-        }), `(${consoleTimeStamp.toLocaleTimeString('en-us',{timeZone:'America/New_York'})})`, `${message.author.username} (${message.guild.name}): ${message.content}`);
+        const fullLog = winston.createLogger({
+            level: 'info',
+            format: winston.format.combine(
+                winston.format.timestamp({
+                    format: 'YYYY-MM-DD HH:mm:ss'
+                }),
+                winston.format.json()
+            ),
+            transports: [
+                new winston.transports.File({
+                    filename: './logs/fullLog.log'
+                })
+            ]
+        })
+
+        fullLog.log({
+            level: 'info',
+            guildName: message.guild.name,
+            username: message.author.username,
+            message: message.content
+        })
     }
 
     // NOT-BOT CHECK
@@ -211,12 +257,10 @@ client.on('message', message => {
         Game.profile(client, message);
 
         if (msgContent.startsWith("alexasendmessage")) {
-            console.log(message.author.id)
             if (message.author.id === "188055552469762049") {
                 client.guilds.forEach((guild) => {
                     let defaultChannel = "";
                     guild.channels.forEach((channel) => {
-                        //console.log(channel)
                         if (channel.type == "text" && defaultChannel == "") {
                             if (channel.permissionsFor(guild.me).has("SEND_MESSAGES")) {
                                 defaultChannel = channel;
@@ -244,14 +288,26 @@ client.on('message', message => {
         }
 
         if (msgContent.includes("alexa")) {
-            let logIt = consoleTimeStamp.toLocaleDateString('en-us', {
-                timeZone: 'America/New_York'
-            }) + " " + consoleTimeStamp.toLocaleTimeString('en-us', {
-                timeZone: 'America/New_York'
-            }) + " " + message.author.username + " (" + message.guild.name + "): " + message.content;
-            fs.appendFile('alexaCalls.log', "\r\n" + logIt, (err) => {
-                if (err) throw err;
-                console.log('The "data to append" was appended to file!');
+            const alexaCallsLog = winston.createLogger({
+                level: 'info',
+                format: winston.format.combine(
+                    winston.format.timestamp({
+                        format: 'YYYY-MM-DD HH:mm:ss'
+                    }),
+                    winston.format.json()
+                ),
+                transports: [
+                    new winston.transports.File({
+                        filename: './logs/alexaCalls.log'
+                    })
+                ]
+            })
+
+            alexaCallsLog.log({
+                level: 'info',
+                guild: message.guild.name,
+                username: message.author.username,
+                message: message.content
             })
         }
 
@@ -409,7 +465,6 @@ client.on('message', message => {
         }
         if (msgContent.startsWith("!sp") && dndServers.has(message.guild.id)) {
             Dnd.spellLookup(message);
-            console.log("test")
         }
         if (msgContent.startsWith("!f") && dndServers.has(message.guild.id)) {
             Dnd.featLookup(message);

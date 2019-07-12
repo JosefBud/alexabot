@@ -27,8 +27,9 @@ async function musicStfu(message, requester) {
     } else {
         if (requester) {
             message.channel.send(`I'm not even doing anything, ${requester}. Why are you pressing the stop button?`)
+        } else {
+            message.channel.send(`I'm not even doing anything, my guy.`)
         }
-        message.channel.send(`I'm not even doing anything, my guy.`)
     }
 }
 

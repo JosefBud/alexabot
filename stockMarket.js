@@ -1,14 +1,32 @@
 const Discord = require('discord.js');
+const winston = require('winston');
 const SQLite = require("better-sqlite3");
+
 const traders = new SQLite('./db/traders.sqlite')
 const portfolios = new SQLite('./db/portfolios.sqlite');
 const leaderboard = new SQLite('./db/leaderboard.sqlite');
+
 const algotrader = require('algotrader');
 const SMFunctions = require('./stockMarketFunctions.js');
 const Yahoo = algotrader.Data.Yahoo;
 const Query = algotrader.Data.Query;
 const IEX = algotrader.Data.IEX;
 const alexaColor = "#31C4F3";
+
+const stocksLog = winston.createLogger({
+    level: 'info',
+    format: winston.format.combine(
+        winston.format.timestamp({
+            format: 'YYYY-MM-DD HH:mm:ss'
+        }),
+        winston.format.json()
+    ),
+    transports: [
+        new winston.transports.File({
+            filename: './logs/alexaStocks.log'
+        })
+    ]
+})
 
 const StockMarket = {
     help: async function (message) {
@@ -40,35 +58,65 @@ const StockMarket = {
         }
     },
 
-    create: async function(message) {
+    create: async function (message) {
         let newProfile = new Discord.RichEmbed();
         const checkExisting = traders.prepare("SELECT * FROM traders WHERE userId = ?").get(message.author.id);
         if (!checkExisting) {
-            traders.prepare("INSERT OR REPLACE INTO traders (userId, money, username) VALUES (@userId, @money, @username)").run({userId: message.author.id, username: message.author.username, money: 50000})
+            traders.prepare("INSERT OR REPLACE INTO traders (userId, money, username) VALUES (@userId, @money, @username)").run({
+                userId: message.author.id,
+                username: message.author.username,
+                money: 50000
+            })
             newProfile
                 .setAuthor(message.author.username, message.author.avatarURL)
                 .setColor(alexaColor)
                 .setTitle("Wallet:")
                 .setDescription("$50,000")
-                .addField("Portfolio:","You haven't purchased any stock yet!")
+                .addField("Portfolio:", "You haven't purchased any stock yet!")
                 .setFooter("Your profile has been created!")
-            
+
             message.channel.send(newProfile)
-        } else {message.channel.send("You already have a stock market profile set up!")}
+
+            stocksLog.log({
+                level: 'info',
+                guildName: message.guild.name,
+                username: message.author.username,
+                eventName: 'Stocks profile created',
+                stockSymbol: null,
+                quantity: null,
+                sharePrice: null
+            })
+        } else {
+            message.channel.send("You already have a stock market profile set up!")
+        }
 
     },
 
-    viewPortfolio: async function(message) {
+    viewPortfolio: async function (message) {
         message.channel.send("Pulling prices")
             .then(newMessage => {
-                setTimeout(() => {newMessage.edit("Pulling prices.")}, 300)
-                setTimeout(() => {newMessage.edit("Pulling prices..")}, 600)
-                setTimeout(() => {newMessage.edit("Pulling prices...")}, 900)
-                setTimeout(() => {newMessage.edit("Pulling prices....")}, 1200)
-                setTimeout(() => {newMessage.edit("Pulling prices.....")}, 1500)
-                setTimeout(() => {newMessage.delete()}, 1800)
+                setTimeout(() => {
+                    newMessage.edit("Pulling prices.")
+                }, 300)
+                setTimeout(() => {
+                    newMessage.edit("Pulling prices..")
+                }, 600)
+                setTimeout(() => {
+                    newMessage.edit("Pulling prices...")
+                }, 900)
+                setTimeout(() => {
+                    newMessage.edit("Pulling prices....")
+                }, 1200)
+                setTimeout(() => {
+                    newMessage.edit("Pulling prices.....")
+                }, 1500)
+                setTimeout(() => {
+                    newMessage.delete()
+                }, 1800)
             })
-            .catch(err => {console.log(err)});
+            .catch(err => {
+                console.log(err)
+            });
         let portfolio = portfolios.prepare("SELECT * FROM portfolios WHERE userId = ?").all(message.author.id);
         let money = traders.prepare("SELECT money FROM traders WHERE userId = ?").get(message.author.id);
         let portfolioDescription = "";
@@ -128,7 +176,7 @@ const StockMarket = {
                                 }
                             }
                         }
-                        
+
                         //console.log(portfolioDescription)
                     }
                 }
@@ -148,7 +196,7 @@ const StockMarket = {
                         portfolioEmbed
                             .addField("Portfolio (continued)", addedPortfolioDescription)
 
-                            console.log(addedPortfolioDescription)
+                        console.log(addedPortfolioDescription)
                     }
 
                     if (extraAddedPortfolioDescription) {
@@ -177,7 +225,7 @@ const StockMarket = {
                     .setDescription(`\$${money.money.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`)
                     .addField("Portfolio:", "You haven't purchased any stock yet!")
                     .setFooter("Vote for Alexa to put an extra $500 ($1,000 on weekends) in your wallet every day! Try \"Alexa vote\"")
-            
+
                 message.channel.send(portfolioEmbed)
             }
         } else {
@@ -185,7 +233,7 @@ const StockMarket = {
         }
     },
 
-    buyShares: async function(message) {
+    buyShares: async function (message) {
         let removeCall = message.content.slice(17);
         let msgArray = removeCall.split(" ");
         let profile = traders.prepare("SELECT * FROM traders WHERE userId = ?").get(message.author.id);
@@ -199,7 +247,7 @@ const StockMarket = {
                 let symbolWanted = msgArray[1].toUpperCase();
                 await SMFunctions.getPrice(symbolWanted)
                     .catch(err => {
-                        message.channel.send("You may have typed something incorrectly. Usually this error happens when the symbol you used doesn't exist or is outside of the US-based stock exchanges. Murica. \n If you tried to use the company name instead of their stock symbol, use `Alexa stocks search [company name]` or Google to find their stock symbol and try your purchase again using that symbol."); 
+                        message.channel.send("You may have typed something incorrectly. Usually this error happens when the symbol you used doesn't exist or is outside of the US-based stock exchanges. Murica. \n If you tried to use the company name instead of their stock symbol, use `Alexa stocks search [company name]` or Google to find their stock symbol and try your purchase again using that symbol.");
                         return;
                     });
                 let cost = qtyWanted * SMFunctions.stockPrice.price.last;
@@ -215,7 +263,9 @@ const StockMarket = {
                         .setDescription(`**${qtyWanted} shares** of **${symbolWanted}** (${SMFunctions.companyName}) at **\$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** each \n This would cost a total of **\$${cost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** and you currently have **\$${profile.money.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** in your wallet`)
                         .setFooter("Please type \"yes\" or \"no\" to confirm or cancel")
                     message.channel.send(confirmPurchase)
-                    let collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 8000 });
+                    let collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, {
+                        time: 8000
+                    });
                     collector.on("collect", response => {
                         if (response.content.toLowerCase() === "yes") {
                             let newMoney = (profile.money - cost).toFixed(2);
@@ -231,7 +281,6 @@ const StockMarket = {
                                 traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(newMoney, response.author.id)
                                 portfolios.prepare("INSERT OR REPLACE INTO portfolios (userId, symbol, companyName, qty, purchasePrice) VALUES (@userId, @symbol, @companyName, @qty, @purchasePrice)").run(newPurchase);
                                 message.channel.send("Purchase complete! Check your portfolio with `Alexa stocks portfolio` or `Alexa stocks profile` to see your new shares.")
-                                console.log("created")
                                 collector.stop()
                             } else {
                                 let newQty = portfolioCheck.qty + qtyWanted
@@ -243,9 +292,18 @@ const StockMarket = {
                                 traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(newMoney, response.author.id)
                                 portfolios.prepare("UPDATE portfolios SET qty = @qty WHERE userId = @userId AND symbol = @symbol").run(newPurchase)
                                 message.channel.send("Purchase complete! Check your portfolio with `Alexa stocks portfolio` or `Alexa stocks profile` to see your new shares.")
-                                console.log("updated")
                                 collector.stop()
                             }
+
+                            stocksLog.log({
+                                level: 'info',
+                                guildName: response.guild.name,
+                                username: response.author.username,
+                                eventName: 'Shares bought',
+                                stockSymbol: symbolWanted,
+                                quantity: qtyWanted,
+                                sharePrice: SMFunctions.stockPrice.price.last
+                            })
                         } else if (response.content.toLowerCase() === "no") {
                             console.log("no")
                             message.channel.send("Okie dokie, artichokie. Purchase cancelled.")
@@ -258,7 +316,9 @@ const StockMarket = {
                     collector.on("end", (collected, reason) => {
                         if (reason === "time") {
                             message.channel.send("You took too much time to confirm!")
-                        } else {return;}
+                        } else {
+                            return;
+                        }
                     })
                 } else {
                     message.channel.send(`You don't have enough money to buy those shares! You currently have **\$${profile.money}** and those shares would cost **\$${cost}** at \$${SMFunctions.stockPrice.price.last} each`)
@@ -269,7 +329,7 @@ const StockMarket = {
         }
     },
 
-    sellShares: async function(message) {
+    sellShares: async function (message) {
         let removeCall = message.content.slice(18);
         let msgArray = removeCall.split(" ");
         let profile = traders.prepare("SELECT * FROM traders WHERE userId = ?").get(message.author.id);
@@ -281,17 +341,17 @@ const StockMarket = {
                 let qtyWanted = parseInt(msgArray[0]);
                 let symbolWanted = msgArray[1].toUpperCase();
                 let portfolioCheck = portfolios.prepare("SELECT * FROM portfolios WHERE userId = ? AND symbol = ?").get(message.author.id, symbolWanted);
-                
+
                 if (portfolioCheck) {
                     if (portfolioCheck.qty >= qtyWanted) {
                         await SMFunctions.getPrice(symbolWanted)
                             .catch(err => {
-                                message.channel.send("You may have typed something incorrectly. Usually this error happens when the symbol you used doesn't exist or is outside of the US-based stock exchanges. Murica. \n If you tried to use the company name instead of their stock symbol, use `Alexa stocks search [company name]` or Google to find their stock symbol and try your sale again using that symbol."); 
+                                message.channel.send("You may have typed something incorrectly. Usually this error happens when the symbol you used doesn't exist or is outside of the US-based stock exchanges. Murica. \n If you tried to use the company name instead of their stock symbol, use `Alexa stocks search [company name]` or Google to find their stock symbol and try your sale again using that symbol.");
                                 return;
                             });
                         await SMFunctions.getCompanyName(symbolWanted, message)
                         //await SMFunctions.getLogo(symbolWanted, message)
-                        
+
                         let totalAmount = SMFunctions.stockPrice.price.last * qtyWanted
                         let totalProfit = totalAmount - (portfolioCheck.purchasePrice * qtyWanted)
                         let confirmSale = new Discord.RichEmbed();
@@ -303,7 +363,9 @@ const StockMarket = {
                             .setDescription(`**${qtyWanted} shares** of **${symbolWanted}** (${SMFunctions.companyName}) at **\$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** each \n This would return a total of **\$${totalAmount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** to your wallet at a **\$${totalProfit.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** profit`)
                             .setFooter("Please type \"yes\" or \"no\" to confirm or cancel")
                         message.channel.send(confirmSale)
-                        let collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 8000 });
+                        let collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, {
+                            time: 8000
+                        });
                         collector.on("collect", response => {
                             if (response.content.toLowerCase() === "yes") {
                                 let newQty = portfolioCheck.qty - qtyWanted
@@ -324,6 +386,17 @@ const StockMarket = {
                                     message.channel.send("Sale complete! Check your portfolio with `Alexa stocks portfolio` or `Alexa stocks profile` to see your updated profile & portfolio.")
                                     collector.stop()
                                 }
+
+                                stocksLog.log({
+                                    level: 'info',
+                                    guildName: response.guild.name,
+                                    username: response.author.username,
+                                    eventName: 'Shares sold',
+                                    stockSymbol: symbolWanted,
+                                    quantity: qtyWanted,
+                                    sharePrice: SMFunctions.stockPrice.price.last
+                                })
+
                             } else if (response.content.toLowerCase() === "no") {
                                 console.log("no")
                                 message.channel.send("Okie dokie, artichokie. Purchase cancelled.")
@@ -336,7 +409,9 @@ const StockMarket = {
                         collector.on("end", (collected, reason) => {
                             if (reason === "time") {
                                 message.channel.send("You took too much time to confirm!")
-                            } else {return;}
+                            } else {
+                                return;
+                            }
                         })
                     } else {
                         message.channel.send(`You don't own that many shares. You're trying to sell **${qtyWanted}** shares but you only have **${portfolioCheck.qty}**.`)
@@ -350,19 +425,19 @@ const StockMarket = {
         }
     },
 
-    test: async function(message) {
+    test: async function (message) {
         let symbol = message.content.slice(18)
         await SMFunctions.getHistory(symbol, message);
         console.log(SMFunctions.stockHistory);
     },
 
-    search: async function(message) {
+    search: async function (message) {
         let searchQuery = message.content.slice(20);
         let searchEmbed = new Discord.RichEmbed();
         await SMFunctions.getSearch(searchQuery, message);
         //await SMFunctions.getLogo(SMFunctions.companySearch.symbol, message);
         await SMFunctions.getPrice(SMFunctions.companySearch.symbol, message);
-        
+
         searchEmbed
             .setAuthor(message.author.username, message.author.avatarURL)
             .setColor(alexaColor)
@@ -375,7 +450,7 @@ const StockMarket = {
         message.channel.send(searchEmbed)
     },
 
-    getHistory: async function(message) {
+    getHistory: async function (message) {
         let symbol = message.content.slice(21).toUpperCase();
         let historyEmbed = new Discord.RichEmbed();
         //await SMFunctions.getLogo(symbol, message);
@@ -402,7 +477,7 @@ const StockMarket = {
         message.channel.send(historyEmbed)
     },
 
-    getPrice: async function(message) {
+    getPrice: async function (message) {
         let symbol = message.content.slice(19).toUpperCase();
         let getPriceEmbed = new Discord.RichEmbed();
         //await SMFunctions.getLogo(symbol, message);
@@ -420,7 +495,7 @@ const StockMarket = {
         message.channel.send(getPriceEmbed);
     },
 
-    leaderboard: async function(message) {
+    leaderboard: async function (message) {
         let leaderboardEmbed = new Discord.RichEmbed();
         let description = "";
         let place = 1;
@@ -429,11 +504,24 @@ const StockMarket = {
             let placement = "";
             let ending = " ";
             switch (place) {
-                case 1: placement = "🥇🥇"; ending = "🥇🥇"; break;
-                case 2: placement = "🥈🥈"; ending = "🥈🥈"; break;
-                case 3: placement = "🥉🥉"; ending = "🥉🥉\n \n **Honorable Mentions:**"; break;
-                case 4: placement = "4th place: "; break;
-                case 5: placement = "5th place: "; break;
+                case 1:
+                    placement = "🥇🥇";
+                    ending = "🥇🥇";
+                    break;
+                case 2:
+                    placement = "🥈🥈";
+                    ending = "🥈🥈";
+                    break;
+                case 3:
+                    placement = "🥉🥉";
+                    ending = "🥉🥉\n \n **Honorable Mentions:**";
+                    break;
+                case 4:
+                    placement = "4th place: ";
+                    break;
+                case 5:
+                    placement = "5th place: ";
+                    break;
             }
             description = description + `${placement} **${user.username}** (\$${user.portfolioValue.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}) ${ending}\n`
             place++;
@@ -455,7 +543,7 @@ const StockMarket = {
         SMFunctions.topGainersArray.forEach(gainer => {
             description += `${gainer.longName} **(${gainer.symbol})**: $${gainer.regularMarketPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}\nToday's change: **${gainer.regularMarketChangePercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%**\n52-week low: **$${gainer.fiftyTwoWeekLow.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}**\n52-week high: **$${gainer.fiftyTwoWeekHigh.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}**\n\n`
         })
-        
+
         gainerEmbed
             .setAuthor("Today's top 5 gainers")
             .setColor(alexaColor)

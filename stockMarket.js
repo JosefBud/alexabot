@@ -196,7 +196,6 @@ const StockMarket = {
                         portfolioEmbed
                             .addField("Portfolio (continued)", addedPortfolioDescription)
 
-                        console.log(addedPortfolioDescription)
                     }
 
                     if (extraAddedPortfolioDescription) {
@@ -305,7 +304,6 @@ const StockMarket = {
                                 sharePrice: SMFunctions.stockPrice.price.last
                             })
                         } else if (response.content.toLowerCase() === "no") {
-                            console.log("no")
                             message.channel.send("Okie dokie, artichokie. Purchase cancelled.")
                             collector.stop();
                         } else {
@@ -398,7 +396,6 @@ const StockMarket = {
                                 })
 
                             } else if (response.content.toLowerCase() === "no") {
-                                console.log("no")
                                 message.channel.send("Okie dokie, artichokie. Purchase cancelled.")
                                 collector.stop();
                             } else {

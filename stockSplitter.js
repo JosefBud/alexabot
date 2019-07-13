@@ -1,7 +1,23 @@
 const config = require('./config.json');
 const axios = require('axios');
+const winston = require('winston');
 const SQLite = require("better-sqlite3");
 const portfolios = new SQLite('./db/portfolios.sqlite');
+
+const stocksLog = winston.createLogger({
+  level: 'info',
+  format: winston.format.combine(
+    winston.format.timestamp({
+      format: 'YYYY-MM-DD HH:mm:ss'
+    }),
+    winston.format.json()
+  ),
+  transports: [
+    new winston.transports.File({
+      filename: './logs/alexaStocks.log'
+    })
+  ]
+})
 
 setInterval(() => {
   const newDate = new Date();
@@ -35,6 +51,16 @@ setInterval(() => {
               if (user.splitDate != finalDate) {
                 portfolios.prepare("UPDATE portfolios SET qty = ? AND splitDate = ? WHERE userId = ?").run(user.qty, finalDate, user.userId);
                 console.log(`Stock split applied to ${user.userId} for ${user.symbol} at a multiplier of ${splitMultiplier}`);
+
+                stocksLog.log({
+                  level: 'info',
+                  guildName: null,
+                  username: user.userId,
+                  eventName: 'Shares split',
+                  stockSymbol: user.symbol,
+                  quantity: user.qty,
+                  sharePrice: null
+                })
               }
             })
           }

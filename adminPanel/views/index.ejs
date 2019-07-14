@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Alexa Admin Web Panel</title>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css" href="css/style.css" />
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
+</head>
+<body>
+	<div class="container-fluid text-center">
+		<nav>
+			<div class="nav nav-tabs" id="nav-tab" role="tablist">
+			<a class="nav-item nav-link active" id="nav-logs-tab" data-toggle="tab" href="#nav-logs" role="tab" aria-controls="nav-logs" aria-selected="true">Logs</a>
+			<a class="nav-item nav-link" id="nav-traders-tab" data-toggle="tab" href="#nav-traders" role="tab" aria-controls="nav-traders" aria-selected="false">Traders</a>
+			<a class="nav-item nav-link" id="nav-portfolios-tab" data-toggle="tab" href="#nav-portfolios" role="tab" aria-controls="nav-portfolios" aria-selected="false">Portfolios</a>
+			</div>
+		</nav>
+		<div class="row">
+			<div class="col tab-content" id="nav-tabContent">
+				<div class="row tab-pane fade show active" id="nav-logs" role="tabpanel" aria-labelledby="nav-logs-tab">
+					<div class="col">
+					<fieldset>
+						<form action="/" method="post">
+						<p>Log file</p>
+						<select name="logName">
+							<option value="fullLog">Full Log</option>
+							<option value="alexaCalls">Alexa Calls</option>
+							<option value="alexaDMs">Alexa DMs</option>
+							<option value="alexaMusic">Alexa Music</option>
+							<option value="alexaStocks">Alexa Stocks</option>
+						</select>
+						<hr />
+						<p>From:</p>
+						<input name="fromDate" type="date" required>
+						<input name="fromTime" type="time">
+						<p>To:</p>
+						<input name="toDate" type="date" required>
+						<input name="toTime" type="time" >
+						<hr />
+						<p>Sort:</p>
+						<select name="order">
+							<option value="asc">Ascending</option>
+							<option value="desc">Descending</option>
+						</select>
+						<hr />
+						<p>Number of entries</p>
+						<input name="limit" type="number" placeholder=50>
+						<hr />
+						<input type="submit" value="Submit" class="btn btn-success">
+						</form>
+					</fieldset>
+					<hr />
+					<% if (logResults !== null){ %>
+						<textarea rows="20" cols="150"><%= logResults %></textarea>
+					<% } %>
+					</div>
+				</div>
+				<div class="row tab-pane fade" id="nav-traders" role="tabpanel" aria-labelledby="nav-traders-tab">
+					<div class="col-4 offset-4">
+						<fieldset>
+							<form action="/stocks" method="post">
+								<p>Sort by</p>
+								<select name="sortBy">
+									<option value="userId">User ID</option>
+									<option value="username">Username</option>
+									<option value="money">Money</option>
+								</select>
+								<input type="submit" value="Submit" class="btn btn-success">
+							</form>
+						</fieldset>
+						<hr />
+						<% if (tradersTable[0]){ %>
+							<table class="table table-striped table-dark table-hover">
+								<thead class="thead-dark">
+									<tr>
+										<th>User ID</th>
+										<th>Username</th>
+										<th>Money</th>
+									</tr>
+								</thead>
+								<tbody>
+									<% tradersTable.forEach(function (ele) {%>
+										<tr>
+											<td><%= ele.userId %></td>
+											<td><%= ele.username %></td>
+											<td><%= ele.money %></td>
+										</tr>
+									<% }); %>
+								</tbody>
+							</table>
+						<% }; %>
+					</div>
+				</div>
+				<div class="row tab-pane fade" id="nav-portfolios" role="tabpanel" aria-labelledby="nav-portfolios-tab">
+					<div class="col-6 offset-3">
+						<fieldset>
+							<form action="/portfolios" method="post">
+								<p>Stock Symbol:</p>
+								<input type="text" name="symbol">
+								<hr />
+								<p>User ID:</p>
+								<input type="text" name="userId">
+								<hr />
+								<input type="submit" value="Submit" class="btn btn-success">
+							</form>
+						</fieldset>
+						<hr />
+						<% if (portfoliosTable[0]){ %>
+							<table class="table table-striped table-dark table-hover">
+								<thead class="thead-dark">
+									<tr>
+										<th>User ID</th>
+										<th>Company Name</th>
+										<th>Symbol</th>
+										<th>Qty</th>
+										<th>Purchase Price</th>
+									</tr>
+								</thead>
+								<tbody>
+									<% portfoliosTable.forEach(function (ele) {%>
+										<tr>
+											<td><%= ele.userId %></td>
+											<td><%= ele.companyName %></td>
+											<td><%= ele.symbol %></td>
+											<td><%= ele.qty %></td>
+											<td>$<%= ele.purchasePrice.toFixed(2) %></td>
+										</tr>
+									<% }); %>
+								</tbody>
+							</table>
+						<% }; %>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script src="js/jquery-3.4.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<% if (tradersTable[0]){ %>
+	<script>
+		$(document).ready(function(){
+		activaTab('nav-traders');
+		});
+	</script>
+<% }; %>
+
+<% if (portfoliosTable[0]){ %>
+	<script>
+		$(document).ready(function(){
+		activaTab('nav-portfolios');
+		});
+	</script>
+<% }; %>
+
+<script>
+function activaTab(tab){
+  $('.nav-tabs a[href="#' + tab + '"]').tab('show');
+};
+
+/* $('#nav-traders a').on('click', function (e) {
+  e.preventDefault()
+  $(this).tab('show')
+}) */
+</script>
+</html>

@@ -1,0 +1,20 @@
+.container-fluid {
+  position: relative;
+  height: 1000vh;
+}
+
+.container-fluid::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: url('../logo.png');
+  opacity: .3;
+  content: "";
+  z-index: -99;
+}
+
+table {
+  margin: auto;
+}

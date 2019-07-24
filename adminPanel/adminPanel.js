@@ -150,4 +150,4 @@ app.post('/portfolios', function (req, res) {
   }, 100)
 })
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+app.listen(port, () => console.log(`Admin panel app listening on port ${port}!`))

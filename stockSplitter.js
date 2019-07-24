@@ -31,44 +31,38 @@ const finalDate = dateArray[2] + "-" + dateArray[0] + "-" + dateArray[1];
 
 const symbolList = portfolios.prepare("SELECT symbol FROM portfolios GROUP BY symbol").all();
 
-let i = 0;
+let i = 20;
 async function apiLimiter() {
   setTimeout(() => {
-    axios.get('https://www.alphavantage.co/query', {
+    axios.get(`https://cloud.iexapis.com/stable/stock/${symbolList[i].symbol}/splits`, {
         params: {
-          function: 'TIME_SERIES_DAILY_ADJUSTED',
-          symbol: symbolList[i].symbol,
-          apikey: config.alphaVantageKey
+          token: config.iexCloudKey
         }
       })
       .then(response => {
         console.log("Checking for splits on " + symbolList[i].symbol);
-        if (response.data['Time Series (Daily)'] && response.data['Time Series (Daily)'][finalDate]) {
-          console.log(response.data['Time Series (Daily)'][finalDate]);
-          const splitMultiplier = parseFloat(response.data['Time Series (Daily)'][finalDate]['8. split coefficient']);
-          if (splitMultiplier != 1) {
+        console.log(response.data);
+        if (response.data[0]) {
+          if (response.data[0].exDate != finalDate) {
             const userList = portfolios.prepare("SELECT * FROM portfolios WHERE symbol = ?").all(symbolList[i].symbol);
             userList.forEach((user) => {
-              user.qty = user.qty * splitMultiplier;
-              if (user.splitDate != finalDate) {
-                portfolios.prepare("UPDATE portfolios SET qty = ? AND splitDate = ? WHERE userId = ?").run(user.qty, finalDate, user.userId);
-                console.log(`Stock split applied to ${user.userId} for ${user.symbol} at a multiplier of ${splitMultiplier}`);
-  
-                stocksLog.log({
-                  level: 'info',
-                  guildName: null,
-                  username: user.userId,
-                  eventName: 'Shares split',
-                  stockSymbol: user.symbol,
-                  quantity: user.qty,
-                  sharePrice: null
-                })
-              }
+              user.qty = user.qty / response.data[0].ratio;
+              portfolios.prepare("UPDATE portfolios SET qty = ? WHERE userId = ? AND symbol = ?").run(user.qty, user.userId, user.symbol);
+              console.log(`Stock split applied to ${user.userId} for ${user.symbol} at a ratio of 1:${response.data[0].ratio}`);
+
+              stocksLog.log({
+                level: 'info',
+                guildName: null,
+                username: user.userId,
+                eventName: 'Shares split',
+                stockSymbol: user.symbol,
+                quantity: user.qty,
+                sharePrice: null
+              })
             })
           }
-        } else {
-          console.log(`Date did not exist for ${symbolList[i].symbol}`)
         }
+        
         
       })
       .then(() => {
@@ -80,8 +74,14 @@ async function apiLimiter() {
       })
       .catch(error => {
         console.log(error);
+
+        i++;
+
+        if (i < symbolList.length) {
+          apiLimiter();
+        }
       })
-  }, 15000)
+  }, 250)
 }
 
 apiLimiter();

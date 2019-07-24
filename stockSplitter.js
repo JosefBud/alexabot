@@ -43,28 +43,31 @@ async function apiLimiter() {
       })
       .then(response => {
         console.log("Checking for splits on " + symbolList[i].symbol);
-        console.log(response.data['Time Series (Daily)'][finalDate]);
-        const splitMultiplier = parseFloat(response.data['Time Series (Daily)'][finalDate]['8. split coefficient']);
-        if (splitMultiplier != 1) {
-          const userList = portfolios.prepare("SELECT * FROM portfolios WHERE symbol = ?").all(symbolList[i].symbol);
-          userList.forEach((user) => {
-            user.qty = user.qty * splitMultiplier;
-            if (user.splitDate != finalDate) {
-              portfolios.prepare("UPDATE portfolios SET qty = ? AND splitDate = ? WHERE userId = ?").run(user.qty, finalDate, user.userId);
-              console.log(`Stock split applied to ${user.userId} for ${user.symbol} at a multiplier of ${splitMultiplier}`);
-
-              stocksLog.log({
-                level: 'info',
-                guildName: null,
-                username: user.userId,
-                eventName: 'Shares split',
-                stockSymbol: user.symbol,
-                quantity: user.qty,
-                sharePrice: null
-              })
-            }
-          })
+        if (response.data['Time Series (Daily)'][finalDate]) {
+          console.log(response.data['Time Series (Daily)'][finalDate]);
+          const splitMultiplier = parseFloat(response.data['Time Series (Daily)'][finalDate]['8. split coefficient']);
+          if (splitMultiplier != 1) {
+            const userList = portfolios.prepare("SELECT * FROM portfolios WHERE symbol = ?").all(symbolList[i].symbol);
+            userList.forEach((user) => {
+              user.qty = user.qty * splitMultiplier;
+              if (user.splitDate != finalDate) {
+                portfolios.prepare("UPDATE portfolios SET qty = ? AND splitDate = ? WHERE userId = ?").run(user.qty, finalDate, user.userId);
+                console.log(`Stock split applied to ${user.userId} for ${user.symbol} at a multiplier of ${splitMultiplier}`);
+  
+                stocksLog.log({
+                  level: 'info',
+                  guildName: null,
+                  username: user.userId,
+                  eventName: 'Shares split',
+                  stockSymbol: user.symbol,
+                  quantity: user.qty,
+                  sharePrice: null
+                })
+              }
+            })
+          }
         }
+        
       })
       .then(() => {
         i++;

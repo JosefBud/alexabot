@@ -272,13 +272,14 @@ const StockMarket = {
                             if (!portfolioCheck) {
                                 let newPurchase = {
                                     userId: response.author.id,
+                                    username: response.author.username,
                                     symbol: symbolWanted,
                                     companyName: SMFunctions.companyName,
                                     qty: qtyWanted,
                                     purchasePrice: SMFunctions.stockPrice.price.last
                                 }
                                 traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(newMoney, response.author.id)
-                                portfolios.prepare("INSERT OR REPLACE INTO portfolios (userId, symbol, companyName, qty, purchasePrice) VALUES (@userId, @symbol, @companyName, @qty, @purchasePrice)").run(newPurchase);
+                                portfolios.prepare("INSERT OR REPLACE INTO portfolios (userId, username, symbol, companyName, qty, purchasePrice) VALUES (@userId, @username, @symbol, @companyName, @qty, @purchasePrice)").run(newPurchase);
                                 message.channel.send("Purchase complete! Check your portfolio with `Alexa stocks portfolio` or `Alexa stocks profile` to see your new shares.")
                                 collector.stop()
                             } else {

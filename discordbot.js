@@ -284,7 +284,7 @@ client.on('message', message => {
         }
 
         if (msgContent === "alexa give me the deets" && message.author.id === josef) {
-            message.channel.send("`alexa portfolioeditor qty [userId] [stockSymbol] [newQty]`")
+            message.channel.send("`alexa portfolioeditor qty [userId] [stockSymbol] [newQty]`\n`alexa portfolioeditor money [userId] [newBalance]`\n`alexa portfolioeditor remove [userId] [stockSymbol]`")
         }
 
         if (msgContent.includes("alexa")) {

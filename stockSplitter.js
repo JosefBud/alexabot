@@ -31,7 +31,7 @@ const finalDate = dateArray[2] + "-" + dateArray[0] + "-" + dateArray[1];
 
 const symbolList = portfolios.prepare("SELECT symbol FROM portfolios GROUP BY symbol").all();
 
-let i = 20;
+let i = 0;
 async function apiLimiter() {
   setTimeout(() => {
     axios.get(`https://cloud.iexapis.com/stable/stock/${symbolList[i].symbol}/splits`, {

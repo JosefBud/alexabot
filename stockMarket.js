@@ -455,8 +455,8 @@ const StockMarket = {
         historyEmbed
             .setAuthor(message.author.username, message.author.avatarURL)
             .setColor(alexaColor)
-            .setTitle(`${SMFunctions.stockHistory[message.author.id].companyName} (${SMFunctions.stockHistory[message.author.id].symbol})`)
-            .setThumbnail(`http://storage.googleapis.com/iex/api/logos/${SMFunctions.stockHistory[message.author.id].symbol}.png`)
+            .setTitle(`${SMFunctions.stockHistory[message.author.id].companyName} (${symbol})`)
+            .setThumbnail(`http://storage.googleapis.com/iex/api/logos/${symbol}.png`)
             .setURL(`https://finance.yahoo.com/quote/${symbol}`)
             .setDescription(`
                 52 week high: **\$${SMFunctions.stockHistory[message.author.id].week52high.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}**

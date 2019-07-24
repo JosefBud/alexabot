@@ -1,5 +1,7 @@
 const Discord = require('discord.js');
 const algotrader = require('algotrader');
+const axios = require('axios');
+const config = require('./config.json');
 const Yahoo = algotrader.Data.Yahoo;
 const Query = algotrader.Data.Query;
 const IEX = algotrader.Data.IEX;
@@ -62,14 +64,22 @@ const SMFunctions = {
     },
 
     getHistory: async function(symbol, message) {
-        await IEX.getStats(symbol)
-            .then(results => {
-                SMFunctions.stockHistory[message.author.id] = results;
+        return new Promise(resolve => {
+            axios.get(`https://cloud.iexapis.com/stable/stock/${symbol}/stats`, {
+                params: {
+                token: config.iexCloudKey
+                }
             })
-            .catch(error => {
-                console.log(error)
-                message.channel.send(SMFunctions.oopsie);
-            })
+                .then(results => {
+                    SMFunctions.stockHistory[message.author.id] = results.data;
+                    console.log(results.data);
+                    resolve();
+                })
+                .catch(error => {
+                    console.log(error)
+                    message.channel.send(SMFunctions.oopsie);
+                })
+        })
     },
 
     getTopGainers: async function(message) {

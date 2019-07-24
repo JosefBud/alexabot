@@ -66,6 +66,8 @@ async function apiLimiter() {
               }
             })
           }
+        } else {
+          console.log(`Date did not exist for ${symbolList[i].symbol}`)
         }
         
       })

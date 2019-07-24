@@ -43,7 +43,7 @@ async function apiLimiter() {
         console.log("Checking for splits on " + symbolList[i].symbol);
         console.log(response.data);
         if (response.data[0]) {
-          if (response.data[0].exDate != finalDate) {
+          if (response.data[0].exDate === finalDate) {
             const userList = portfolios.prepare("SELECT * FROM portfolios WHERE symbol = ?").all(symbolList[i].symbol);
             userList.forEach((user) => {
               user.qty = user.qty / response.data[0].ratio;

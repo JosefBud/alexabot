@@ -43,7 +43,7 @@ async function apiLimiter() {
       })
       .then(response => {
         console.log("Checking for splits on " + symbolList[i].symbol);
-        if (response.data['Time Series (Daily)'][finalDate]) {
+        if (response.data['Time Series (Daily)'] && response.data['Time Series (Daily)'][finalDate]) {
           console.log(response.data['Time Series (Daily)'][finalDate]);
           const splitMultiplier = parseFloat(response.data['Time Series (Daily)'][finalDate]['8. split coefficient']);
           if (splitMultiplier != 1) {

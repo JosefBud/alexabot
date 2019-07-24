@@ -101,6 +101,8 @@
 								<hr />
 								<p>User ID:</p>
 								<input type="text" name="userId">
+								<p>Username:</p>
+								<input type="text" name="username">
 								<hr />
 								<input type="submit" value="Submit" class="btn btn-success">
 							</form>
@@ -121,6 +123,7 @@
 									<% portfoliosTable.forEach(function (ele) {%>
 										<tr>
 											<td><%= ele.userId %></td>
+											<td><%= ele.username %></td>
 											<td><%= ele.companyName %></td>
 											<td><%= ele.symbol %></td>
 											<td><%= ele.qty %></td>

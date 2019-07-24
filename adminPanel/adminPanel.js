@@ -128,11 +128,13 @@ app.post('/stocks', function (req, res) {
 
 app.post('/portfolios', function (req, res) {
   if (req.body.symbol) {
-    portfoliosTable = portfolios.prepare("SELECT * FROM portfolios WHERE symbol = ?").all(req.body.symbol)
-  }
-
-  if (req.body.userId) {
-    portfoliosTable = portfolios.prepare("SELECT * FROM portfolios WHERE userId = ?").all(req.body.userId)
+    portfoliosTable = portfolios.prepare("SELECT * FROM portfolios WHERE symbol = ?").all(req.body.symbol);
+  } else if (req.body.userId) {
+    portfoliosTable = portfolios.prepare("SELECT * FROM portfolios WHERE userId = ?").all(req.body.userId);
+  } else if (req.body.name) {
+    portfoliosTable = portfolios.prepare("SELECT * FROM portfolios WHERE username = ?").all(req.body.userId);
+  } else {
+    portfoliosTable = portfolios.prepare("SELECT * FROM portfolios ORDER BY username ASC").all();
   }
 
   const interval = setInterval(() => {

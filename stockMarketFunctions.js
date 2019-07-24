@@ -7,17 +7,17 @@ const StockMarket = require('./stockMarket.js')
 
 const SMFunctions = {
     companyLogo: "",
-    companyName: "",
+    companyName: {},
     companySearch: {},
-    stockPrice: 0,
+    stockPrice: {},
     stockHistory: {},
     topGainersArray: [],
     oopsie: "Someone made an oopsie. Either that stock symbol doesn't exist, or my owner's coding sucks. Most likely the latter but check your message/symbol and try again!",
 
     getLogo: async function (symbol, message) {
         await IEX.getLogo(symbol)
-            .then(result => {
-                SMFunctions.companyLogo = result;
+            .then(results => {
+                SMFunctions.companyLogo = results;
             })
             .catch(error => {
                 console.log(error)
@@ -29,11 +29,10 @@ const SMFunctions = {
     getCompanyName: async function (symbol, message) {
         await Query.search(symbol)
             .then(results => {
-                SMFunctions.companyName = results[0].name;
+                SMFunctions.companyName[message.author.id] = results[0].name;
             })
             .catch(error => {
                 console.log(error)
-                SMFunctions.companyName = "";
                 message.channel.send(SMFunctions.oopsie);
             })
     },
@@ -41,24 +40,23 @@ const SMFunctions = {
     getSearch: async function(search, message) {
         await Query.search(search)
             .then(results => {
-                SMFunctions.companySearch = results[0];
+                SMFunctions.companySearch[message.author.id] = results[0]
+                console.log(SMFunctions.companySearch);
             })
             .catch(error => {
                 console.log(error)
-                SMFunctions.companySearch = {};
                 message.channel.send(SMFunctions.oopsie);
             })
     },
 
     getPrice: async function(symbol, message) {
         await IEX.getQuote(symbol,"1d","1m",true)
-            .then(result => {
-                let latestPrice = result;
-                SMFunctions.stockPrice = latestPrice;
+            .then(results => {
+                let latestPrice = results;
+                SMFunctions.stockPrice[message.author.id] = latestPrice;
             })
             .catch(error => {
                 console.log(error)
-                SMFunctions.stockPrice = 0;
                 message.channel.send(SMFunctions.oopsie);
             })
     },
@@ -66,11 +64,10 @@ const SMFunctions = {
     getHistory: async function(symbol, message) {
         await IEX.getStats(symbol)
             .then(results => {
-                SMFunctions.stockHistory = results;
+                SMFunctions.stockHistory[message.author.id] = results;
             })
             .catch(error => {
                 console.log(error)
-                SMFunctions.stockHistory = {};
                 message.channel.send(SMFunctions.oopsie);
             })
     },

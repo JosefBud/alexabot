@@ -135,42 +135,42 @@ const StockMarket = {
                 async function forEach(array) {
                     for (let i = 0; i < array.length; i++) {
                         await SMFunctions.getPrice(portfolio[i].symbol, message);
-                        let profitEach = (SMFunctions.stockPrice.price.last - portfolio[i].purchasePrice);
-                        let profitTotal = ((SMFunctions.stockPrice.price.last * portfolio[i].qty) - (portfolio[i].purchasePrice * portfolio[i].qty));
+                        let profitEach = (SMFunctions.stockPrice[message.author.id].price.last - portfolio[i].purchasePrice);
+                        let profitTotal = ((SMFunctions.stockPrice[message.author.id].price.last * portfolio[i].qty) - (portfolio[i].purchasePrice * portfolio[i].qty));
                         let profitPercent = (profitEach / portfolio[i].purchasePrice * 100);
-                        portfolioValue = portfolioValue + (SMFunctions.stockPrice.price.last * portfolio[i].qty);
+                        portfolioValue = portfolioValue + (SMFunctions.stockPrice[message.author.id].price.last * portfolio[i].qty);
                         if (portfolioDescription.length < 800) {
                             if (profitTotal < 0) {
-                                portfolioDescription = portfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total loss (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
+                                portfolioDescription = portfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice[message.author.id].price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total loss (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
                             } else {
-                                portfolioDescription = portfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total profit (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
+                                portfolioDescription = portfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice[message.author.id].price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total profit (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
                             }
                         } else {
                             if (addedPortfolioDescription.length < 800) {
                                 if (profitTotal < 0) {
-                                    addedPortfolioDescription = addedPortfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total loss (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
+                                    addedPortfolioDescription = addedPortfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice[message.author.id].price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total loss (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
                                 } else {
-                                    addedPortfolioDescription = addedPortfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total profit (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
+                                    addedPortfolioDescription = addedPortfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice[message.author.id].price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total profit (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
                                 }
                             } else {
                                 if (extraAddedPortfolioDescription.length < 800) {
                                     if (profitTotal < 0) {
-                                        extraAddedPortfolioDescription = extraAddedPortfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total loss (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
+                                        extraAddedPortfolioDescription = extraAddedPortfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice[message.author.id].price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total loss (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
                                     } else {
-                                        extraAddedPortfolioDescription = extraAddedPortfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total profit (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
+                                        extraAddedPortfolioDescription = extraAddedPortfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice[message.author.id].price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total profit (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
                                     }
                                 } else {
                                     if (extraExtraAddedPortfolioDescription.length < 800) {
                                         if (profitTotal < 0) {
-                                            extraExtraAddedPortfolioDescription = extraExtraAddedPortfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total loss (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
+                                            extraExtraAddedPortfolioDescription = extraExtraAddedPortfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice[message.author.id].price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total loss (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
                                         } else {
-                                            extraExtraAddedPortfolioDescription = extraExtraAddedPortfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total profit (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
+                                            extraExtraAddedPortfolioDescription = extraExtraAddedPortfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice[message.author.id].price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total profit (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
                                         }
                                     } else {
                                         if (profitTotal < 0) {
-                                            extraExtraExtraAddedPortfolioDescription = extraExtraExtraAddedPortfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total loss (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
+                                            extraExtraExtraAddedPortfolioDescription = extraExtraExtraAddedPortfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice[message.author.id].price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total loss (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
                                         } else {
-                                            extraExtraExtraAddedPortfolioDescription = extraExtraExtraAddedPortfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total profit (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
+                                            extraExtraExtraAddedPortfolioDescription = extraExtraExtraAddedPortfolioDescription + `**${portfolio[i].companyName}** (${portfolio[i].symbol}): ${portfolio[i].qty} shares purchased at \$${portfolio[i].purchasePrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} each \n Current price: \$${SMFunctions.stockPrice[message.author.id].price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} | **\$${profitTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** total profit (${profitPercent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%) \n`;
                                         }
                                     }
                                 }
@@ -244,12 +244,12 @@ const StockMarket = {
             } else {
                 let qtyWanted = parseInt(msgArray[0]);
                 let symbolWanted = msgArray[1].toUpperCase();
-                await SMFunctions.getPrice(symbolWanted)
+                await SMFunctions.getPrice(symbolWanted, message)
                     .catch(err => {
                         message.channel.send("You may have typed something incorrectly. Usually this error happens when the symbol you used doesn't exist or is outside of the US-based stock exchanges. Murica. \n If you tried to use the company name instead of their stock symbol, use `Alexa stocks search [company name]` or Google to find their stock symbol and try your purchase again using that symbol.");
                         return;
                     });
-                let cost = qtyWanted * SMFunctions.stockPrice.price.last;
+                let cost = qtyWanted * SMFunctions.stockPrice[message.author.id].price.last;
                 if (profile.money >= cost) {
                     await SMFunctions.getCompanyName(symbolWanted, message)
                     //await SMFunctions.getLogo(symbolWanted, message)
@@ -259,7 +259,7 @@ const StockMarket = {
                         .setColor(alexaColor)
                         .setThumbnail(`http://storage.googleapis.com/iex/api/logos/${symbolWanted}.png`)
                         .setTitle("Please confirm your purchase")
-                        .setDescription(`**${qtyWanted} shares** of **${symbolWanted}** (${SMFunctions.companyName}) at **\$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** each \n This would cost a total of **\$${cost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** and you currently have **\$${profile.money.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** in your wallet`)
+                        .setDescription(`**${qtyWanted} shares** of **${symbolWanted}** (${SMFunctions.companyName[message.author.id]}) at **\$${SMFunctions.stockPrice[message.author.id].price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** each \n This would cost a total of **\$${cost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** and you currently have **\$${profile.money.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** in your wallet`)
                         .setFooter("Please type \"yes\" or \"no\" to confirm or cancel")
                     message.channel.send(confirmPurchase)
                     let collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, {
@@ -274,9 +274,9 @@ const StockMarket = {
                                     userId: response.author.id,
                                     username: response.author.username,
                                     symbol: symbolWanted,
-                                    companyName: SMFunctions.companyName,
+                                    companyName: SMFunctions.companyName[response.author.id],
                                     qty: qtyWanted,
-                                    purchasePrice: SMFunctions.stockPrice.price.last
+                                    purchasePrice: SMFunctions.stockPrice[message.author.id].price.last
                                 }
                                 traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(newMoney, response.author.id)
                                 portfolios.prepare("INSERT OR REPLACE INTO portfolios (userId, username, symbol, companyName, qty, purchasePrice) VALUES (@userId, @username, @symbol, @companyName, @qty, @purchasePrice)").run(newPurchase);
@@ -302,7 +302,7 @@ const StockMarket = {
                                 eventName: 'Shares bought',
                                 stockSymbol: symbolWanted,
                                 quantity: qtyWanted,
-                                sharePrice: SMFunctions.stockPrice.price.last
+                                sharePrice: SMFunctions.stockPrice[message.author.id].price.last
                             })
                         } else if (response.content.toLowerCase() === "no") {
                             message.channel.send("Okie dokie, artichokie. Purchase cancelled.")
@@ -320,7 +320,7 @@ const StockMarket = {
                         }
                     })
                 } else {
-                    message.channel.send(`You don't have enough money to buy those shares! You currently have **\$${profile.money}** and those shares would cost **\$${cost}** at \$${SMFunctions.stockPrice.price.last} each`)
+                    message.channel.send(`You don't have enough money to buy those shares! You currently have **\$${profile.money}** and those shares would cost **\$${cost}** at \$${SMFunctions.stockPrice[message.author.id].price.last} each`)
                 }
             }
         } else {
@@ -343,7 +343,7 @@ const StockMarket = {
 
                 if (portfolioCheck) {
                     if (portfolioCheck.qty >= qtyWanted) {
-                        await SMFunctions.getPrice(symbolWanted)
+                        await SMFunctions.getPrice(symbolWanted, message)
                             .catch(err => {
                                 message.channel.send("You may have typed something incorrectly. Usually this error happens when the symbol you used doesn't exist or is outside of the US-based stock exchanges. Murica. \n If you tried to use the company name instead of their stock symbol, use `Alexa stocks search [company name]` or Google to find their stock symbol and try your sale again using that symbol.");
                                 return;
@@ -351,7 +351,7 @@ const StockMarket = {
                         await SMFunctions.getCompanyName(symbolWanted, message)
                         //await SMFunctions.getLogo(symbolWanted, message)
 
-                        let totalAmount = SMFunctions.stockPrice.price.last * qtyWanted
+                        let totalAmount = SMFunctions.stockPrice[message.author.id].price.last * qtyWanted
                         let totalProfit = totalAmount - (portfolioCheck.purchasePrice * qtyWanted)
                         let confirmSale = new Discord.RichEmbed();
                         confirmSale
@@ -359,7 +359,7 @@ const StockMarket = {
                             .setColor(alexaColor)
                             .setThumbnail(`http://storage.googleapis.com/iex/api/logos/${symbolWanted}.png`)
                             .setTitle("Please confirm your sale")
-                            .setDescription(`**${qtyWanted} shares** of **${symbolWanted}** (${SMFunctions.companyName}) at **\$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** each \n This would return a total of **\$${totalAmount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** to your wallet at a **\$${totalProfit.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** profit`)
+                            .setDescription(`**${qtyWanted} shares** of **${symbolWanted}** (${SMFunctions.companyName[message.author.id]}) at **\$${SMFunctions.stockPrice[message.author.id].price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** each \n This would return a total of **\$${totalAmount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** to your wallet at a **\$${totalProfit.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** profit`)
                             .setFooter("Please type \"yes\" or \"no\" to confirm or cancel")
                         message.channel.send(confirmSale)
                         let collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, {
@@ -393,7 +393,7 @@ const StockMarket = {
                                     eventName: 'Shares sold',
                                     stockSymbol: symbolWanted,
                                     quantity: qtyWanted,
-                                    sharePrice: SMFunctions.stockPrice.price.last
+                                    sharePrice: SMFunctions.stockPrice[message.author.id].price.last
                                 })
 
                             } else if (response.content.toLowerCase() === "no") {
@@ -433,17 +433,16 @@ const StockMarket = {
         let searchQuery = message.content.slice(20);
         let searchEmbed = new Discord.RichEmbed();
         await SMFunctions.getSearch(searchQuery, message);
-        //await SMFunctions.getLogo(SMFunctions.companySearch.symbol, message);
-        await SMFunctions.getPrice(SMFunctions.companySearch.symbol, message);
+        await SMFunctions.getPrice(SMFunctions.companySearch[message.author.id].symbol, message);
 
         searchEmbed
             .setAuthor(message.author.username, message.author.avatarURL)
             .setColor(alexaColor)
-            .setTitle(SMFunctions.companySearch.name)
-            .setThumbnail(`http://storage.googleapis.com/iex/api/logos/${SMFunctions.companySearch.symbol}.png`)
-            .setURL(`https://finance.yahoo.com/quote/${SMFunctions.companySearch.symbol}`)
-            .setDescription(`Symbol: **${SMFunctions.companySearch.symbol}**\n Current Price: **\$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}**`)
-            .setFooter(`Exchange: ${SMFunctions.companySearch.exchDisp}`)
+            .setTitle(SMFunctions.companySearch[message.author.id].name)
+            .setThumbnail(`http://storage.googleapis.com/iex/api/logos/${SMFunctions.companySearch[message.author.id].symbol}.png`)
+            .setURL(`https://finance.yahoo.com/quote/${SMFunctions.companySearch[message.author.id].symbol}`)
+            .setDescription(`Symbol: **${SMFunctions.companySearch[message.author.id].symbol}**\n Current Price: **\$${SMFunctions.stockPrice[message.author.id].price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}**`)
+            .setFooter(`Exchange: ${SMFunctions.companySearch[message.author.id].exchDisp}`)
 
         message.channel.send(searchEmbed)
     },
@@ -456,20 +455,20 @@ const StockMarket = {
         historyEmbed
             .setAuthor(message.author.username, message.author.avatarURL)
             .setColor(alexaColor)
-            .setTitle(`${SMFunctions.stockHistory.companyName} (${SMFunctions.stockHistory.symbol})`)
-            .setThumbnail(`http://storage.googleapis.com/iex/api/logos/${SMFunctions.stockHistory.symbol}.png`)
+            .setTitle(`${SMFunctions.stockHistory[message.author.id].companyName} (${SMFunctions.stockHistory[message.author.id].symbol})`)
+            .setThumbnail(`http://storage.googleapis.com/iex/api/logos/${SMFunctions.stockHistory[message.author.id].symbol}.png`)
             .setURL(`https://finance.yahoo.com/quote/${symbol}`)
             .setDescription(`
-                52 week high: **\$${SMFunctions.stockHistory.week52high.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}**
-                52 week low: **\$${SMFunctions.stockHistory.week52low.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}**
-                52 week change: **\$${SMFunctions.stockHistory.week52change.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}**
-                5-year change: **${(SMFunctions.stockHistory.year5ChangePercent * 100).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%**
-                2-year change: **${(SMFunctions.stockHistory.year2ChangePercent * 100).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%**
-                1-year change: **${(SMFunctions.stockHistory.year1ChangePercent * 100).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%**
-                YTD change: **${(SMFunctions.stockHistory.ytdChangePercent * 100).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%**
-                6-month change: **${(SMFunctions.stockHistory.month6ChangePercent * 100).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%**
-                3-month change: **${(SMFunctions.stockHistory.month3ChangePercent * 100).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%**
-                1-month change: **${(SMFunctions.stockHistory.month1ChangePercent * 100).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%**
+                52 week high: **\$${SMFunctions.stockHistory[message.author.id].week52high.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}**
+                52 week low: **\$${SMFunctions.stockHistory[message.author.id].week52low.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}**
+                52 week change: **\$${SMFunctions.stockHistory[message.author.id].week52change.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}**
+                5-year change: **${(SMFunctions.stockHistory[message.author.id].year5ChangePercent * 100).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%**
+                2-year change: **${(SMFunctions.stockHistory[message.author.id].year2ChangePercent * 100).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%**
+                1-year change: **${(SMFunctions.stockHistory[message.author.id].year1ChangePercent * 100).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%**
+                YTD change: **${(SMFunctions.stockHistory[message.author.id].ytdChangePercent * 100).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%**
+                6-month change: **${(SMFunctions.stockHistory[message.author.id].month6ChangePercent * 100).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%**
+                3-month change: **${(SMFunctions.stockHistory[message.author.id].month3ChangePercent * 100).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%**
+                1-month change: **${(SMFunctions.stockHistory[message.author.id].month1ChangePercent * 100).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}%**
             `)
 
         message.channel.send(historyEmbed)
@@ -484,11 +483,11 @@ const StockMarket = {
         getPriceEmbed
             .setAuthor(message.author.username, message.author.avatarURL, "")
             .setColor(alexaColor)
-            .setTitle(`${SMFunctions.companyName} (${symbol})`)
+            .setTitle(`${SMFunctions.companyName[message.author.id]} (${symbol})`)
             .setThumbnail(`http://storage.googleapis.com/iex/api/logos/${symbol}.png`)
             .setURL(`https://finance.yahoo.com/quote/${symbol}`)
-            .setDescription(`**\$${SMFunctions.stockPrice.price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}**`)
-            .setFooter(`as of ${SMFunctions.stockPrice.date.toLocaleString('en-us',{timeZone:'America/New_York'})} EST`)
+            .setDescription(`**\$${SMFunctions.stockPrice[message.author.id].price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}**`)
+            .setFooter(`as of ${SMFunctions.stockPrice[message.author.id].date.toLocaleString('en-us',{timeZone:'America/New_York'})} EST`)
 
         message.channel.send(getPriceEmbed);
     },

@@ -8,7 +8,7 @@ const fs = require('fs');
 var alexaColor = "#31C4F3";
 
 
-//setInterval(async () => {
+setInterval(async () => {
     let startTime = new Date();
     console.log(`${startTime.toLocaleTimeString('en-us',{timeZone:'America/New_York'})}: LEADERBOARD UPDATE JOB STARTING`)
     async function assignLeaderboard() {
@@ -46,9 +46,9 @@ var alexaColor = "#31C4F3";
     }
 
     assignLeaderboard();
-//}, 120000);
+}, 120000);
 
-/* setInterval(async () => {
+setInterval(async () => {
     async function updateCurrentPlayers() {
         let numOfTraders = traders.prepare("SELECT COUNT(userId) FROM traders;").get();
         numOfTraders = numOfTraders["COUNT(userId)"];
@@ -79,4 +79,4 @@ var alexaColor = "#31C4F3";
     }
 
     await updateFeatureTracker();
-}, 30000); */
+}, 30000);

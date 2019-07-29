@@ -8,7 +8,7 @@ const fs = require('fs');
 var alexaColor = "#31C4F3";
 
 
-setInterval(async () => {
+//setInterval(async () => {
     let startTime = new Date();
     console.log(`${startTime.toLocaleTimeString('en-us',{timeZone:'America/New_York'})}: LEADERBOARD UPDATE JOB STARTING`)
     async function assignLeaderboard() {
@@ -22,9 +22,14 @@ setInterval(async () => {
                     async function forEachPortfolio(portfolioArray) {
                         for (c = 0; c < portfolioArray.length; c++) {
                             if (portfolio[c]) {
-                                await SMFunctions.getPrice(portfolio[c].symbol);
-                                //console.log(portfolio)
-                                newPortfolioValue = newPortfolioValue + (SMFunctions.stockPrice.price.last * portfolio[c].qty);
+                                const fakeMessage = {
+                                    author: {
+                                        id: 1
+                                    }
+                                }
+                                await SMFunctions.getPrice(portfolio[c].symbol, fakeMessage);
+                                console.log(portfolio)
+                                newPortfolioValue = newPortfolioValue + (SMFunctions.stockPrice[fakeMessage.author.id].price.last * portfolio[c].qty);
                             } else {return;}
                         }
                     }
@@ -41,9 +46,9 @@ setInterval(async () => {
     }
 
     assignLeaderboard();
-}, 120000);
+//}, 120000);
 
-setInterval(async () => {
+/* setInterval(async () => {
     async function updateCurrentPlayers() {
         let numOfTraders = traders.prepare("SELECT COUNT(userId) FROM traders;").get();
         numOfTraders = numOfTraders["COUNT(userId)"];
@@ -74,4 +79,4 @@ setInterval(async () => {
     }
 
     await updateFeatureTracker();
-}, 30000);
+}, 30000); */

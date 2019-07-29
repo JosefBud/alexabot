@@ -58,8 +58,10 @@ const SMFunctions = {
                 SMFunctions.stockPrice[message.author.id] = latestPrice;
             })
             .catch(error => {
-                console.log(error)
-                message.channel.send(SMFunctions.oopsie);
+                console.log(error);
+                if (message.channel) {
+                    message.channel.send(SMFunctions.oopsie);
+                }
             })
     },
 

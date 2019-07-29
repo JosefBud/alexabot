@@ -28,7 +28,7 @@ setInterval(async () => {
                                     }
                                 }
                                 await SMFunctions.getPrice(portfolio[c].symbol, fakeMessage);
-                                console.log(portfolio)
+                                //console.log(portfolio)
                                 newPortfolioValue = newPortfolioValue + (SMFunctions.stockPrice[fakeMessage.author.id].price.last * portfolio[c].qty);
                             } else {return;}
                         }

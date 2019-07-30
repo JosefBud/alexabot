@@ -246,6 +246,7 @@ const StockMarket = {
                 let qtyWanted = parseInt(msgArray[0]);
                 if (qtyWanted < 0) {
                     message.channel.send("Why can't we be friends?");
+                    return;
                 }
 
                 let symbolWanted = msgArray[1].toUpperCase();
@@ -356,8 +357,9 @@ const StockMarket = {
                 let qtyWanted = parseInt(msgArray[0]);
                 if (qtyWanted < 0) {
                     message.channel.send("Why can't we be friends?");
+                    return;
                 }
-                
+
                 let symbolWanted = msgArray[1].toUpperCase();
                 if (symbolWanted === "UNDEFINED") {
                     message.channel.send("Sanitize me, daddy.");

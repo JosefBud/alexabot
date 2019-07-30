@@ -244,7 +244,6 @@ const StockMarket = {
                 message.channel.send("You may have typed something incorrectly. Try again using `Alexa stocks buy [quantity] [symbol]`")
             } else {
                 let qtyWanted = parseInt(msgArray[0], 10);
-                console.log(qtyWanted);
                 if (qtyWanted < 0) {
                     message.channel.send("Why can't we be friends?");
                     return;

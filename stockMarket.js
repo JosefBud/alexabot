@@ -244,6 +244,10 @@ const StockMarket = {
                 message.channel.send("You may have typed something incorrectly. Try again using `Alexa stocks buy [quantity] [symbol]`")
             } else {
                 let qtyWanted = parseInt(msgArray[0]);
+                if (qtyWanted < 0) {
+                    message.channel.send("Why can't we be friends?");
+                }
+
                 let symbolWanted = msgArray[1].toUpperCase();
                 if (symbolWanted === "UNDEFINED") {
                     message.channel.send("Sanitize me, daddy.");
@@ -350,6 +354,10 @@ const StockMarket = {
                 message.channel.send("You may have typed something incorrectly. Try again using `Alexa stocks sell [quantity] [symbol]`")
             } else {
                 let qtyWanted = parseInt(msgArray[0]);
+                if (qtyWanted < 0) {
+                    message.channel.send("Why can't we be friends?");
+                }
+                
                 let symbolWanted = msgArray[1].toUpperCase();
                 if (symbolWanted === "UNDEFINED") {
                     message.channel.send("Sanitize me, daddy.");

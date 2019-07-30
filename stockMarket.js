@@ -243,9 +243,15 @@ const StockMarket = {
             if (!parseInt(msgArray[0])) {
                 message.channel.send("You may have typed something incorrectly. Try again using `Alexa stocks buy [quantity] [symbol]`")
             } else {
-                let qtyWanted = parseInt(msgArray[0]);
+                let qtyWanted = parseInt(msgArray[0], 10);
+                console.log(qtyWanted);
                 if (qtyWanted < 0) {
                     message.channel.send("Why can't we be friends?");
+                    return;
+                }
+
+                if (qtyWanted === 0) {
+                    message.channel.send("Well you can't buy 0 shares, that's just silly");
                     return;
                 }
 
@@ -354,9 +360,14 @@ const StockMarket = {
             if (!parseInt(msgArray[0])) {
                 message.channel.send("You may have typed something incorrectly. Try again using `Alexa stocks sell [quantity] [symbol]`")
             } else {
-                let qtyWanted = parseInt(msgArray[0]);
+                let qtyWanted = parseInt(msgArray[0], 10);
                 if (qtyWanted < 0) {
                     message.channel.send("Why can't we be friends?");
+                    return;
+                }
+
+                if (qtyWanted === 0) {
+                    message.channel.send("Well you can't sell 0 shares, that's just silly");
                     return;
                 }
 

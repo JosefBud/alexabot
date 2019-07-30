@@ -213,7 +213,8 @@ const StockMarket = {
                             .addField("Portfolio (continued)", extraExtraExtraAddedPortfolioDescription)
                     }
 
-                    message.channel.send(portfolioEmbed)
+                    message.channel.send(portfolioEmbed);
+                    SMFunctions.stockPrice[message.author.id].price.last = 0;
                 }
                 embed();
             } else {
@@ -244,6 +245,11 @@ const StockMarket = {
             } else {
                 let qtyWanted = parseInt(msgArray[0]);
                 let symbolWanted = msgArray[1].toUpperCase();
+                if (symbolWanted === "UNDEFINED") {
+                    message.channel.send("Sanitize me, daddy.");
+                    return;
+                }
+
                 await SMFunctions.getPrice(symbolWanted, message)
                     .catch(err => {
                         message.channel.send("You may have typed something incorrectly. Usually this error happens when the symbol you used doesn't exist or is outside of the US-based stock exchanges. Murica. \n If you tried to use the company name instead of their stock symbol, use `Alexa stocks search [company name]` or Google to find their stock symbol and try your purchase again using that symbol.");
@@ -289,9 +295,10 @@ const StockMarket = {
                                     symbol: symbolWanted,
                                     qty: newQty
                                 }
-                                traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(newMoney, response.author.id)
-                                portfolios.prepare("UPDATE portfolios SET qty = @qty WHERE userId = @userId AND symbol = @symbol").run(newPurchase)
-                                message.channel.send("Purchase complete! Check your portfolio with `Alexa stocks portfolio` or `Alexa stocks profile` to see your new shares.")
+                                traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(newMoney, response.author.id);
+                                portfolios.prepare("UPDATE portfolios SET qty = @qty WHERE userId = @userId AND symbol = @symbol").run(newPurchase);
+                                message.channel.send("Purchase complete! Check your portfolio with `Alexa stocks portfolio` or `Alexa stocks profile` to see your new shares.");
+                                SMFunctions.stockPrice[message.author.id].price.last = 0;
                                 collector.stop()
                             }
 
@@ -305,22 +312,26 @@ const StockMarket = {
                                 sharePrice: SMFunctions.stockPrice[message.author.id].price.last
                             })
                         } else if (response.content.toLowerCase() === "no") {
-                            message.channel.send("Okie dokie, artichokie. Purchase cancelled.")
+                            message.channel.send("Okie dokie, artichokie. Purchase cancelled.");
+                            SMFunctions.stockPrice[message.author.id].price.last = 0;
                             collector.stop();
                         } else {
-                            message.channel.send("Well that wasn't a valid response. Try again from the beginning.")
-                            collector.stop()
+                            message.channel.send("Well that wasn't a valid response. Try again from the beginning.");
+                            SMFunctions.stockPrice[message.author.id].price.last = 0;
+                            collector.stop();
                         }
                     })
                     collector.on("end", (collected, reason) => {
                         if (reason === "time") {
-                            message.channel.send("You took too much time to confirm!")
+                            message.channel.send("You took too much time to confirm!");
+                            SMFunctions.stockPrice[message.author.id].price.last = 0;
                         } else {
                             return;
                         }
                     })
                 } else {
-                    message.channel.send(`You don't have enough money to buy those shares! You currently have **\$${profile.money}** and those shares would cost **\$${cost}** at \$${SMFunctions.stockPrice[message.author.id].price.last} each`)
+                    message.channel.send(`You don't have enough money to buy those shares! You currently have **\$${profile.money}** and those shares would cost **\$${cost}** at \$${SMFunctions.stockPrice[message.author.id].price.last} each`);
+                    SMFunctions.stockPrice[message.author.id].price.last = 0;
                 }
             }
         } else {
@@ -339,6 +350,10 @@ const StockMarket = {
             } else {
                 let qtyWanted = parseInt(msgArray[0]);
                 let symbolWanted = msgArray[1].toUpperCase();
+                if (symbolWanted === "UNDEFINED") {
+                    message.channel.send("Sanitize me, daddy.");
+                    return;
+                }
                 let portfolioCheck = portfolios.prepare("SELECT * FROM portfolios WHERE userId = ? AND symbol = ?").get(message.author.id, symbolWanted);
 
                 if (portfolioCheck) {
@@ -375,15 +390,17 @@ const StockMarket = {
                                         symbol: symbolWanted,
                                         qty: newQty
                                     }
-                                    traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(newMoney, response.author.id)
+                                    traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(newMoney, response.author.id);
                                     portfolios.prepare("UPDATE portfolios SET qty = @qty WHERE userId = @userId AND symbol = @symbol").run(newPortfolio);
-                                    message.channel.send("Sale complete! Check your portfolio with `Alexa stocks portfolio` or `Alexa stocks profile` to see your updated profile & portfolio.")
-                                    collector.stop()
+                                    message.channel.send("Sale complete! Check your portfolio with `Alexa stocks portfolio` or `Alexa stocks profile` to see your updated profile & portfolio.");
+                                    SMFunctions.stockPrice[message.author.id].price.last = 0;
+                                    collector.stop();
                                 } else {
-                                    traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(newMoney, response.author.id)
+                                    traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(newMoney, response.author.id);
                                     portfolios.prepare("DELETE FROM portfolios WHERE userId = ? AND symbol = ?").run(response.author.id, symbolWanted);
-                                    message.channel.send("Sale complete! Check your portfolio with `Alexa stocks portfolio` or `Alexa stocks profile` to see your updated profile & portfolio.")
-                                    collector.stop()
+                                    message.channel.send("Sale complete! Check your portfolio with `Alexa stocks portfolio` or `Alexa stocks profile` to see your updated profile & portfolio.");
+                                    SMFunctions.stockPrice[message.author.id].price.last = 0;
+                                    collector.stop();
                                 }
 
                                 stocksLog.log({
@@ -397,22 +414,26 @@ const StockMarket = {
                                 })
 
                             } else if (response.content.toLowerCase() === "no") {
-                                message.channel.send("Okie dokie, artichokie. Purchase cancelled.")
+                                message.channel.send("Okie dokie, artichokie. Purchase cancelled.");
+                                SMFunctions.stockPrice[message.author.id].price.last = 0;
                                 collector.stop();
                             } else {
-                                message.channel.send("Well that wasn't a valid response. Try again from the beginning.")
-                                collector.stop()
+                                message.channel.send("Well that wasn't a valid response. Try again from the beginning.");
+                                SMFunctions.stockPrice[message.author.id].price.last = 0;
+                                collector.stop();
                             }
                         })
                         collector.on("end", (collected, reason) => {
                             if (reason === "time") {
-                                message.channel.send("You took too much time to confirm!")
+                                message.channel.send("You took too much time to confirm!");
+                                SMFunctions.stockPrice[message.author.id].price.last = 0;
                             } else {
+                                SMFunctions.stockPrice[message.author.id].price.last = 0;
                                 return;
                             }
                         })
                     } else {
-                        message.channel.send(`You don't own that many shares. You're trying to sell **${qtyWanted}** shares but you only have **${portfolioCheck.qty}**.`)
+                        message.channel.send(`You don't own that many shares. You're trying to sell **${qtyWanted}** shares but you only have **${portfolioCheck.qty}**.`);
                     }
                 } else {
                     message.channel.send("You don't own any shares of that company's stock!")
@@ -444,11 +465,16 @@ const StockMarket = {
             .setDescription(`Symbol: **${SMFunctions.companySearch[message.author.id].symbol}**\n Current Price: **\$${SMFunctions.stockPrice[message.author.id].price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}**`)
             .setFooter(`Exchange: ${SMFunctions.companySearch[message.author.id].exchDisp}`)
 
-        message.channel.send(searchEmbed)
+        message.channel.send(searchEmbed);
+        SMFunctions.stockPrice[message.author.id].price.last = 0;
     },
 
     getHistory: async function (message) {
         let symbol = message.content.slice(21).toUpperCase();
+        if (symbol === "UNDEFINED") {
+            message.channel.send("Sanitize me, daddy.");
+            return;
+        }
         let historyEmbed = new Discord.RichEmbed();
         //await SMFunctions.getLogo(symbol, message);
         await SMFunctions.getHistory(symbol, message);
@@ -476,6 +502,10 @@ const StockMarket = {
 
     getPrice: async function (message) {
         let symbol = message.content.slice(19).toUpperCase();
+        if (symbol === "UNDEFINED") {
+            message.channel.send("Sanitize me, daddy.");
+            return;
+        }
         let getPriceEmbed = new Discord.RichEmbed();
         //await SMFunctions.getLogo(symbol, message);
         await SMFunctions.getCompanyName(symbol, message);
@@ -490,6 +520,7 @@ const StockMarket = {
             .setFooter(`as of ${SMFunctions.stockPrice[message.author.id].date.toLocaleString('en-us',{timeZone:'America/New_York'})} EST`)
 
         message.channel.send(getPriceEmbed);
+        SMFunctions.stockPrice[message.author.id].price.last = 0;
     },
 
     leaderboard: async function (message) {

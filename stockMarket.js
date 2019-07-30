@@ -292,7 +292,7 @@ const StockMarket = {
                                     symbol: symbolWanted,
                                     companyName: SMFunctions.companyName[response.author.id],
                                     qty: qtyWanted,
-                                    purchasePrice: SMFunctions.stockPrice[message.author.id].price.last
+                                    purchasePrice: SMFunctions.stockPrice[message.author.id].price.last.toFixed(2)
                                 }
                                 traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(newMoney, response.author.id);
                                 portfolios.prepare("INSERT OR REPLACE INTO portfolios (userId, username, symbol, companyName, qty, purchasePrice) VALUES (@userId, @username, @symbol, @companyName, @qty, @purchasePrice)").run(newPurchase);
@@ -341,7 +341,7 @@ const StockMarket = {
                         }
                     })
                 } else {
-                    message.channel.send(`You don't have enough money to buy those shares! You currently have **\$${profile.money}** and those shares would cost **\$${cost}** at \$${SMFunctions.stockPrice[message.author.id].price.last} each`);
+                    message.channel.send(`You don't have enough money to buy those shares! You currently have **\$${profile.money}** and those shares would cost **\$${cost}** at \$${SMFunctions.stockPrice[message.author.id].price.last.toFixed(2)} each`);
                     SMFunctions.stockPrice[message.author.id].price.last = 0;
                 }
             }

@@ -52,10 +52,12 @@ const SMFunctions = {
     },
 
     getPrice: async function(symbol, message) {
-        await IEX.getQuote(symbol,"1d","1m",true)
+        return new Promise(async (resolve, reject) => {
+            await IEX.getQuote(symbol,"1d","1m",true)
             .then(results => {
                 let latestPrice = results;
                 SMFunctions.stockPrice[message.author.id] = latestPrice;
+                resolve();
             })
             .catch(error => {
                 console.log(error);
@@ -63,6 +65,8 @@ const SMFunctions = {
                     message.channel.send(SMFunctions.oopsie);
                 }
             })
+        })
+        
     },
 
     getHistory: async function(symbol, message) {

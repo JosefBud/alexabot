@@ -8,7 +8,7 @@ const fs = require('fs');
 var alexaColor = "#31C4F3";
 
 
-setInterval(async () => {
+updateLeaderboard = async () => {
     let startTime = new Date();
     console.log(`${startTime.toLocaleTimeString('en-us',{timeZone:'America/New_York'})}: LEADERBOARD UPDATE JOB STARTING`)
     async function assignLeaderboard() {
@@ -43,10 +43,13 @@ setInterval(async () => {
         await forEachTrader(tradersArray);
         let endTime = new Date();
         console.log(`${endTime.toLocaleTimeString('en-us',{timeZone:'America/New_York'})}: LEADERBOARD UPDATE JOB DONE`);
+        updateLeaderboard();
     }
 
     assignLeaderboard();
-}, 120000);
+}
+
+updateLeaderboard();
 
 setInterval(async () => {
     async function updateCurrentPlayers() {

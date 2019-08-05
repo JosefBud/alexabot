@@ -61,8 +61,16 @@ const SMFunctions = {
             })
             .catch(error => {
                 console.log(error);
+                console.log("Symbol: " + symbol);
                 if (message.channel) {
                     message.channel.send(SMFunctions.oopsie);
+                } else {
+                    SMFunctions.stockPrice[message.author.id] = {
+                        price: {
+                            last: 0
+                        }
+                    };
+                    resolve();
                 }
             })
         })

@@ -240,8 +240,124 @@ const StockMarket = {
         let portfolio = portfolios.prepare("SELECT * FROM portfolios WHERE userId = ?").get(message.author.id);
         //console.log(parseInt(msgArray[0]))
         if (profile) {
-            if (!parseInt(msgArray[0])) {
-                message.channel.send("You may have typed something incorrectly. Try again using `Alexa stocks buy [quantity] [symbol]`")
+            let symbolWanted = msgArray[1].toUpperCase();
+
+            if (msgArray[0].startsWith("$")) {
+                let amountWanted = parseInt((msgArray[0].split("$")[1]), 10);
+                if (!parseInt(amountWanted)) {
+                    message.channel.send("You may have typed something incorrectly. Try again using `Alexa stocks buy [quantity] [symbol]`");
+                    return;
+                }
+                
+                if (amountWanted < 0) {
+                    message.channel.send("Why can't we be friends?");
+                    return;
+                }
+
+                if (amountWanted === 0) {
+                    message.channel.send("Well you can't buy $0 worth of shares, that's just silly");
+                    return;
+                }
+
+                if (profile.money < amountWanted) {
+                    message.channel.send(`You don't have enough money to buy those shares! You currently have **\$${profile.money}**.`);
+                    return;
+                }
+
+                await SMFunctions.getPrice(symbolWanted, message)
+                .catch(err => {
+                    message.channel.send("You may have typed something incorrectly. Usually this error happens when the symbol you used doesn't exist or is outside of the US-based stock exchanges. Murica. \n If you tried to use the company name instead of their stock symbol, use `Alexa stocks search [company name]` or Google to find their stock symbol and try your purchase again using that symbol.");
+                    return;
+                });
+
+                let shareQty = Math.floor(amountWanted / SMFunctions.stockPrice[message.author.id].price.last);
+                if (shareQty < 1) {
+                    message.channel.send(`Those shares cost **\$${SMFunctions.stockPrice[message.author.id].price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** each. The amount you entered isn't enough to cover the price of at least 1 share!`)
+                    return;
+                }
+
+                let cost = shareQty * SMFunctions.stockPrice[message.author.id].price.last;
+
+                await SMFunctions.getCompanyName(symbolWanted, message)
+                    let confirmPurchase = new Discord.RichEmbed();
+                    confirmPurchase
+                        .setAuthor(message.author.username, message.author.avatarURL)
+                        .setColor(alexaColor)
+                        .setThumbnail(`http://storage.googleapis.com/iex/api/logos/${symbolWanted}.png`)
+                        .setTitle("Please confirm your purchase")
+                        .setDescription(`**${shareQty} shares** of **${symbolWanted}** (${SMFunctions.companyName[message.author.id]}) at **\$${SMFunctions.stockPrice[message.author.id].price.last.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** each \n This would cost a total of **\$${cost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** and you currently have **\$${profile.money.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}** in your wallet`)
+                        .setFooter("Please type \"yes\" or \"no\" to confirm or cancel")
+                    message.channel.send(confirmPurchase)
+                    let collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, {
+                        time: 8000
+                    });
+                    collector.on("collect", response => {
+                        if (response.content.toLowerCase() === "yes") {
+                            let newMoney = (profile.money - cost).toFixed(2);
+                            let portfolioCheck = portfolios.prepare("SELECT * FROM portfolios WHERE userId = ? AND symbol = ?").get(response.author.id, symbolWanted)
+                            if (!portfolioCheck) {
+                                let newPurchase = {
+                                    userId: response.author.id,
+                                    username: response.author.username,
+                                    symbol: symbolWanted,
+                                    companyName: SMFunctions.companyName[response.author.id],
+                                    qty: shareQty,
+                                    purchasePrice: SMFunctions.stockPrice[message.author.id].price.last.toFixed(2)
+                                }
+                                traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(newMoney, response.author.id);
+                                portfolios.prepare("INSERT OR REPLACE INTO portfolios (userId, username, symbol, companyName, qty, purchasePrice) VALUES (@userId, @username, @symbol, @companyName, @qty, @purchasePrice)").run(newPurchase);
+                                message.channel.send("Purchase complete! Check your portfolio with `Alexa stocks portfolio` or `Alexa stocks profile` to see your new shares.");
+                                SMFunctions.stockPrice[message.author.id].price.last = 0;
+                                collector.stop();
+                            } else {
+                                let newQty = portfolioCheck.qty + shareQty;
+                                let newPurchase = {
+                                    userId: response.author.id,
+                                    symbol: symbolWanted,
+                                    qty: newQty
+                                }
+                                traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(newMoney, response.author.id);
+                                portfolios.prepare("UPDATE portfolios SET qty = @qty WHERE userId = @userId AND symbol = @symbol").run(newPurchase);
+                                message.channel.send("Purchase complete! Check your portfolio with `Alexa stocks portfolio` or `Alexa stocks profile` to see your new shares.");
+                                SMFunctions.stockPrice[message.author.id].price.last = 0;
+                                collector.stop();
+                            }
+
+                            stocksLog.log({
+                                level: 'info',
+                                guildName: response.guild.name,
+                                username: response.author.username,
+                                eventName: 'Shares bought',
+                                stockSymbol: symbolWanted,
+                                quantity: shareQty,
+                                sharePrice: SMFunctions.stockPrice[message.author.id].price.last
+                            })
+                            return;
+                        } else if (response.content.toLowerCase() === "no") {
+                            message.channel.send("Okie dokie, artichokie. Purchase cancelled.");
+                            SMFunctions.stockPrice[message.author.id].price.last = 0;
+                            collector.stop();
+                            return;
+                        } else {
+                            message.channel.send("Well that wasn't a valid response. Try again from the beginning.");
+                            SMFunctions.stockPrice[message.author.id].price.last = 0;
+                            collector.stop();
+                            return;
+                        }
+                    })
+                    collector.on("end", (collected, reason) => {
+                        if (reason === "time") {
+                            message.channel.send("You took too much time to confirm!");
+                            SMFunctions.stockPrice[message.author.id].price.last = 0;
+                            return;
+                        } else {
+                            return;
+                        }
+                    })
+
+            } else if (!parseInt(msgArray[0])) {
+                message.channel.send("You may have typed something incorrectly. Try again using `Alexa stocks buy [quantity] [symbol]`");
+                return;
             } else {
                 let qtyWanted = parseInt(msgArray[0], 10);
                 if (qtyWanted < 0) {
@@ -254,7 +370,6 @@ const StockMarket = {
                     return;
                 }
 
-                let symbolWanted = msgArray[1].toUpperCase();
                 if (symbolWanted === "UNDEFINED") {
                     message.channel.send("Sanitize me, daddy.");
                     return;
@@ -268,7 +383,6 @@ const StockMarket = {
                 let cost = qtyWanted * SMFunctions.stockPrice[message.author.id].price.last;
                 if (profile.money >= cost) {
                     await SMFunctions.getCompanyName(symbolWanted, message)
-                    //await SMFunctions.getLogo(symbolWanted, message)
                     let confirmPurchase = new Discord.RichEmbed();
                     confirmPurchase
                         .setAuthor(message.author.username, message.author.avatarURL)

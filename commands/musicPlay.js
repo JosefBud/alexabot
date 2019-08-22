@@ -342,7 +342,7 @@ async function musicPlay(message, msgContent, caseSensitiveContent, client) {
             }
 
             const videos = result.videos
-            var firstResult = videos[0]
+            let firstResult = videos[0]
             let videoObj;
             if (firstResult) {
                 videoObj = {
@@ -356,10 +356,23 @@ async function musicPlay(message, msgContent, caseSensitiveContent, client) {
             }
 
             if (firstResult.videoId.length !== 11) {
-                message.channel.send("That video doesn't seem to have a valid video ID. If you think this message is an error, please let me know on the Alexa Discord server: https://discord.gg/PysGrtD")
-                return;
+                //message.channel.send("That video doesn't seem to have a valid video ID. If you think this message is an error, please let me know on the Alexa Discord server: https://discord.gg/PysGrtD")
+                firstResult = videos[1];
+                if (firstResult) {
+                    videoObj = {
+                        videoId: firstResult.videoId,
+                        name: firstResult.title,
+                        seconds: firstResult.seconds
+                    }
+                }
+
+                if (firstResult.videoId.length !== 11) {
+                    message.channel.send("That video doesn't seem to have a valid video ID. If you think this message is an error, please let me know on the Alexa Discord server: https://discord.gg/PysGrtD");
+                    return;
+                }
             }
 
+            console.log(videoObj);
             if ((caseSensitiveContent.includes("fromalexaqueue")) === false) {
                 if (message.guild.voiceConnection) {
                     endReason = "play"

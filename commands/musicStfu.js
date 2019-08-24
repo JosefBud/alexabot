@@ -24,6 +24,8 @@ async function musicStfu(message, requester) {
         fs.writeFile('./currentlyPlaying.json', JSON.stringify(currentlyPlaying), (err) => {
             if (err) throw err;
         });
+
+        musicPlay.setCurrentSong(message.guild.id);
     } else {
         if (requester) {
             message.channel.send(`I'm not even doing anything, ${requester}. Why are you pressing the stop button?`)

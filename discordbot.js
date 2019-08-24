@@ -28,6 +28,7 @@ const musicClearQueue = require('./commands/musicClearQueue.js');
 const musicStfu = require('./commands/musicStfu.js');
 const musicPause = require('./commands/musicPause.js');
 const musicResume = require('./commands/musicResume.js');
+const musicLyrics = require('./commands/musicLyrics.js');
 const thatsSoSad = require('./commands/thatsSoSad.js');
 const buy = require('./commands/buy.js');
 const getOut = require('./commands/getOut.js');
@@ -391,6 +392,11 @@ client.on('message', message => {
         if (msgContent.startsWith("alexa stfu") || msgContent.startsWith("alexa shut up") || msgContent.startsWith("alexa fuck off")) {
             musicStfu(message);
             featureTracker("stfu");
+        }
+
+        if (msgContent.startsWith("alexa lyrics")) {
+            musicLyrics(message);
+            featureTracker("lyrics");
         }
         if (msgContent.startsWith("alexa buy")) {
             buy(message, client);

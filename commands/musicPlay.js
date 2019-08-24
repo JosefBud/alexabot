@@ -8,18 +8,27 @@ const serverVolumeSql = new SQLite('./db/serverVolume.sqlite');
 const songQueue = new SQLite('./db/songQueue.sqlite');
 const alexaColor = "#31C4F3";
 let endReason = "none";
+let currentSong = {};
 
 const featureTracker = require('../featureTracker.js');
 const musicQueue = require('./musicQueue.js');
 const musicPause = require('./musicPause.js');
 const musicResume = require('./musicResume.js');
 
-async function getEndReason() {
+function getEndReason() {
     return endReason;
 }
 
-async function setEndReason(newEndReason) {
+function setEndReason(newEndReason) {
     endReason = newEndReason;
+}
+
+function getCurrentSong() {
+    return currentSong;
+}
+
+function setCurrentSong(guildId) {
+    currentSong[guildId] = null;
 }
 
 async function musicPlay(message, msgContent, caseSensitiveContent, client) {
@@ -149,6 +158,9 @@ async function musicPlay(message, msgContent, caseSensitiveContent, client) {
                     console.log(ytdlOptions);
                     console.log(video.seconds);
                 }
+
+                currentSong[message.guild.id] = video.name
+
                 const stream = ytdl(`https://www.youtube.com/watch?v=${video.videoId}`, ytdlOptions)
                 const dispatcher = connection.playStream(stream, streamOptions);
 
@@ -215,11 +227,11 @@ async function musicPlay(message, msgContent, caseSensitiveContent, client) {
                         endReason = "none";
                         return;
                     } else {
-                        message.guild.voiceConnection.disconnect();
+                        dispatcher.player.voiceConnection.disconnect();
                         let arrayNum = 0;
                         let currentlyPlaying = require('../currentlyPlaying.json');
                         currentlyPlaying.servers.forEach((element) => {
-                            if (message.guild.id === element) {
+                            if (dispatcher.player.voiceConnection.channel.guild.id === element) {
                                 currentlyPlaying.servers.splice(arrayNum, 1);
                                 currentlyPlaying.total--;
                             } else {
@@ -229,6 +241,8 @@ async function musicPlay(message, msgContent, caseSensitiveContent, client) {
                         fs.writeFile('./currentlyPlaying.json', JSON.stringify(currentlyPlaying), (err) => {
                             if (err) throw err;
                         });
+
+                        currentSong[dispatcher.player.voiceConnection.channel.guild.id] = null;
                     }
                 })
             })
@@ -252,6 +266,8 @@ async function musicPlay(message, msgContent, caseSensitiveContent, client) {
                     fs.writeFile('./currentlyPlaying.json', JSON.stringify(currentlyPlaying), (err) => {
                         if (err) throw err;
                     });
+
+                    currentSong[message.guild.id] = null;
                 }
             })
     }
@@ -393,5 +409,7 @@ async function musicPlay(message, msgContent, caseSensitiveContent, client) {
 module.exports = {
     getEndReason,
     setEndReason,
+    getCurrentSong,
+    setCurrentSong,
     musicPlay
 };

@@ -11,7 +11,8 @@
         "🔶**Alexa STFU** will disconnect Alexa from the voice channel.",
         "🔷**Alexa volume** will bring up the volume commands and current volume.",
         "🔶**Alexa volume [0-100]%** will change the volume to the number you set.",
-        "🔷**Alexa volume down** or **Alexa volume up** changes the volume by 10%. This doesn't work *while* you're playing a song, it only adjusts it for the next time you play a song."
+        "🔷**Alexa volume down** or **Alexa volume up** changes the volume by 10%. This doesn't work *while* you're playing a song, it only adjusts it for the next time you play a song.",
+        "🔶**Alexa lyrics** displays lyrics for the song that's currently playing."
     ],
     "2": [
         "__**Stock Market Game**__\n",

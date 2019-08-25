@@ -86,6 +86,9 @@ async function musicLyrics(message) {
 
           embed.addField('\u200b', chunk);
         })
+      } else if (verse.length < 3) {
+        embed.addField(lyricsHeaders[index], '\u200b')
+        return;
       } else {
         embed.addField(lyricsHeaders[index], verse)
       }

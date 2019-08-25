@@ -53,6 +53,7 @@ async function musicLyrics(message) {
 
     songName = songName.split("(");
     songName = songName[0].split("[");
+    songName = songName[0].split("w/");
     songName = songName[0];
     await fetchLyrics(songName, message.guild.id, message);
 

@@ -288,6 +288,94 @@ client.on('message', message => {
             message.channel.send("`alexa portfolioeditor qty [userId] [stockSymbol] [newQty]`\n`alexa portfolioeditor money [userId] [newBalance]`\n`alexa portfolioeditor remove [userId] [stockSymbol]`")
         }
 
+        if (msgContent.startsWith("!it") && dndServers.has(message.guild.id)) {
+            Dnd.itemLookup(message);
+            return;
+        }
+        if (msgContent.startsWith("!sp") && dndServers.has(message.guild.id)) {
+            Dnd.spellLookup(message);
+            return;
+        }
+        if (msgContent.startsWith("!f") && dndServers.has(message.guild.id)) {
+            Dnd.featLookup(message);
+            return;
+        }
+        if (msgContent.startsWith("!artificer") && dndServers.has(message.guild.id)) {
+            let query = message.content.toLowerCase().slice(11);
+            Dnd.classFeatLookup(message, "Artificer", query);
+            return;
+        }
+        if (msgContent.startsWith("!barbarian") && dndServers.has(message.guild.id)) {
+            let query = message.content.toLowerCase().slice(11);
+            Dnd.classFeatLookup(message, "Barbarian", query);
+            return;
+        }
+        if (msgContent.startsWith("!bard") && dndServers.has(message.guild.id)) {
+            let query = message.content.toLowerCase().slice(6);
+            Dnd.classFeatLookup(message, "Bard", query);
+            return;
+        }
+        if (msgContent.startsWith("!cleric") && dndServers.has(message.guild.id)) {
+            let query = message.content.toLowerCase().slice(8);
+            Dnd.classFeatLookup(message, "Cleric", query);
+            return;
+        }
+        if (msgContent.startsWith("!druid") && dndServers.has(message.guild.id)) {
+            let query = message.content.toLowerCase().slice(5);
+            Dnd.classFeatLookup(message, "Druid", query);
+            return;
+        }
+        if (msgContent.startsWith("!fighter") && dndServers.has(message.guild.id)) {
+            let query = message.content.toLowerCase().slice(8);
+            Dnd.classFeatLookup(message, "Fighter", query);
+            return;
+        }
+        if (msgContent.startsWith("!monk") && dndServers.has(message.guild.id)) {
+            let query = message.content.toLowerCase().slice(6);
+            Dnd.classFeatLookup(message, "Monk", query);
+            return;
+        }
+        if (msgContent.startsWith("!mystic") && dndServers.has(message.guild.id)) {
+            let query = message.content.toLowerCase().slice(8);
+            Dnd.classFeatLookup(message, "Mystic", query);
+            return;
+        }
+        if (msgContent.startsWith("!paladin") && dndServers.has(message.guild.id)) {
+            let query = message.content.toLowerCase().slice(9);
+            Dnd.classFeatLookup(message, "Paladin", query);
+            return;
+        }
+        if (msgContent.startsWith("!ranger") && dndServers.has(message.guild.id)) {
+            let query = message.content.toLowerCase().slice(8);
+            Dnd.classFeatLookup(message, "Ranger", query);
+            return;
+        }
+        if (msgContent.startsWith("!rogue") && dndServers.has(message.guild.id)) {
+            let query = message.content.toLowerCase().slice(7);
+            Dnd.classFeatLookup(message, "Rogue", query);
+            return;
+        }
+        if (msgContent.startsWith("!rune scribe") && dndServers.has(message.guild.id)) {
+            let query = message.content.toLowerCase().slice(13);
+            Dnd.classFeatLookup(message, "Rune Scribe", query);
+            return;
+        }
+        if (msgContent.startsWith("!sorcerer") && dndServers.has(message.guild.id)) {
+            let query = message.content.toLowerCase().slice(10);
+            Dnd.classFeatLookup(message, "Sorcerer", query);
+            return;
+        }
+        if (msgContent.startsWith("!warlock") && dndServers.has(message.guild.id)) {
+            let query = message.content.toLowerCase().slice(9);
+            Dnd.classFeatLookup(message, "Warlock", query);
+            return;
+        }
+        if (msgContent.startsWith("!wizard") && dndServers.has(message.guild.id)) {
+            let query = message.content.toLowerCase().slice(8);
+            Dnd.classFeatLookup(message, "Wizard", query);
+            return;
+        }
+
         if (msgContent.includes("alexa")) {
             const alexaCallsLog = winston.createLogger({
                 level: 'info',
@@ -310,231 +398,197 @@ client.on('message', message => {
                 username: message.author.username,
                 message: message.content
             })
+        } else {
+            return;
         }
 
         if (msgContent === "alexa" || msgContent.startsWith("alexa help") || msgContent.startsWith("alexa commands")) {
             help(message, msgContent);
             featureTracker("help");
+            return;
         }
-        /*
-        if (msgContent.startsWith("alexa test")) {
-            //console.log(message.mentions.members.first().user.id);
-            client.fetchUser(message.mentions.members.first().user.id).then((user) => {
-                message.channel.send(`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`)
-            });
-            //message.channel.send(`https://cdn.discordapp.com/avatars/${client.fetchUser(message.mentions.members.first().user.id).id}/${client.fetchUser(message.mentions.members.first().user.id).avatar}.png`)
-        }
-        */
-        //if (msgContent.startsWith("alexa listen")) {VoiceRecog.listen(client, message);}
+
+        /* if (msgContent.startsWith("alexa listen")) {
+            VoiceRecog.listen(client, message);
+        } */
+
         if (msgContent.startsWith("alexa vote")) {
             message.channel.send("Well aren't you just the sweetest lil' thang voting for me... Here ya go, qt: https://discordbots.org/bot/534469636381736981/vote");
             featureTracker("vote");
+            return;
         }
         if (msgContent.startsWith("alexa get out of")) {
             getOut(message, msgContent);
             featureTracker("getOut");
+            return;
         }
         if (msgContent.startsWith("alexa xp")) {
-            Game.test(message)
+            Game.test(message);
+            return;
         }
         if (msgContent.startsWith("alexa stage")) {
             Game.stage(client, message);
+            return;
         }
         if (msgContent.startsWith("alexa reset")) {
             Game.profileReset(message);
+            return;
         }
         if (msgContent.startsWith("alexa spend")) {
             Game.spendSkillPoints(message);
+            return;
         }
         if (msgContent.startsWith("alexa create")) {
             Game.createCharacter(message);
+            return;
         }
         if (msgContent.startsWith("alexa flip")) {
             Game.flipCoin(message);
             featureTracker("flip");
+            return;
         }
         if (msgContent.startsWith("alexa steal")) {
             Game.stealCoins(client, message);
             featureTracker("steal");
+            return;
         }
         if (msgContent.startsWith("alexa profile")) {
             Game.getProfile(message);
             featureTracker("profile");
+            return;
         }
         if (msgContent.startsWith("alexa volume")) {
             musicVolume(message);
             featureTracker("volume");
+            return;
         }
         if (msgContent.startsWith("alexa play ")) {
             musicPlay.musicPlay(message, msgContent, message.content, client);
             featureTracker("play");
+            return;
         }
         if (msgContent.startsWith("alexa pause")) {
             musicPause(message, client, message.author.username);
             featureTracker("pause");
+            return;
         }
         if (msgContent.startsWith("alexa resume") || msgContent.startsWith("alexa unpause") || msgContent === "alexa play") {
             musicResume(message, client, message.author.username);
             featureTracker("resume");
+            return;
         }
         if (msgContent.startsWith("alexa queue")) {
             musicQueue(message);
             featureTracker("queue");
+            return;
         }
         if (msgContent.startsWith("alexa next")) {
             musicNext(message, client);
             featureTracker("next");
+            return;
         }
         if (msgContent.startsWith("alexa clear queue")) {
             musicClearQueue(message);
             featureTracker("clearQueue");
+            return;
         }
         if (msgContent.startsWith("alexa stfu") || msgContent.startsWith("alexa shut up") || msgContent.startsWith("alexa fuck off")) {
             musicStfu(message);
             featureTracker("stfu");
+            return;
         }
 
         if (msgContent.startsWith("alexa lyrics")) {
             musicLyrics(message);
             featureTracker("lyrics");
+            return;
         }
         if (msgContent.startsWith("alexa buy")) {
             buy(message, client);
             featureTracker("buy");
+            return;
         }
         if (msgContent.replace(/[o]/gi, "").includes("thats s sad") || msgContent.replace(/[o]/gi, "").includes("that is s sad") || msgContent.replace(/[o]/gi, "").includes("that is just s sad")) {
             thatsSoSad(message, client);
             featureTracker("thatsSoSad");
+            return;
         }
         if (msgContent.startsWith("alexa fuck ea")) {
             message.channel.send("EA bAd gErAlDo gOoD");
+            return;
         }
         //if (msgContent.startsWith("alexa wow profile")) {BlizzardCmd.test(message, msgContent, client); featureTracker("wowProfile");}
         if (msgContent.startsWith("alexa give me a meme")) {
             Reddit.randomMeme(message);
             featureTracker("meme");
+            return;
         }
         if (msgContent.startsWith("alexa give me /r/")) {
             Reddit.giveSub(message);
             featureTracker("subreddit");
+            return;
         }
         if (msgContent.startsWith("alexa minesweeper")) {
             minesweeper(message);
             featureTracker("minesweeper");
+            return;
         }
         if (msgContent.startsWith("alexa stocks start")) {
             StockMarket.create(message);
             featureTracker("stocksStart");
+            return;
         }
         if (msgContent.startsWith("alexa stocks portfolio") || msgContent.startsWith("alexa stocks profile") || msgContent.startsWith("alexa stocks wallet") || msgContent.startsWith("alexa stocks money")) {
             StockMarket.viewPortfolio(message);
             featureTracker("stocksProfile");
+            return;
         }
         if (msgContent.startsWith("alexa stocks buy")) {
             StockMarket.buyShares(message);
             featureTracker("stocksBuy");
+            return;
         }
         if (msgContent.startsWith("alexa stocks sell")) {
             StockMarket.sellShares(message);
             featureTracker("stocksSell");
+            return;
         }
         if (msgContent.startsWith("alexa stocks price")) {
             StockMarket.getPrice(message);
             featureTracker("stocksPrice");
+            return;
         }
         if (msgContent.startsWith("alexa stocks history")) {
             StockMarket.getHistory(message);
             featureTracker("stocksHistory");
+            return;
         }
         if (msgContent.startsWith("alexa stocks search")) {
             StockMarket.search(message);
             featureTracker("stocksSearch");
+            return;
         }
         if (msgContent.startsWith("alexa stocks top gainers")) {
             StockMarket.topGainers(message);
-            featureTracker("stocksGainers")
+            featureTracker("stocksGainers");
+            return;
         }
         if (msgContent.startsWith("alexa stocks leaderboard")) {
             StockMarket.leaderboard(message);
             featureTracker("stocksLeaderboard");
+            return;
         }
         if (msgContent.startsWith("alexa stocks help") || msgContent === "alexa stocks") {
             StockMarket.help(message);
             featureTracker("stocksHelp");
+            return;
         }
         if (msgContent.startsWith("alexa what is the weather") || msgContent.startsWith("alexa how is the weather")) {
             whatIsWeather(message);
             featureTracker("weather");
+            return;
         }
-        if (msgContent.startsWith("!it") && dndServers.has(message.guild.id)) {
-            Dnd.itemLookup(message);
-        }
-        if (msgContent.startsWith("!sp") && dndServers.has(message.guild.id)) {
-            Dnd.spellLookup(message);
-        }
-        if (msgContent.startsWith("!f") && dndServers.has(message.guild.id)) {
-            Dnd.featLookup(message);
-        }
-        if (msgContent.startsWith("!artificer") && dndServers.has(message.guild.id)) {
-            let query = message.content.toLowerCase().slice(11);
-            Dnd.classFeatLookup(message, "Artificer", query);
-        }
-        if (msgContent.startsWith("!barbarian") && dndServers.has(message.guild.id)) {
-            let query = message.content.toLowerCase().slice(11);
-            Dnd.classFeatLookup(message, "Barbarian", query);
-        }
-        if (msgContent.startsWith("!bard") && dndServers.has(message.guild.id)) {
-            let query = message.content.toLowerCase().slice(6);
-            Dnd.classFeatLookup(message, "Bard", query);
-        }
-        if (msgContent.startsWith("!cleric") && dndServers.has(message.guild.id)) {
-            let query = message.content.toLowerCase().slice(8);
-            Dnd.classFeatLookup(message, "Cleric", query);
-        }
-        if (msgContent.startsWith("!druid") && dndServers.has(message.guild.id)) {
-            let query = message.content.toLowerCase().slice(5);
-            Dnd.classFeatLookup(message, "Druid", query);
-        }
-        if (msgContent.startsWith("!fighter") && dndServers.has(message.guild.id)) {
-            let query = message.content.toLowerCase().slice(8);
-            Dnd.classFeatLookup(message, "Fighter", query);
-        }
-        if (msgContent.startsWith("!monk") && dndServers.has(message.guild.id)) {
-            let query = message.content.toLowerCase().slice(6);
-            Dnd.classFeatLookup(message, "Monk", query);
-        }
-        if (msgContent.startsWith("!mystic") && dndServers.has(message.guild.id)) {
-            let query = message.content.toLowerCase().slice(8);
-            Dnd.classFeatLookup(message, "Mystic", query);
-        }
-        if (msgContent.startsWith("!paladin") && dndServers.has(message.guild.id)) {
-            let query = message.content.toLowerCase().slice(9);
-            Dnd.classFeatLookup(message, "Paladin", query);
-        }
-        if (msgContent.startsWith("!ranger") && dndServers.has(message.guild.id)) {
-            let query = message.content.toLowerCase().slice(8);
-            Dnd.classFeatLookup(message, "Ranger", query);
-        }
-        if (msgContent.startsWith("!rogue") && dndServers.has(message.guild.id)) {
-            let query = message.content.toLowerCase().slice(7);
-            Dnd.classFeatLookup(message, "Rogue", query);
-        }
-        if (msgContent.startsWith("!rune scribe") && dndServers.has(message.guild.id)) {
-            let query = message.content.toLowerCase().slice(13);
-            Dnd.classFeatLookup(message, "Rune Scribe", query);
-        }
-        if (msgContent.startsWith("!sorcerer") && dndServers.has(message.guild.id)) {
-            let query = message.content.toLowerCase().slice(10);
-            Dnd.classFeatLookup(message, "Sorcerer", query);
-        }
-        if (msgContent.startsWith("!warlock") && dndServers.has(message.guild.id)) {
-            let query = message.content.toLowerCase().slice(9);
-            Dnd.classFeatLookup(message, "Warlock", query);
-        }
-        if (msgContent.startsWith("!wizard") && dndServers.has(message.guild.id)) {
-            let query = message.content.toLowerCase().slice(8);
-            Dnd.classFeatLookup(message, "Wizard", query);
-        }
+
         if (msgContent.startsWith("alexa give money") && alexaMods.has(message.member.id)) {
             if (message.mentions.users.array()[0]) {
                 let luckyWinner = message.mentions.users.array()[0].username;
@@ -549,7 +603,8 @@ client.on('message', message => {
                     return;
                 }
 
-                message.channel.send(`$${amount} sent to ${luckyWinner}'s profile!`)
+                message.channel.send(`$${amount} sent to ${luckyWinner}'s profile!`);
+                return;
             } else {
                 let amount;
                 if (message.content.split(" ")[3]) {
@@ -563,7 +618,8 @@ client.on('message', message => {
                     return;
                 }
 
-                message.channel.send(`$${amount} added to your profile!`)
+                message.channel.send(`$${amount} added to your profile!`);
+                return;
             }
         }
 
@@ -581,10 +637,16 @@ client.on('message', message => {
                     return;
                 }
 
-                message.channel.send(`$${amount} taken from ${luckyWinner}'s profile and added to yours!`)
+                message.channel.send(`$${amount} taken from ${luckyWinner}'s profile and added to yours!`);
+                return;
             } else {
                 return;
             }
+        }
+
+        if (msgContent.startsWith("alexa ")) {
+            message.channel.send("Hmm, I don't know that one.");
+            return;
         }
     }
 });

@@ -72,15 +72,17 @@ client.on('ready', () => {
     }, 10000)
 
     // POSTING BOT STATS TO DISCORDBOTS.ORG
-    setInterval(() => {
-        client.shard.fetchClientValues('guilds.size')
-			    .then(results => {
-                    let serverCount = results.reduce((prev, guildCount) => prev + guildCount, 0);
-                    dbl.postStats(serverCount, client.shard.id, client.shard.count );
-			    })
-			    .catch(console.error);
-        
-    }, 1800000);
+    if (client.shard.id === 2) {
+        setInterval(() => {
+            client.shard.fetchClientValues('guilds.size')
+                    .then(results => {
+                        let serverCount = results.reduce((prev, guildCount) => prev + guildCount, 0);
+                        dbl.postStats(serverCount, client.shard.id, client.shard.count );
+                    })
+                    .catch(console.error);
+            
+        }, 1800000);
+    }
 
     dbl.on('posted', () => {
         console.log('Server count posted!');

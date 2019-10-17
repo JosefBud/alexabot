@@ -73,7 +73,13 @@ client.on('ready', () => {
 
     // POSTING BOT STATS TO DISCORDBOTS.ORG
     setInterval(() => {
-        dbl.postStats(client.guilds.size , client.shard.id, client.shard.count );
+        client.shard.fetchClientValues('guilds.size')
+			    .then(results => {
+                    let serverCount = results.reduce((prev, guildCount) => prev + guildCount, 0);
+                    dbl.postStats(serverCount, client.shard.id, client.shard.count );
+			    })
+			    .catch(console.error);
+        
     }, 1800000);
 
     dbl.on('posted', () => {

@@ -145,15 +145,20 @@ client.on('ready', () => {
 
     Game.prep(client);
 
-    console.log(client.users.size)
+    console.log(client.users.size);
 
-    // SETTING BOT STATUS BETWEEN 'LISTENING TO ALEXA HELP' AND 'PLAYING ALEXA STOCKS'
+    // SETTING BOT STATUS BETWEEN 'LISTENING TO # SERVERS' AND 'PLAYING ALEXA STOCKS'
     setInterval(() => {
         if (status === "LISTENING") {
-            client.user.setActivity(`${client.guilds.size} servers`, {
-                type: status
-            })
-            status = "PLAYING"
+            client.shard.fetchClientValues('guilds.size')
+			    .then(results => {
+				    client.user.setActivity(`${results.reduce((prev, guildCount) => prev + guildCount, 0)} servers`, {
+                        type: status
+                    });
+                    
+                    status = "PLAYING";
+			    })
+			    .catch(console.error);
         } else {
             client.user.setActivity('\"Alexa stocks\"', {
                 type: status
@@ -164,7 +169,7 @@ client.on('ready', () => {
 
     // POSTING BOT STATS TO DISCORDBOTS.ORG
     setInterval(() => {
-        dbl.postStats(client.guilds.size /*, client.shards.Id, client.shards.total*/ );
+        dbl.postStats(client.guilds.size , client.shard.id, client.shard.count );
     }, 1800000);
 
     dbl.on('posted', () => {

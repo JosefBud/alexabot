@@ -43,102 +43,6 @@ const alexaMods = new Set(["207297782195683329", "183386090143612928", "18805555
 // ^^ the Alexa Experiment, The Safe Space, Bot Test ^^
 let status = "LISTENING";
 
-const server = http.createServer(function (request, response) {
-
-    let auth = request.headers['authorization']; // auth is in base64(username:password)  so we need to decode the base64
-    console.log("Authorization Header is: ", auth);
-    if (auth === config.httpAuth) {
-        console.log("AUTHORIZED!")
-        let authTimeStamp = new Date();
-        let logItAuth = authTimeStamp.toLocaleDateString('en-us', {
-            timeZone: 'America/New_York'
-        }) + " " + authTimeStamp.toLocaleTimeString('en-us', {
-            timeZone: 'America/New_York'
-        }) + " " + "Somebody has voted!";
-        fs.appendFile('httpCalls.log', "\r\n" + logItAuth, (err) => {
-            if (err) throw err;
-            console.log('The "data to append" was appended to file!');
-        })
-        if (request.method == 'POST') {
-            request.on('data', function (data) {
-                let post = JSON.parse(data);
-
-                const voteLog = winston.createLogger({
-                    level: 'info',
-                    format: winston.format.combine(
-                        winston.format.timestamp({
-                            format: 'YYYY-MM-DD HH:mm:ss'
-                        }),
-                        winston.format.json()
-                    ),
-                    transports: [
-                        new winston.transports.File({
-                            filename: './logs/alexaVotes.log'
-                        })
-                    ]
-                })
-
-                voteLog.log({
-                    level: 'info',
-                    user: post.user,
-                    content: post
-                })
-
-                let voterProfile = traders.prepare("SELECT money FROM traders WHERE userId = ?").get(post.user);
-                if (voterProfile) {
-                    let currentDate = new Date();
-                    let dayOfWeek = currentDate.getDay();
-                    if (dayOfWeek === 5 || dayOfWeek === 6 || dayOfWeek === 0) {
-                        let voterMoney = voterProfile.money + 1000;
-                        traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(voterMoney, post.user)
-
-                        client.users.get(post.user).send("Thank you for voting! I've added $1,000 to your wallet, you can check it by using `Alexa stocks profile` in your Discord server.\n Also feel free to join the Alexa Discord server at https://discord.gg/PysGrtD")
-                    } else {
-                        let voterMoney = voterProfile.money + 500;
-                        traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(voterMoney, post.user)
-
-                        client.users.get(post.user).send("Thank you for voting! I've added $500 to your wallet, you can check it by using `Alexa stocks profile` in your Discord server.\n Also feel free to join the Alexa Discord server at https://discord.gg/PysGrtD")
-                    }
-                } else {
-                    return;
-                }
-            });
-            request.on('end', function () {
-                try {
-                    let post = JSON.parse(body);
-                    console.log(post);
-                    response.writeHead(200, {
-                        "Content-Type": "text/plain"
-                    });
-                    response.end();
-                    return;
-                } catch (err) {
-                    response.writeHead(500, {
-                        "Content-Type": "text/plain"
-                    });
-                    response.write("Bad Post Data.  Is your data a proper JSON?\n");
-                    response.end();
-                    return;
-                }
-            });
-        }
-    } else {
-        let deniedTimeStamp = new Date();
-        let logItDenied = deniedTimeStamp.toLocaleDateString('en-us', {
-            timeZone: 'America/New_York'
-        }) + " " + deniedTimeStamp.toLocaleTimeString('en-us', {
-            timeZone: 'America/New_York'
-        }) + " " + "Unauthorized HTTP request";
-        fs.appendFile('httpCalls.log', "\r\n" + logItDenied, (err) => {
-            if (err) throw err;
-            console.log('The "data to append" was appended to file!');
-        })
-        response.end();
-    }
-});
-server.listen(60000, "0.0.0.0");
-console.log("NodeJS HTTP server started")
-
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
@@ -183,6 +87,104 @@ client.on('ready', () => {
     fs.writeFile('./currentlyPlaying.json', JSON.stringify(currentlyPlaying), (err) => {
         if (err) throw err;
     })
+
+    if (client.shard.id === 0) {
+        const server = http.createServer(function (request, response) {
+
+            let auth = request.headers['authorization']; // auth is in base64(username:password)  so we need to decode the base64
+            console.log("Authorization Header is: ", auth);
+            if (auth === config.httpAuth) {
+                console.log("AUTHORIZED!")
+                let authTimeStamp = new Date();
+                let logItAuth = authTimeStamp.toLocaleDateString('en-us', {
+                    timeZone: 'America/New_York'
+                }) + " " + authTimeStamp.toLocaleTimeString('en-us', {
+                    timeZone: 'America/New_York'
+                }) + " " + "Somebody has voted!";
+                fs.appendFile('httpCalls.log', "\r\n" + logItAuth, (err) => {
+                    if (err) throw err;
+                    console.log('The "data to append" was appended to file!');
+                })
+                if (request.method == 'POST') {
+                    request.on('data', function (data) {
+                        let post = JSON.parse(data);
+        
+                        const voteLog = winston.createLogger({
+                            level: 'info',
+                            format: winston.format.combine(
+                                winston.format.timestamp({
+                                    format: 'YYYY-MM-DD HH:mm:ss'
+                                }),
+                                winston.format.json()
+                            ),
+                            transports: [
+                                new winston.transports.File({
+                                    filename: './logs/alexaVotes.log'
+                                })
+                            ]
+                        })
+        
+                        voteLog.log({
+                            level: 'info',
+                            user: post.user,
+                            content: post
+                        })
+        
+                        let voterProfile = traders.prepare("SELECT money FROM traders WHERE userId = ?").get(post.user);
+                        if (voterProfile) {
+                            let currentDate = new Date();
+                            let dayOfWeek = currentDate.getDay();
+                            if (dayOfWeek === 5 || dayOfWeek === 6 || dayOfWeek === 0) {
+                                let voterMoney = voterProfile.money + 1000;
+                                traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(voterMoney, post.user)
+        
+                                client.users.get(post.user).send("Thank you for voting! I've added $1,000 to your wallet, you can check it by using `Alexa stocks profile` in your Discord server.\n Also feel free to join the Alexa Discord server at https://discord.gg/PysGrtD")
+                            } else {
+                                let voterMoney = voterProfile.money + 500;
+                                traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(voterMoney, post.user)
+        
+                                client.users.get(post.user).send("Thank you for voting! I've added $500 to your wallet, you can check it by using `Alexa stocks profile` in your Discord server.\n Also feel free to join the Alexa Discord server at https://discord.gg/PysGrtD")
+                            }
+                        } else {
+                            return;
+                        }
+                    });
+                    request.on('end', function () {
+                        try {
+                            let post = JSON.parse(body);
+                            console.log(post);
+                            response.writeHead(200, {
+                                "Content-Type": "text/plain"
+                            });
+                            response.end();
+                            return;
+                        } catch (err) {
+                            response.writeHead(500, {
+                                "Content-Type": "text/plain"
+                            });
+                            response.write("Bad Post Data.  Is your data a proper JSON?\n");
+                            response.end();
+                            return;
+                        }
+                    });
+                }
+            } else {
+                let deniedTimeStamp = new Date();
+                let logItDenied = deniedTimeStamp.toLocaleDateString('en-us', {
+                    timeZone: 'America/New_York'
+                }) + " " + deniedTimeStamp.toLocaleTimeString('en-us', {
+                    timeZone: 'America/New_York'
+                }) + " " + "Unauthorized HTTP request";
+                fs.appendFile('httpCalls.log', "\r\n" + logItDenied, (err) => {
+                    if (err) throw err;
+                    console.log('The "data to append" was appended to file!');
+                })
+                response.end();
+            }
+        });
+        server.listen(60000, "0.0.0.0");
+        console.log("NodeJS HTTP server started")
+    }
 });
 
 client.on('error', console.error);

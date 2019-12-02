@@ -14,31 +14,50 @@ updateLeaderboard = async () => {
     async function assignLeaderboard() {
         let tradersArray = traders.prepare("SELECT * FROM traders;").all();
         async function forEachTrader(array) {
-            for (b = 0; b < array.length; b++) {
-                let portfolio = portfolios.prepare("SELECT * FROM portfolios WHERE userId = ?").all(tradersArray[b].userId);
-                if (portfolio) {
-                    let newPortfolioValue = 0;
+            return new Promise(async resolve => {
+                for (b = 0; b < array.length; b++) {
+                    let portfolio = portfolios.prepare("SELECT * FROM portfolios WHERE userId = ?").all(tradersArray[b].userId);
+                    if (portfolio[0]) {
+                        let newPortfolioValue = 0;
 
-                    async function forEachPortfolio(portfolioArray) {
-                        for (c = 0; c < portfolioArray.length; c++) {
-                            if (portfolio[c]) {
-                                const fakeMessage = {
-                                    author: {
-                                        id: 1
+                        async function forEachPortfolio(portfolioArray) {
+                            return new Promise(async resolve => {
+                                for (c = 0; c < portfolioArray.length; c++) {
+                                    if (portfolio[c]) {
+                                        const fakeMessage = {
+                                            author: {
+                                                id: 1
+                                            }
+                                        }
+                                        await SMFunctions.getPrice(portfolio[c].symbol, fakeMessage);
+
+                                        newPortfolioValue = newPortfolioValue + (SMFunctions.stockPrice[fakeMessage.author.id].price.last * portfolio[c].qty);
+                                    }
+
+                                    if (c === portfolioArray.length - 1) {
+                                        resolve();
                                     }
                                 }
-                                await SMFunctions.getPrice(portfolio[c].symbol, fakeMessage);
-                                //console.log(portfolio)
-                                newPortfolioValue = newPortfolioValue + (SMFunctions.stockPrice[fakeMessage.author.id].price.last * portfolio[c].qty);
-                            } else {return;}
+                            })
+
                         }
+
+                        await forEachPortfolio(portfolio);
+
+                        newPortfolioValue = newPortfolioValue + tradersArray[b].money;
+                        leaderboard.prepare("INSERT OR REPLACE INTO leaderboard (userId, username, portfolioValue) VALUES (@userId, @username, @portfolioValue)").run({
+                            userId: tradersArray[b].userId,
+                            username: tradersArray[b].username,
+                            portfolioValue: newPortfolioValue
+                        })
                     }
 
-                    await forEachPortfolio(portfolio);
-                    newPortfolioValue = newPortfolioValue + tradersArray[b].money;
-                    leaderboard.prepare("INSERT OR REPLACE INTO leaderboard (userId, username, portfolioValue) VALUES (@userId, @username, @portfolioValue)").run({userId: tradersArray[b].userId, username: tradersArray[b].username, portfolioValue: newPortfolioValue})
-                } else {return;}
-            }
+                    if (b === array.length - 1) {
+                        resolve();
+                    }
+                }
+            })
+
         }
         await forEachTrader(tradersArray);
         let endTime = new Date();
@@ -51,7 +70,7 @@ updateLeaderboard = async () => {
 
 updateLeaderboard();
 
-setInterval(async () => {
+/* setInterval(async () => {
     async function updateCurrentPlayers() {
         let numOfTraders = traders.prepare("SELECT COUNT(userId) FROM traders;").get();
         numOfTraders = numOfTraders["COUNT(userId)"];
@@ -59,7 +78,9 @@ setInterval(async () => {
         request({
             method: 'POST',
             uri: 'http://www.alexadiscord.com:8080',
-            body: {"stockPlayers": numOfTraders},
+            body: {
+                "stockPlayers": numOfTraders
+            },
             json: true
         })
         let startTime = new Date();
@@ -82,4 +103,4 @@ setInterval(async () => {
     }
 
     await updateFeatureTracker();
-}, 30000);
+}, 30000); */

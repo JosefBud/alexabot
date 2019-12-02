@@ -55,14 +55,14 @@ client.on('ready', () => {
     setInterval(() => {
         if (status === "LISTENING") {
             client.shard.fetchClientValues('guilds.size')
-			    .then(results => {
-				    client.user.setActivity(`${results.reduce((prev, guildCount) => prev + guildCount, 0)} servers`, {
+                .then(results => {
+                    client.user.setActivity(`${results.reduce((prev, guildCount) => prev + guildCount, 0)} servers`, {
                         type: status
                     });
-                    
+
                     status = "PLAYING";
-			    })
-			    .catch(console.error);
+                })
+                .catch(console.error);
         } else {
             client.user.setActivity('\"Alexa stocks\"', {
                 type: status
@@ -75,12 +75,12 @@ client.on('ready', () => {
     if (client.shard.id === 2) {
         setInterval(() => {
             client.shard.fetchClientValues('guilds.size')
-                    .then(results => {
-                        let serverCount = results.reduce((prev, guildCount) => prev + guildCount, 0);
-                        dbl.postStats(serverCount, client.shard.id, client.shard.count );
-                    })
-                    .catch(console.error);
-            
+                .then(results => {
+                    let serverCount = results.reduce((prev, guildCount) => prev + guildCount, 0);
+                    dbl.postStats(serverCount, client.shard.id, client.shard.count);
+                })
+                .catch(console.error);
+
         }, 1800000);
     }
 
@@ -116,7 +116,7 @@ client.on('ready', () => {
                 if (request.method == 'POST') {
                     request.on('data', function (data) {
                         let post = JSON.parse(data);
-        
+
                         const voteLog = winston.createLogger({
                             level: 'info',
                             format: winston.format.combine(
@@ -131,13 +131,13 @@ client.on('ready', () => {
                                 })
                             ]
                         })
-        
+
                         voteLog.log({
                             level: 'info',
                             user: post.user,
                             content: post
                         })
-        
+
                         let voterProfile = traders.prepare("SELECT money FROM traders WHERE userId = ?").get(post.user);
                         if (voterProfile) {
                             let currentDate = new Date();
@@ -145,12 +145,12 @@ client.on('ready', () => {
                             if (dayOfWeek === 5 || dayOfWeek === 6 || dayOfWeek === 0) {
                                 let voterMoney = voterProfile.money + 1000;
                                 traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(voterMoney, post.user)
-        
+
                                 client.users.get(post.user).send("Thank you for voting! I've added $1,000 to your wallet, you can check it by using `Alexa stocks profile` in your Discord server.\n Also feel free to join the Alexa Discord server at https://discord.gg/PysGrtD")
                             } else {
                                 let voterMoney = voterProfile.money + 500;
                                 traders.prepare("UPDATE traders SET money = ? WHERE userId = ?").run(voterMoney, post.user)
-        
+
                                 client.users.get(post.user).send("Thank you for voting! I've added $500 to your wallet, you can check it by using `Alexa stocks profile` in your Discord server.\n Also feel free to join the Alexa Discord server at https://discord.gg/PysGrtD")
                             }
                         } else {
@@ -255,7 +255,7 @@ client.on('message', message => {
             ),
             transports: [
                 new winston.transports.File({
-                    filename: './logs/fullLog.log'
+                    filename: `./logs/fullLog-${consoleTimeStamp.getFullYear()}-${consoleTimeStamp.getMonth() + 1}-${consoleTimeStamp.getDate()}.log`
                 })
             ]
         })
